@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destinations - PlanMyTrip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:wght@700&display=swap');
+        
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 28%),
+                        linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .destination-card {
+            background: rgba(255,255,255,0.96);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 28px 70px rgba(15, 23, 42, 0.14);
+            border-color: rgba(59, 130, 246, 0.28);
+        }
+
+        .destination-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .destination-card:hover .destination-image {
+            transform: scale(1.05);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            border: 2px solid rgba(147, 197, 253, 0.5);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+            background: white;
+            color: #334155;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
+        }
+
+        .filter-btn:hover:not(.active) {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .map-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+        }
+
+        .map-card iframe {
+            width: 100%;
+            min-height: 340px;
+            border: none;
+        }
+
+        .map-card .map-footer {
+            padding: 1rem 1.25rem 1.25rem;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .price-tag {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <!-- Navigation -->
+    <div class="max-w-7xl mx-auto mb-8">
+        <a href="index.html" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold">
+            <i data-lucide="arrow-left" class="w-5 h-5 mr-2"></i>
+            Back to Home
+        </a>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="max-w-7xl mx-auto mb-12 animate-slide-up">
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-6">
+                <div class="relative">
+                    <i data-lucide="map-pin" class="w-16 h-16 text-red-600"></i>
+                </div>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 mb-4">
+                Explore Destinations
+            </h1>
+            <p class="text-gray-600 text-xl max-w-2xl mx-auto">
+                Discover amazing travel destinations across India with personalized budgets and expert guides.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/frontend/plannewtrip.html" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-full px-6 py-3 shadow-lg shadow-blue-500/15 hover:scale-[1.01] transition-all">
+                    <i data-lucide="rocket" class="w-5 h-5"></i>
+                    Plan a Trip
+                </a>
+                <a href="#destinations-grid" class="inline-flex items-center justify-center gap-2 text-blue-700 border border-blue-200 bg-white rounded-full px-6 py-3 font-semibold hover:bg-blue-50 transition-all">
+                    <i data-lucide="map" class="w-5 h-5"></i>
+                    Browse Destinations
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Search & Filter Section -->
+        <div class="mb-12 bg-white p-6 rounded-2xl shadow-lg">
+            <div class="mb-6">
+                <label class="block text-sm font-bold text-gray-700 mb-3">Filter by Category</label>
+                <div class="flex flex-wrap gap-3">
+                    <button class="filter-btn active" data-category="all" onclick="filterDestinations('all', this)">All</button>
+                    <button class="filter-btn" data-category="beach" onclick="filterDestinations('beach', this)">🏖️ Beaches</button>
+                    <button class="filter-btn" data-category="mountain" onclick="filterDestinations('mountain', this)">⛰️ Mountains</button>
+                    <button class="filter-btn" data-category="cultural" onclick="filterDestinations('cultural', this)">🏰 Cultural</button>
+                    <button class="filter-btn" data-category="adventure" onclick="filterDestinations('adventure', this)">🧗 Adventure</button>
+                </div>
+            </div>
+
+            <div class="grid gap-6 lg:grid-cols-[1fr_0.95fr] items-start">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-3">Search</label>
+                    <input type="text" id="search-input" placeholder="Search destinations..." 
+                        onkeyup="searchDestinations()" 
+                        class="w-full p-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm">
+                </div>
+                <div class="map-card">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-bold text-gray-900">Explore on the Map</h2>
+                        <p class="text-sm text-gray-600 mt-2">View popular destinations and travel regions across India.</p>
+                    </div>
+                    <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=68.17%2C6.75%2C97.4%2C35.36&layer=mapnik" loading="lazy"></iframe>
+                    <div class="map-footer">Drag or zoom the map to explore each destination. Click Book Now to begin planning your trip.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Destinations Grid -->
+        <div id="destinations-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Destinations will be loaded here -->
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const destinations = [
+            {
+                id: 'goa',
+                name: 'South Goa Beaches',
+                category: 'beach',
+                price: 4000,
+                rating: 4.8,
+                image: 'https://c4.wallpaperflare.com/wallpaper/783/273/75/water-asia-india-andaman-wallpaper-preview.jpg',
+                description: 'Experience pristine beaches with crystal clear waters and golden sand.',
+                highlights: ['Beach Resort', 'Water Sports', 'Nightlife', 'Seafood'],
+                bestTime: 'November to February',
+                weather: 'Best enjoyed in afternoons when humidity is lower'
+            },
+            {
+                id: 'udaipur',
+                name: 'Udaipur City Palace',
+                category: 'cultural',
+                price: 5500,
+                rating: 4.6,
+                image: 'https://images.pexels.com/photos/19160083/pexels-photo-19160083.jpeg',
+                description: 'Majestic architecture and romantic lakeside views in the City of Lakes.',
+                highlights: ['City Palace', 'Lake Pichola', 'Boat Ride', 'Local Bazaar'],
+                bestTime: 'September to March',
+                weather: 'Early morning visits offer cooler temperatures'
+            },
+            {
+                id: 'meghalaya',
+                name: 'Meghalaya Living Bridges',
+                category: 'adventure',
+                price: 8000,
+                rating: 4.9,
+                image: 'https://assets.traveltriangle.com/blog/wp-content/uploads/2016/11/Living-root-bridge-6.jpg',
+                description: 'Explore the living root bridges of Cherrapunji in verdant greenery.',
+                highlights: ['Living Root Bridges', 'Waterfalls', 'Trekking', 'Local Culture'],
+                bestTime: 'August to October',
+                weather: 'Wear sturdy footwear for slippery trails after rain'
+            },
+            {
+                id: 'hampi',
+                name: 'Hampi Ruins & Temples',
+                category: 'cultural',
+                price: 3000,
+                rating: 4.7,
+                image: 'https://i0.wp.com/claudiosieberphotography.com/wp-content/uploads/2016/02/india-jammu-and-kashmir-leh-ladakh-34.jpg?ssl=1&fit=5760%2C2868',
+                description: 'Ancient temples and historical ruins from the Vijayanagara empire.',
+                highlights: ['Ancient Ruins', 'Temples', 'Photography', 'History'],
+                bestTime: 'December to February',
+                weather: 'Early morning photography is absolutely stunning'
+            },
+            {
+                id: 'kashmir',
+                name: 'Kashmir Valley',
+                category: 'mountain',
+                price: 7500,
+                rating: 4.9,
+                image: 'https://thrillingtravel.in/wp-content/uploads/2017/04/IMG_6599-2.jpg',
+                description: 'Paradise on earth with snow-capped mountains and lush valleys.',
+                highlights: ['Dal Lake', 'Snow Mountains', 'Houseboat Stay', 'Skiing'],
+                bestTime: 'April to May',
+                weather: 'Spring tulips create magical landscapes'
+            },
+            {
+                id: 'leh',
+                name: 'Leh-Ladakh',
+                category: 'mountain',
+                price: 9000,
+                rating: 4.8,
+                image: 'https://c4.wallpaperflare.com/wallpaper/783/273/75/water-asia-india-andaman-wallpaper-preview.jpg',
+                description: 'High altitude adventure and breathtaking landscapes of the Himalayas.',
+                highlights: ['Pangong Lake', 'Khardung La Pass', 'Monasteries', 'Adventure'],
+                bestTime: 'June to September',
+                weather: 'Acclimatize for altitude (11,500 ft). Best in summer'
+            }
+        ];
+
+        let filteredDestinations = [...destinations];
+
+        function renderDestinations() {
+            const grid = document.getElementById('destinations-grid');
+            grid.innerHTML = '';
+
+            filteredDestinations.forEach((dest, index) => {
+                const card = document.createElement('div');
+                card.className = 'destination-card animate-slide-up';
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${dest.image}" alt="${dest.name}" class="destination-image">
+                        <div class="absolute top-4 right-4">
+                            <span class="price-tag">₹${dest.price}</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${dest.name}</h3>
+                        <div class="flex items-center mb-3">
+                            <i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-yellow-500 mr-2"></i>
+                            <span class="font-bold text-gray-700">${dest.rating}/5.0</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">${dest.description}</p>
+                        
+                        <div class="mb-4">
+                            <p class="text-sm font-bold text-gray-700 mb-2">Highlights:</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${dest.highlights.map(h => `<span class="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full">${h}</span>`).join('')}
+                            </div>
+                        </div>
+
+                        <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-600"><strong>Best Time:</strong> ${dest.bestTime}</p>
+                            <p class="text-xs text-gray-600 mt-1"><strong>💡 Tip:</strong> ${dest.weather}</p>
+                        </div>
+
+                        <button onclick="bookDestination('${dest.id}')" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 rounded-lg transition-all">
+                            Book Now
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function filterDestinations(category, button) {
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+
+            const search = document.getElementById('search-input').value.toLowerCase();
+            filteredDestinations = destinations.filter(d => {
+                const categoryMatch = category === 'all' || d.category === category;
+                const searchMatch = !search || d.name.toLowerCase().includes(search) || d.description.toLowerCase().includes(search);
+                return categoryMatch && searchMatch;
+            });
+            renderDestinations();
+        }
+
+        function searchDestinations() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const activeCategory = document.querySelector('.filter-btn.active')?.dataset.category || 'all';
+            filteredDestinations = destinations.filter(d => {
+                const categoryMatch = activeCategory === 'all' || d.category === activeCategory;
+                const searchMatch = !search || d.name.toLowerCase().includes(search) || d.description.toLowerCase().includes(search);
+                return categoryMatch && searchMatch;
+            });
+            renderDestinations();
+        }
+
+        function bookDestination(id) {
+            const dest = destinations.find(d => d.id === id);
+            alert(`🎉 Great choice! ${dest.name} will be added to your trip. Continue booking to see more options!`);
+            // Redirect to home for booking
+            window.location.href = 'index.html';
+        }
+
+        // Initial render
+        renderDestinations();
+    </script>
+</body>
+</html>

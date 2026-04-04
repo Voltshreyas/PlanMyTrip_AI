@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – PlanMyTrip | Your Perfect Journey Awaits</title>
+    <meta name="description" content="Sign in or register to PlanMyTrip – plan personalized travel itineraries with intelligent budgeting and real-time logistics.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --accent: #06b6d4;
+            --success: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0f0c2e;
+            overflow-x: hidden;
+        }
+
+        /* ── Animated background ── */
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0f0c2e 0%, #1a1060 40%, #0c1a3e 70%, #0a1f3d 100%);
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbFloat var(--duration, 10s) ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes orbFloat {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(var(--mx, 30px), var(--my, 20px)) scale(var(--ms, 1.1)); }
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+                radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
+                radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 10% 55%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.6) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.4) 0%, transparent 100%);
+        }
+
+        /* ── Layout ── */
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* ── Glass card ── */
+        .login-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(32px) saturate(180%);
+            -webkit-backdrop-filter: blur(32px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 2rem;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.12);
+            width: 100%;
+            max-width: 26rem;
+            animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── Form inputs ── */
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,255,255,0.14);
+            border-radius: 0.875rem;
+            color: white;
+            font-size: 0.9375rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s ease;
+        }
+
+        .form-input::placeholder { color: rgba(255,255,255,0.4); }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(99, 102, 241, 0.65);
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.45);
+            pointer-events: none;
+            transition: color 0.25s;
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            color: rgba(99, 102, 241, 0.9);
+        }
+
+        /* ── Submit button ── */
+        .btn-submit {
+            width: 100%;
+            padding: 0.9375rem 1.5rem;
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #06b6d4 100%);
+            background-size: 200% 200%;
+            animation: gradShift 4s ease infinite;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 0.875rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 28px rgba(79, 70, 229, 0.55);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 12px 40px rgba(79, 70, 229, 0.7);
+            filter: brightness(1.08);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        @keyframes gradShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ── Labels ── */
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.035em;
+        }
+
+        /* ── Toggle link ── */
+        .toggle-link {
+            color: #a5b4fc;
+            font-weight: 700;
+            font-size: 0.875rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: color 0.2s;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            text-decoration-color: transparent;
+        }
+
+        .toggle-link:hover {
+            color: #c7d2fe;
+            text-decoration-color: #c7d2fe;
+        }
+
+        /* ── Alert messages ── */
+        .msg-error {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 0.75rem;
+            color: #fca5a5;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: slideUpFade 0.3s ease;
+        }
+
+        .msg-success {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 0.75rem;
+            color: #6ee7b7;
+            font-size: 0.875rem;
+            font-weight: 500;
+            animation: slideUpFade 0.3s ease;
+        }
+
+        /* ── Spinner ── */
+        .spinner {
+            display: inline-block;
+            width: 1.15rem;
+            height: 1.15rem;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Feature pills ── */
+        .feature-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: rgba(255,255,255,0.25);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 480px) {
+            .login-card { border-radius: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Background -->
+    <div class="bg-scene">
+        <div class="stars"></div>
+        <div class="orb" style="width:500px;height:500px;background:radial-gradient(circle,rgba(79,70,229,0.35),transparent 70%);top:-120px;left:-100px;--duration:12s;--mx:60px;--my:40px;--ms:1.15;"></div>
+        <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(6,182,212,0.25),transparent 70%);bottom:-80px;right:-80px;--duration:14s;--mx:-50px;--my:-30px;--ms:1.1;"></div>
+        <div class="orb" style="width:300px;height:300px;background:radial-gradient(circle,rgba(139,92,246,0.2),transparent 70%);top:50%;right:15%;--duration:9s;--mx:-40px;--my:50px;--ms:1.2;"></div>
+        <div class="orb" style="width:200px;height:200px;background:radial-gradient(circle,rgba(16,185,129,0.18),transparent 70%);bottom:20%;left:10%;--duration:11s;--mx:40px;--my:-30px;--ms:1.05;"></div>
+    </div>
+
+    <!-- Login Wrapper -->
+    <div class="login-wrapper">
+        <div class="login-card p-8 md:p-10">
+
+            <!-- Logo & Branding -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-400 shadow-lg shadow-indigo-500/40 mb-5" style="animation: orbFloat 4s ease-in-out infinite alternate; --mx:4px; --my:-6px;">
+                    <i data-lucide="plane" class="w-8 h-8 text-white"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2 tracking-tight" style="font-family:'Outfit',sans-serif;">
+                    PlanMyTrip
+                </h1>
+                <p class="text-sm text-white/50 font-medium">Your perfect journey starts here ✈️</p>
+
+                <!-- Feature pills -->
+                <div class="flex flex-wrap justify-center gap-2 mt-5">
+                    <span class="feature-pill"><i data-lucide="shield-check" class="w-3 h-3"></i> Secure</span>
+                    <span class="feature-pill"><i data-lucide="zap" class="w-3 h-3"></i> Instant</span>
+                    <span class="feature-pill"><i data-lucide="gift" class="w-3 h-3"></i> Rewards</span>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <form id="login-form" class="space-y-4" novalidate>
+
+                <!-- Phone -->
+                <div>
+                    <label class="form-label" for="phone">
+                        <i data-lucide="phone" class="w-3.5 h-3.5"></i> Phone Number
+                    </label>
+                    <div class="input-wrapper relative">
+                        <i data-lucide="smartphone" class="input-icon w-4 h-4"></i>
+                        <input type="tel" id="phone" name="phone" required
+                            placeholder="10-digit mobile number"
+                            class="form-input">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="form-label" for="email">
+                        <i data-lucide="mail" class="w-3.5 h-3.5"></i> Email Address
+                    </label>
+                    <div class="input-wrapper relative">
+                        <i data-lucide="at-sign" class="input-icon w-4 h-4"></i>
+                        <input type="email" id="email" name="email" required
+                            placeholder="your@email.com"
+                            class="form-input">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="form-label" for="password">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Password
+                    </label>
+                    <div class="input-wrapper relative">
+                        <i data-lucide="key-round" class="input-icon w-4 h-4"></i>
+                        <input type="password" id="password" name="password" required minlength="6"
+                            placeholder="Min. 6 characters"
+                            class="form-input">
+                    </div>
+                    <p class="mt-1.5 text-xs text-white/35 ml-1">At least 6 characters required</p>
+                </div>
+
+                <!-- Messages -->
+                <div id="error-message" class="msg-error" role="alert" aria-live="polite">
+                    <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+                    <span id="error-text"></span>
+                </div>
+                <div id="success-message" class="msg-success" role="status" aria-live="polite">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 flex-shrink-0"></i>
+                    <span id="success-text"></span>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" id="register-btn" class="btn-submit mt-2">
+                    <span id="btn-spinner" class="spinner hidden"></span>
+                    <span id="btn-text">
+                        <i data-lucide="rocket" class="w-4 h-4 inline"></i>
+                        Register &amp; Start Planning
+                    </span>
+                </button>
+
+                <!-- Divider -->
+                <div class="divider my-4">or</div>
+
+                <!-- Toggle auth -->
+                <div class="text-center">
+                    <p class="text-sm text-white/40 mb-2">Already have an account?</p>
+                    <button type="button" id="toggle-auth" class="toggle-link">Sign in instead →</button>
+                </div>
+            </form>
+
+            <!-- Footer note -->
+            <p class="text-center text-xs text-white/25 mt-6 leading-relaxed">
+                By continuing, you agree to our Terms of Service &amp; Privacy Policy.
+            </p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCQXjca8O0UlyNfRhTj514WkV4_4PJVxfM",
+            authDomain: "ai-trip-planner-login.firebaseapp.com",
+            projectId: "ai-trip-planner-login",
+            storageBucket: "ai-trip-planner-login.firebasestorage.app",
+            messagingSenderId: "553658297995",
+            appId: "1:553658297995:web:66387052ae219373d1ee8e",
+            measurementId: "G-H1V0TW9R8Q"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let isLoginMode = false;
+        const form = document.getElementById('login-form');
+        const toggleAuth = document.getElementById('toggle-auth');
+        const registerBtn = document.getElementById('register-btn');
+        const errorDiv = document.getElementById('error-message');
+        const successDiv = document.getElementById('success-message');
+        const errorText = document.getElementById('error-text');
+        const successText = document.getElementById('success-text');
+
+        toggleAuth.addEventListener('click', () => {
+            isLoginMode = !isLoginMode;
+            toggleAuth.textContent = isLoginMode ? 'Create new account →' : 'Sign in instead →';
+            const btnText = document.getElementById('btn-text');
+            if (btnText) {
+                btnText.innerHTML = isLoginMode
+                    ? '<i data-lucide="log-in" class="w-4 h-4 inline"></i> Sign In'
+                    : '<i data-lucide="rocket" class="w-4 h-4 inline"></i> Register &amp; Start Planning';
+                lucide.createIcons();
+            }
+            hideMessages();
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value.trim();
+
+            if (!email || !password || !phone) { showError('All fields are required'); return; }
+            if (!validatePhoneNumber(phone)) { showError('Please enter a valid 10-digit phone number'); return; }
+
+            setLoading(true);
+            try {
+                let userCredential;
+                if (isLoginMode) {
+                    userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    showSuccess('Welcome back! Redirecting …');
+                } else {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(doc(db, 'users', userCredential.user.uid), {
+                        email, phone,
+                        createdAt: new Date().toISOString(),
+                        referralCode: `PLANMYTRIP-${phone.slice(-4)}`
+                    });
+                    showSuccess('Account created! Redirecting …');
+                }
+
+                localStorage.setItem('planmytrip_user', JSON.stringify({
+                    uid: userCredential.user.uid,
+                    email, phone,
+                    referralCode: `PLANMYTRIP-${phone.slice(-4)}`
+                }));
+
+                setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+
+            } catch (error) {
+                showError(getErrorMessage(error.code));
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(on) {
+            document.getElementById('btn-spinner').classList.toggle('hidden', !on);
+            registerBtn.disabled = on;
+            registerBtn.style.opacity = on ? '0.78' : '';
+            registerBtn.style.cursor = on ? 'not-allowed' : '';
+        }
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorDiv.style.display = 'flex';
+            successDiv.style.display = 'none';
+            lucide.createIcons();
+        }
+
+        function showSuccess(msg) {
+            successText.textContent = msg;
+            successDiv.style.display = 'flex';
+            errorDiv.style.display = 'none';
+            lucide.createIcons();
+        }
+
+        function hideMessages() {
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+        }
+
+        function getErrorMessage(code) {
+            return {
+                'auth/email-already-in-use': 'This email is already registered. Sign in instead.',
+                'auth/invalid-email': 'Please enter a valid email address.',
+                'auth/weak-password': 'Password must be at least 6 characters.',
+                'auth/user-not-found': 'No account found. Please register first.',
+                'auth/wrong-password': 'Incorrect password. Please try again.',
+                'auth/invalid-credential': 'Invalid credentials. Please check and try again.',
+            }[code] || 'Something went wrong. Please try again.';
+        }
+
+        function validatePhoneNumber(phone) {
+            return /^[0-9]{10}$/.test(phone.replace(/[^\d]/g, ''));
+        }
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>

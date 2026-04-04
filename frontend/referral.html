@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Program - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .referral-card {
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .referral-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .benefit-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            font-size: 28px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .bg-gradient-premium { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); }
+
+        /* Small-screen adjustments for better responsiveness */
+        @media (max-width: 640px) {
+            .benefit-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+            .referral-card {
+                padding: 1.5rem;
+            }
+            .stat-box .text-4xl {
+                font-size: 1.75rem;
+            }
+            h1 {
+                font-size: 2.25rem;
+            }
+            /* Make cards full width and adjust grid spacing for small screens */
+            .referral-card {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .grid.md\:grid-cols-4 {
+                gap: 1rem;
+            }
+            .referral-card .text-xl {
+                font-size: 1.05rem;
+            }
+            .bg-white.p-8.md\:p-12 {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+    <!-- Premium Header & Navigation -->
+    <header class="sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <a href="../index.html" class="flex items-center gap-2.5 group flex-shrink-0">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-300/40 transition-transform group-hover:scale-110">
+                    <i data-lucide="plane" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-extrabold" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
+                    PlanMyTrip
+                </span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-1">
+                <a id="nav-home" href="../index.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
+                    <i data-lucide="home" class="w-4 h-4"></i> Home
+                </a>
+                <a id="nav-destinations" href="../destination.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
+                    <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
+                </a>
+                <a id="nav-about" href="mission.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
+                    <i data-lucide="info" class="w-4 h-4"></i> Mission
+                </a>
+                <a id="nav-bookings" href="bookings.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
+                    <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
+                </a>
+                <a id="nav-referrals" href="referral.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-indigo-600 bg-indigo-50 font-semibold transition-all">
+                    <i data-lucide="gift" class="w-4 h-4"></i> Referrals
+                </a>
+                <a href="plannewtrip.html" class="ml-3 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-md shadow-indigo-300/40 transition-all hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);">
+                    <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Plan Trip
+                </a>
+            </nav>
+
+            <!-- Right side -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
+                    <i data-lucide="user-circle" class="w-4 h-4 text-indigo-500"></i>
+                    <span class="text-xs font-bold text-indigo-700 max-w-[80px] truncate" id="user-id-display">User</span>
+                </div>
+                <a href="logout.html" title="Logout" class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-semibold py-1.5 px-3 rounded-xl transition-all text-sm border border-red-100">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Logout</span>
+                </a>
+                <a href="users.html"><img class="user-avatar w-9 h-9 rounded-full object-cover cursor-pointer" src="https://placehold.co/40x40/4F46E5/FFFFFF?text=SR" alt="User Avatar" id="user-avatar-img"></a>
+                <!-- Hamburger -->
+                <button id="mobile-menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-xl text-gray-600" style="background:rgba(79,70,229,0.07);border:1.5px solid rgba(79,70,229,0.12);">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden animate-slide-down mx-4 mb-3 p-3 space-y-1" style="background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-radius:1rem;border:1px solid rgba(79,70,229,0.1);box-shadow:0 8px 32px rgba(79,70,229,0.1);">
+            <a id="nav-home-mobile" href="../index.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
+                <i data-lucide="home" class="w-4 h-4"></i> Home
+            </a>
+            <a id="nav-destinations-mobile" href="../destination.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
+                <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
+            </a>
+            <a id="nav-about-mobile" href="mission.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
+                <i data-lucide="info" class="w-4 h-4"></i> Our Mission
+            </a>
+            <a id="nav-bookings-mobile" href="bookings.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
+                <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
+            </a>
+            <a id="nav-referrals-mobile" href="referral.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
+                <i data-lucide="gift" class="w-4 h-4"></i> Referrals
+            </a>
+            <a href="plannewtrip.html" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white mt-1" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);">
+                <i data-lucide="rocket" class="w-4 h-4"></i> Start Planning
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
+        <!-- Hero Section -->
+        <div class="relative overflow-hidden mb-12 p-8 md:p-16 rounded-3xl text-center shadow-2xl" 
+             style="background: linear-gradient(135deg, #0f0c2e 0%, #1a1060 100%);">
+            <!-- Background Orbs -->
+            <div style="position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.25),transparent 70%);top:-150px;left:-100px;border-radius:50%;pointer-events:none;"></div>
+            <div style="position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(6,182,212,0.2),transparent 70%);bottom:-100px;right:-50px;border-radius:50%;pointer-events:none;"></div>
+            
+            <div class="relative z-10 animate-slide-up">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-6" 
+                     style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;">
+                    <i data-lucide="gift" class="w-3.5 h-3.5"></i> Referral Exclusive Rewards
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
+                    Share the Joy, <br>
+                    <span class="hero-title">Multiply the Rewards</span>
+                </h1>
+                <p class="text-white/60 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-medium">
+                    Invite your friends to PlanMyTrip and unlock amazing discounts on your next adventure across India.
+                </p>
+                <div class="flex justify-center">
+                    <a href="#how-it-works" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold bg-white text-indigo-900 transition-all hover:scale-105 shadow-xl">
+                        Explore Benefits <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="mb-16 scroll-mt-24">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">How It Works</h2>
+                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Step 1 -->
+                <div class="step-card p-8 text-center group">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-sm border border-indigo-100">
+                            <i data-lucide="link" class="w-8 h-8 text-indigo-600"></i>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest">Step 01</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Share Your Code</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Send your unique referral link to friends via WhatsApp or social media.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card p-8 text-center group" style="animation-delay: 0.1s;">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:-rotate-3 shadow-sm border border-emerald-100">
+                            <i data-lucide="user-plus" class="w-8 h-8 text-emerald-600"></i>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-xs font-bold text-emerald-500 uppercase tracking-widest">Step 02</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">They Sign Up</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Your friends create their account using your referral code during registration.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card p-8 text-center group" style="animation-delay: 0.2s;">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-sm border border-amber-100">
+                            <i data-lucide="plane-takeoff" class="w-8 h-8 text-amber-600"></i>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Step 03</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">They Book a Trip</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">They embark on their first journey booked through PlanMyTrip.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card p-8 text-center group" style="animation-delay: 0.3s;">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:-rotate-3 shadow-sm border border-rose-100">
+                            <i data-lucide="gift" class="w-8 h-8 text-rose-600"></i>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">Step 04</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">You Earn Rewards</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Get a ₹750 discount credited instantly for every successful referral.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Your Referral Code Section -->
+        <section class="mb-16">
+            <div class="relative overflow-hidden p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/20" 
+                 style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
+                <!-- Abstract Bg Elements -->
+                <div class="absolute -top-12 -right-12 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div class="text-center md:text-left">
+                        <h2 class="text-3xl font-black text-white mb-2 tracking-tight">Your Referral Code</h2>
+                        <p class="text-indigo-100 text-lg">Share this unique code to start earning.</p>
+                    </div>
+                    
+                    <div class="w-full md:w-auto">
+                        <div class="bg-white/10 backdrop-blur-xl border border-white/30 p-2 rounded-2xl flex items-center gap-2">
+                            <div class="px-6 py-4 bg-white/20 rounded-xl border border-white/20">
+                                <span id="referral-code" class="text-2xl md:text-3xl font-black text-white font-mono tracking-wider">PLANMYTRIP-AS0603</span>
+                            </div>
+                            <button onclick="copyReferralCode()" class="flex items-center gap-2 bg-white text-indigo-600 hover:bg-indigo-50 px-6 py-4 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg">
+                                <i data-lucide="copy" class="w-5 h-5"></i> <span class="hidden sm:inline">Copy</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">Your Benefits</h2>
+                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Benefit 1 -->
+                <div class="step-card p-8 group">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-sm border border-indigo-100">💰</div>
+                        <h3 class="text-xl font-bold text-gray-900">Instant Discounts</h3>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed">Receive a ₹750 discount coupon for every friend who signs up and books their first trip.</p>
+                </div>
+
+                <!-- Benefit 2 -->
+                <div class="step-card p-8 group" style="animation-delay: 0.1s;">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-sm border border-indigo-100">🌟</div>
+                        <h3 class="text-xl font-bold text-gray-900">Special Perks</h3>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed">Unlock exclusive early access to holiday deals and premium travel guides curated by experts.</p>
+                </div>
+
+                <!-- Benefit 3 -->
+                <div class="step-card p-8 group" style="animation-delay: 0.2s;">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-sm border border-indigo-100">🎁</div>
+                        <h3 class="text-xl font-bold text-gray-900">Elite Status</h3>
+                    </div>
+                    <p class="text-gray-500 text-sm leading-relaxed">Refer 10 friends to become a Platinum Member and enjoy zero convenience fees on all bookings.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="mb-16">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div class="stat-card p-6 text-center">
+                    <div class="text-3xl md:text-4xl font-black text-indigo-600 mb-1">5</div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Friends Joined</p>
+                </div>
+                <div class="stat-card p-6 text-center" style="animation-delay: 0.1s;">
+                    <div class="text-3xl md:text-4xl font-black text-emerald-600 mb-1">₹3,750</div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Earned</p>
+                </div>
+                <div class="stat-card p-6 text-center" style="animation-delay: 0.2s;">
+                    <div class="text-3xl md:text-4xl font-black text-amber-600 mb-1">2</div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Trips Booked</p>
+                </div>
+                <div class="stat-card p-6 text-center" style="animation-delay: 0.3s;">
+                    <div class="text-3xl md:text-4xl font-black text-indigo-600 mb-1">35%</div>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Avg. Savings</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Share Section -->
+        <section class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">Spread the Word</h2>
+                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-indigo-50 text-center">
+                <p class="text-gray-500 text-lg mb-10 max-w-2xl mx-auto">
+                    Choose your favorite platform and share the magic of travel with your network.
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="shareToSocial('facebook')" class="group flex items-center gap-3 bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#1877F2] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
+                        <i data-lucide="facebook" class="w-6 h-6"></i>
+                        <span>Facebook</span>
+                    </button>
+                    <button onclick="shareToSocial('twitter')" class="group flex items-center gap-3 bg-[#1DA1F2]/10 hover:bg-[#1DA1F2] text-[#1DA1F2] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
+                        <i data-lucide="twitter" class="w-6 h-6"></i>
+                        <span>Twitter</span>
+                    </button>
+                    <button onclick="shareToSocial('whatsapp')" class="group flex items-center gap-3 bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
+                        <i data-lucide="message-circle" class="w-6 h-6"></i>
+                        <span>WhatsApp</span>
+                    </button>
+                    <button onclick="shareToSocial('linkedin')" class="group flex items-center gap-3 bg-[#0077B5]/10 hover:bg-[#0077B5] text-[#0077B5] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
+                        <i data-lucide="linkedin" class="w-6 h-6"></i>
+                        <span>LinkedIn</span>
+                    </button>
+                    <button onclick="shareToSocial('email')" class="group flex items-center gap-3 bg-rose-50 hover:bg-rose-500 text-rose-500 hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
+                        <i data-lucide="mail" class="w-6 h-6"></i>
+                        <span>Email</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section class="mb-16">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">Top Referrers</h2>
+                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="bg-white rounded-3xl shadow-xl border border-indigo-50 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-6 text-white text-center">
+                    <h3 class="text-xl font-bold flex items-center justify-center gap-2">
+                        <i data-lucide="trophy" class="w-5 h-5"></i> Global Leaderboard
+                    </h3>
+                </div>
+                
+                <div class="divide-y divide-indigo-50">
+                    <!-- Rank 1 -->
+                    <div class="p-6 flex items-center justify-between hover:bg-indigo-50/30 transition duration-300">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shadow-sm border border-amber-200">🥇</div>
+                            <div>
+                                <p class="font-bold text-gray-900 text-lg">Kaushik M.</p>
+                                <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">₹15,000 Earned</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-black text-2xl text-indigo-900">20</p>
+                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-tighter">Referrals</p>
+                        </div>
+                    </div>
+
+                    <!-- Rank 2 -->
+                    <div class="p-6 flex items-center justify-between hover:bg-indigo-50/30 transition duration-300">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-2xl shadow-sm border border-slate-200">🥈</div>
+                            <div>
+                                <p class="font-bold text-gray-900 text-lg">Divya K.</p>
+                                <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">₹12,500 Earned</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-black text-2xl text-indigo-900">17</p>
+                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-tighter">Referrals</p>
+                        </div>
+                    </div>
+
+                    <!-- Rank 3 -->
+                    <div class="p-6 flex items-center justify-between hover:bg-indigo-50/30 transition duration-300">
+                        <div class="flex items-center gap-6">
+                            <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl shadow-sm border border-orange-100">🥉</div>
+                            <div>
+                                <p class="font-bold text-gray-900 text-lg">Arjun P.</p>
+                                <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">₹11,250 Earned</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-black text-2xl text-indigo-900">15</p>
+                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-tighter">Referrals</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6 bg-indigo-50/50 text-center">
+                    <p class="text-sm text-indigo-600 font-semibold italic">You are just 3 referrals away from entering the top 10! 🚀</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="mb-12">
+            <div class="relative overflow-hidden p-10 md:p-16 rounded-[3rem] text-center shadow-2xl" 
+                 style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="absolute -top-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-black/5 rounded-full blur-2xl"></div>
+                
+                <div class="relative z-10 animate-slide-up">
+                    <h2 class="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">Ready to Start Earning?</h2>
+                    <p class="text-emerald-50 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium">
+                        Join thousands of travelers who are exploring India for less. Share your code today!
+                    </p>
+                    <button onclick="startSharing()" class="group inline-flex items-center gap-3 bg-white text-emerald-700 hover:bg-emerald-50 px-10 py-5 rounded-[2rem] font-black text-lg transition-all hover:scale-105 shadow-xl">
+                        <i data-lucide="share-2" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
+                        Share Now
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10 border-t border-gray-100 text-center">
+        <p class="text-gray-400 text-sm font-medium">© 2026 PlanMyTrip. All rights reserved.</p>
+        <div class="flex justify-center gap-6 mt-4">
+            <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors text-xs font-bold uppercase tracking-widest">Privacy Policy</a>
+            <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors text-xs font-bold uppercase tracking-widest">Terms of Service</a>
+            <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors text-xs font-bold uppercase tracking-widest">Help Center</a>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        const menuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Copy Referral Code
+        function copyReferralCode() {
+            const code = document.getElementById('referral-code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.currentTarget;
+                const originalContent = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i> Copied!';
+                btn.classList.add('bg-emerald-50', 'text-emerald-600');
+                lucide.createIcons();
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.remove('bg-emerald-50', 'text-emerald-600');
+                    lucide.createIcons();
+                }, 2000);
+            });
+        }
+
+        // Social Sharing Logic
+        function shareToSocial(platform) {
+            const code = document.getElementById('referral-code').textContent;
+            const messages = {
+                facebook: `Check out PlanMyTrip! Use my referral code ${code} to get ₹750 discount on your next trip across India! 🌍✈️`,
+                twitter: `I'm earning amazing rewards with PlanMyTrip referral program! 🎁 Use my code ${code} for ₹750 discount #TravelIndia #PlanMyTrip`,
+                whatsapp: `Hey! Use my PlanMyTrip referral code: ${code} to get ₹750 discount on your trip booking! 🌍🎉`,
+                linkedin: `I'm part of the PlanMyTrip referral program and loving it! Share code ${code} for travel rewards 🌟`,
+                email: `PlanMyTrip Referral - Use code: ${code}`
+            };
+
+            const shareUrls = {
+                facebook: `https://www.facebook.com/sharer/sharer.php?u=https://planmytrip.com&quote=${encodeURIComponent(messages.facebook)}`,
+                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(messages.twitter)}`,
+                whatsapp: `https://wa.me/?text=${encodeURIComponent(messages.whatsapp)}`,
+                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://planmytrip.com`,
+                email: `mailto:?subject=PlanMyTrip Referral&body=${encodeURIComponent(messages.email)}`
+            };
+
+            if (shareUrls[platform]) {
+                if (platform === 'email') {
+                    window.location.href = shareUrls[platform];
+                } else {
+                    window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+                }
+            }
+        }
+
+        // Start Sharing CTA
+        function startSharing() {
+            document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                alert('🎉 Great choice! Choose a platform above to start sharing your unique code!');
+            }, 800);
+        }
+    </script>
+</body>
+</html>
