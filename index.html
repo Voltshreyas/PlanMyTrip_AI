@@ -1,1446 +1,1116 @@
+<!--
+  =============================================================================
+  PROJECT: PlanMyTrip - Next-Gen Travel Booking Platform
+  VERSION: 3.0.0
+  AUTHOR:  Shreyas R.
+  MODULE:  Landing Page (Cinematic Experience)
+  DESCRIPTION: High-performance landing page with Anime.js animations,
+               background videos, and responsive design.
+  =============================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlanMyTrip – Plan, Book & Explore India</title>
-    <meta name="description" content="Discover stunning Indian destinations with personalized budgets and real-time travel logistics. Plan your perfect trip with PlanMyTrip.">
+    <title>PlanMyTrip - Travel Across India</title>
+    <meta name="description" content="Plan beautiful India trips with curated destinations, transparent pricing, referral rewards, and live logistics.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        h1, h2, h3, h4, .font-outfit { font-family: 'Outfit', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); }
-        .bg-gradient-premium { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); }
-        .fade-in { animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.85);
+            --border: rgba(226, 232, 240, 0.8);
+            --paper: #ffffff;
+            --surface: #f8fafc;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            background: #f8fafc !important;
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+        h1, h2, h3, .brand-font { font-family: "Outfit", system-ui, sans-serif; letter-spacing: 0 !important; }
+        body::before, body::after { display: none !important; }
+
+        .site-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; }
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+        }
+        .app-header::after {
+            display: none;
+        }
+        .brand-link {
+            padding: 6px 8px 6px 6px;
+            border-radius: 12px;
+            transition: transform .2s ease, background .2s ease;
+        }
+        .brand-link:hover {
+            transform: translateY(-1px);
+            background: rgba(14,165,233,0.08);
+        }
+        .brand-mark, .primary-btn {
+            background: var(--primary) !important;
+            color: #fff !important;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25) !important;
+        }
+        .brand-mark {
+            position: relative;
+            isolation: isolate;
+        }
+        .brand-mark::before {
+            display: none;
+        }
+        .brand-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px !important;
+            color: #475569 !important;
+            font-weight: 800;
+            border: 1px solid transparent;
+            min-height: 40px;
+            background: transparent !important;
+            transition: transform .2s ease, background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+        }
+        .nav-link.active, .nav-link:hover {
+            background: rgba(99, 102, 241, 0.08) !important;
+            color: var(--primary) !important;
+            border-color: rgba(99, 102, 241, 0.1);
+            transform: translateY(-1px);
+        }
+        .nav-link:active,
+        .nav-cta:active,
+        .auth-action:active,
+        .mobile-menu-toggle:active {
+            transform: translateY(0) scale(0.97);
+        }
+        .nav-ripple {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(15,118,110,0.2);
+            transform: translate(-50%, -50%) scale(0);
+            animation: navRipple 0.55s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes navRipple {
+            to { opacity: 0; transform: translate(-50%, -50%) scale(12); }
+        }
+        .nav-cta {
+            min-height: 42px;
+            padding: 0 16px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 8px 15px rgba(99, 102, 241, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(15,118,110,0.2);
+        }
+        .trips-menu { position: relative; }
+        .trips-trigger::after {
+            display: none !important;
+        }
+        .trips-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 50%;
+            width: 292px;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(20,33,61,0.1);
+            background: rgba(248,251,255,0.98);
+            box-shadow: 0 22px 54px rgba(20,33,61,0.16);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-50%) translateY(10px) scale(0.98);
+            transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+        }
+        .trips-menu:hover .trips-dropdown,
+        .trips-menu:focus-within .trips-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0) scale(1);
+        }
+        .trip-drop-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #334155;
+            font-weight: 850;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+        .trip-drop-link:hover {
+            background: #e6f4f1;
+            color: #0f766e;
+            transform: translateX(3px);
+        }
+        .auth-action {
+            min-height: 42px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 12px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            border: 1px solid rgba(20,33,61,0.1);
+            background: #fff;
+            color: #334155;
+            transition: transform .2s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+        }
+        .auth-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(20,33,61,0.1);
+        }
+        .auth-action.login { color: var(--primary); background: rgba(99, 102, 241, 0.08); border-color: rgba(99, 102, 241, 0.14); }
+        .auth-action.logout { color: var(--danger); background: #fff1f2; border-color: rgba(239, 68, 68, 0.12); }
+        .user-chip {
+            max-width: 170px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .user-avatar-chip {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            min-height: 52px;
+            flex: 0 0 52px;
+            aspect-ratio: 1 / 1;
+            padding: 0;
+            border-radius: 50% !important;
+            justify-content: center;
+            color: #fff;
+            background:
+                radial-gradient(circle at 30% 22%, rgba(255,255,255,0.26), transparent 28%),
+                linear-gradient(135deg, var(--primary) 0%, var(--secondary) 52%, #818cf8 100%);
+            border: 3px solid #fbbf24;
+            box-shadow: 0 10px 22px rgba(8,145,178,0.24), 0 0 0 4px rgba(251,191,36,0.12);
+            font-family: "Outfit", system-ui, sans-serif;
+            font-size: 1.18rem;
+            font-weight: 900;
+            letter-spacing: 0;
+        }
+        .user-avatar-chip:hover {
+            color: #fff;
+            background:
+                radial-gradient(circle at 30% 22%, rgba(255,255,255,0.3), transparent 28%),
+                linear-gradient(135deg, #0d9488 0%, #0284c7 48%, #4338ca 100%);
+            box-shadow: 0 14px 30px rgba(8,145,178,0.34), 0 0 0 5px rgba(251,191,36,0.16);
+        }
+        .account-wrap {
+            position: relative;
+            display: inline-flex;
+        }
+        .account-menu {
+            position: absolute;
+            top: calc(100% + 14px);
+            right: 0;
+            width: min(318px, calc(100vw - 24px));
+            border-radius: 14px;
+            border: 1px solid rgba(20,33,61,0.12);
+            background:
+                linear-gradient(180deg, rgba(240,253,250,0.98) 0%, rgba(255,255,255,0.98) 42%),
+                #ffffff;
+            box-shadow: 0 28px 70px rgba(8,47,73,0.2);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px) scale(0.98);
+            transform-origin: top right;
+            transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+        }
+        .account-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .account-menu-head {
+            padding: 22px 18px 18px;
+            text-align: center;
+            border-bottom: 1px solid rgba(20,33,61,0.08);
+            background:
+                radial-gradient(circle at top left, rgba(251,191,36,0.22), transparent 34%),
+                linear-gradient(135deg, rgba(15,118,110,0.1), rgba(8,145,178,0.08));
+        }
+        .account-menu-avatar {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            aspect-ratio: 1 / 1;
+            margin: 0 auto 12px;
+            border-radius: 50% !important;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            background:
+                radial-gradient(circle at 30% 22%, rgba(255,255,255,0.26), transparent 28%),
+                linear-gradient(135deg, var(--primary) 0%, var(--secondary) 52%, #818cf8 100%);
+            border: 3px solid #fbbf24;
+            box-shadow: 0 10px 22px rgba(8,145,178,0.24), 0 0 0 4px rgba(251,191,36,0.12);
+            font-family: "Outfit", system-ui, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+        .account-menu-name {
+            display: block;
+            color: #0f172a;
+            font-family: "Outfit", system-ui, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        .account-menu-email {
+            display: block;
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+        .account-manage-btn {
+            margin-top: 18px;
+            width: 100%;
+            min-height: 44px;
+            border-radius: 8px;
+            border: 1px solid rgba(15,118,110,0.22);
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #0f172a;
+            font-weight: 900;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+        .account-manage-btn:hover {
+            background: linear-gradient(135deg, #0f766e, #0891b2);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .account-menu-list {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(20,33,61,0.08);
+        }
+        .account-menu-link {
+            width: 100%;
+            min-height: 50px;
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            color: #0f172a;
+            font-weight: 850;
+            text-align: left;
+            transition: background .2s ease, color .2s ease;
+        }
+        .account-menu-link:hover {
+            background: linear-gradient(90deg, #f0fdfa, #eff6ff);
+            color: #0f766e;
+        }
+        .account-menu-link span {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .account-menu-footer {
+            padding: 10px 0;
+        }
+        .account-logout {
+            color: #be123c;
+        }
+        .account-logout:hover {
+            background: #fff1f2;
+            color: #be123c;
+        }
+        .hero {
+            position: relative;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.15) 0%, transparent 50%),
+                #0f172a; /* Dark background as seen in user preference */
+            color: white;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("https://www.transparenttextures.com/patterns/cubes.png");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        .hero .kicker {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .hero h1 {
+            color: white;
+            font-size: clamp(40px, 8vw, 88px);
+            line-height: 1.05;
+            letter-spacing: -0.04em !important;
+        }
+        .hero h1 span {
+            background: linear-gradient(135deg, #818cf8, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .hero-copy {
+            color: rgba(255, 255, 255, 0.6);
+            max-width: 650px;
+        }
+        .hero-stat {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .hero-stat strong { color: #818cf8; }
+        .hero-stat span { color: rgba(255, 255, 255, 0.5); }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 48px;
+            padding: 0 18px;
+            border-radius: 8px !important;
+            font-weight: 900;
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .ghost-btn {
+            color: white;
+            border: 1px solid rgba(224,242,254,0.46);
+            background: rgba(224,242,254,0.16);
+            backdrop-filter: blur(10px);
+        }
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 42px;
+            max-width: 760px;
+        }
+        .hero-stat {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 16px;
+            color: var(--ink);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+        }
+        .hero-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+            border-color: var(--primary);
+        }
+        .hero-stat strong { display: block; font-size: 28px; font-weight: 900; color: var(--primary); font-family: 'Outfit'; }
+        .hero-stat span { color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .section { padding: clamp(56px, 8vw, 96px) 0; }
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+        .kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #e0f2fe, #ecfdf5);
+            color: #0369a1;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+        .section-title {
+            margin-top: 12px;
+            font-size: clamp(30px, 5vw, 56px);
+            line-height: 1.04;
+            font-weight: 900;
+            color: var(--ink);
+        }
+        .section-copy { max-width: 560px; color: var(--muted); line-height: 1.75; }
+        .panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        .panel:hover {
+            box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+            transform: translateY(-2px);
+        }
+        .panel:hover {
+            box-shadow: 0 22px 58px rgba(20,33,61,0.12);
+        }
+        .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+        .feature-card {
+            padding: 32px;
+            text-align: center;
+        }
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .feature-card:nth-child(2) .icon-box {
+            background: linear-gradient(135deg, #fef3c7, #fff7ed);
+            color: var(--amber);
+            border-color: rgba(245,158,11,0.24);
+        }
+        .feature-card:nth-child(3) .icon-box {
+            background: linear-gradient(135deg, #fce7f3, #ede9fe);
+            color: var(--violet);
+            border-color: rgba(124,58,237,0.2);
+        }
+        .gallery-wrap { position: relative; overflow: hidden; padding: 20px; }
+        #image-carousel {
+            display: flex;
+            gap: 18px;
+            min-height: 390px;
+            align-items: center;
+            overflow: hidden;
+        }
+        .dest-card-premium {
+            width: 280px !important;
+            height: 380px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 16px 38px rgba(22,33,31,0.18) !important;
+        }
+        .carousel-control {
+            position: static !important;
+            transform: none !important;
+            width: 46px !important;
+            height: 46px !important;
+            border-radius: 8px !important;
+            background: var(--surface) !important;
+            color: #0284c7 !important;
+            border: 1px solid var(--line) !important;
+            box-shadow: 0 10px 26px rgba(22,33,31,0.08) !important;
+        }
+        .carousel-control:hover {
+            background: linear-gradient(135deg, #e0f2fe, #ecfdf5) !important;
+            color: #0369a1 !important;
+        }
+        .planner-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(340px, 0.92fr); gap: 18px; align-items: start; }
+        .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .field label { display: block; margin-bottom: 8px; color: #40504c; font-weight: 900; }
+        .field input, .field select {
+            width: 100%;
+            min-height: 48px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            padding: 0 14px;
+            border-radius: 8px !important;
+        }
+        #destination-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+        #destination-options > div { border-radius: 8px !important; }
+        .summary-card { position: sticky; top: 96px; padding: 22px; }
+        .price-line { display: flex; justify-content: space-between; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line); color: #40504c; }
+        .total-line { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding: 16px; border-radius: 8px; background: linear-gradient(135deg, #e0f2fe, #dcfce7); color: #0369a1; font-size: 22px; font-weight: 900; }
+        .testimonial-window { overflow: hidden; padding: 8px 0 28px; }
+        #review-carousel-content { display: flex; align-items: stretch; }
+        .review-card { border-radius: 8px !important; }
+        .cta-band {
+            background:
+                linear-gradient(135deg, rgba(15,23,42,0.96), rgba(2,132,199,0.9) 48%, rgba(16,185,129,0.88)),
+                url("https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=2200&auto=format&fit=crop") center/cover no-repeat;
+            color: white;
+            padding: clamp(34px, 6vw, 58px);
+            border-radius: 8px;
+        }
+        .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .mobile-menu {
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            top: 66px;
+            padding: 10px;
+            border: 1px solid rgba(20,33,61,0.1);
+            background: #f8fbff;
+            border-radius: 8px;
+            box-shadow: 0 16px 40px rgba(20,33,61,0.14);
+        }
+        .payment-btn:hover {
+            background: linear-gradient(135deg, #e0f2fe, #f0fdf4) !important;
+            border-color: rgba(14,165,233,0.35) !important;
+        }
+        .bg-white {
+            background-color: var(--surface) !important;
+        }
+        .bg-white\/10 {
+            background-color: rgba(224,242,254,0.16) !important;
+        }
+        .border-white\/15,
+        .border-white\/20 {
+            border-color: rgba(224,242,254,0.28) !important;
+        }
+        input.bg-white,
+        .payment-btn,
+        .mobile-menu,
+        #netbanking-modal .panel,
+        #bhim-modal .panel {
+            background-color: #f8fbff !important;
+        }
+        @media (max-width: 1024px) {
+            .planner-grid, .checkout-grid, .feature-grid { grid-template-columns: 1fr; }
+            .summary-card { position: static; }
+            .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+        @media (max-width: 720px) {
+            .site-shell { width: min(100% - 24px, 1180px); }
+            .app-header .site-shell { height: 64px; }
+            .brand-text { font-size: 1.28rem !important; }
+            .brand-mark { width: 2.25rem !important; height: 2.25rem !important; }
+            .mobile-menu { top: 58px; }
+            .mobile-trip-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 8px 0; }
+            .mobile-trip-grid .nav-link { min-height: 46px; }
+            .mobile-menu .nav-link {
+                color: #475569 !important;
+                background: transparent !important;
+                border-color: transparent;
+                margin-bottom: 6px;
+            }
+            .mobile-menu .nav-link.active,
+            .mobile-menu .nav-link:hover {
+                background: #e6f4f1 !important;
+                color: #0f766e !important;
+            }
+            .hero { min-height: auto; }
+            .section-head { display: block; }
+            .hero-actions .btn { width: 100%; }
+            .hero-stats, .form-grid, #destination-options { grid-template-columns: 1fr; }
+            .dest-card-premium { width: 82vw !important; }
+            #image-carousel { overflow-x: auto; scroll-snap-type: x mandatory; }
+            .nav-user { display: none; }
+            .auth-action span:not(.user-chip):not(#user-id-display) { display: none; }
+            .auth-action:not(.user-avatar-chip) { width: 40px; justify-content: center; padding: 0; }
+            .account-wrap { display: inline-flex; }
+            .account-menu { right: -52px; top: calc(100% + 10px); }
+        }
     </style>
 </head>
-<body class="min-h-screen bg-indigo-50/20 text-slate-800 flex flex-col relative overflow-x-hidden">
-
-    <!-- MAIN APP CONTAINER -->
-    <div id="main-app" class="flex-1 flex flex-col">
-        
-        <!-- Premium Header & Navigation -->
-        <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100/50 shadow-sm animate-slide-down">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-4">
-                <!-- Logo -->
-                <a href="#" onclick="switchView('home-view')" class="flex items-center gap-2.5 group flex-shrink-0">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-[0_4px_15px_rgba(79,70,229,0.3)] transition-transform group-hover:scale-110">
-                        <i data-lucide="plane" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <span class="text-xl font-extrabold" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                        PlanMyTrip
+<body>
+    <div id="main-app" class="min-h-screen">
+        <header class="app-header">
+            <div class="site-shell h-[72px] flex items-center justify-between gap-4">
+                <a href="#" onclick="switchView('home-view')" class="brand-link flex items-center gap-3">
+                    <span class="brand-mark brand-icon w-10 h-10 rounded-lg flex items-center justify-center shadow-sm">
+                        <i data-lucide="plane" class="w-5 h-5"></i>
                     </span>
+                    <span class="brand-font brand-text text-2xl font-black">PlanMyTrip</span>
                 </a>
 
-                <!-- Desktop Nav -->
-                <nav class="hidden md:flex items-center gap-1.5">
-                    <a id="nav-home" href="index.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-indigo-700 bg-indigo-50 font-bold transition-all shadow-sm">
-                        <i data-lucide="home" class="w-4 h-4"></i> Home
-                    </a>
-                    <a id="nav-destinations" href="destination.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-                    </a>
-                    <a id="nav-about" href="frontend/mission.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                        <i data-lucide="info" class="w-4 h-4"></i> Mission
-                    </a>
-                    <a id="nav-bookings" href="frontend/bookings.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                        <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-                    </a>
-                    <a id="nav-referrals" href="frontend/referral.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                        <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-                    </a>
-                    <a href="frontend/plannewtrip.html" class="ml-2 flex items-center gap-1.5 px-5 py-2 rounded-xl text-sm font-bold text-white shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5 hover:shadow-indigo-500/40 bg-gradient-premium">
-                        <i data-lucide="rocket" class="w-4 h-4"></i> Plan Trip
-                    </a>
+                <nav class="hidden md:flex items-center gap-1">
+                    <a id="nav-home" href="index.html" onclick="switchView('home-view')" class="nav-link active px-3 py-2 text-sm inline-flex items-center gap-2"><i data-lucide="home" class="w-4 h-4"></i> Home</a>
+                    <a id="nav-plantrip" href="frontend/destination.html" onclick="switchView('planning-view')" class="nav-link px-3 py-2 text-sm inline-flex items-center gap-2"><i data-lucide="route" class="w-4 h-4"></i> Plan</a>
+                    <a id="nav-about" href="frontend/mission.html" onclick="switchView('about-us-view')" class="nav-link px-3 py-2 text-sm inline-flex items-center gap-2"><i data-lucide="target" class="w-4 h-4"></i> Mission</a>
+                    <div class="trips-menu">
+                        <button id="nav-bookings" type="button" href="frontend/bookings.html" onclick="switchView('upcoming-trips-view')" class="nav-link trips-trigger px-3 py-2 text-sm inline-flex items-center gap-2"><i data-lucide="calendar-days" class="w-4 h-4"></i> Bookings <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
+                        <div class="trips-dropdown" aria-label="Trip booking options">
+                            <a href="frontend/hotel.html" class="trip-drop-link"><i data-lucide="hotel" class="w-5 h-5"></i><span>Hotel Booking</span></a>
+                            <a href="frontend/bus.html" class="trip-drop-link"><i data-lucide="bus" class="w-5 h-5"></i><span>Bus Ticket</span></a>
+                            <a href="frontend/train.html" class="trip-drop-link"><i data-lucide="train-front" class="w-5 h-5"></i><span>Train Ticket</span></a>
+                            <a href="frontend/flight.html" class="trip-drop-link"><i data-lucide="plane-takeoff" class="w-5 h-5"></i><span>Flight Ticket</span></a>
+                            <a href="frontend/accomodation.html" class="trip-drop-link"><i data-lucide="bed-double" class="w-5 h-5"></i><span>Accommodation</span></a>
+                        </div>
+                    </div>
+                    <a id="nav-referrals" href="frontend/referral.html" onclick="switchView('registered-view')" class="nav-link px-3 py-2 text-sm inline-flex items-center gap-2"><i data-lucide="gift" class="w-4 h-4"></i> Referral</a>
+                    <button onclick="switchView('planning-view')" class="nav-cta ml-2 text-sm">
+                        <i data-lucide="send" class="w-4 h-4"></i> Plan Trip
+                    </button>
                 </nav>
 
-                <!-- Right side -->
-                <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="hidden sm:flex items-center gap-2 bg-indigo-50/80 border border-indigo-100 px-3 py-1.5 rounded-xl backdrop-blur-sm">
-                        <i data-lucide="user-circle" class="w-4 h-4 text-indigo-600"></i>
-                        <span class="text-xs font-bold text-indigo-800 max-w-[80px] truncate" id="user-id-display">User</span>
+                <div class="flex items-center gap-2">
+                    <div id="account-wrap" class="account-wrap nav-user hidden">
+                        <button id="user-section-link" type="button" class="auth-action user-avatar-chip" aria-label="Open account menu" aria-expanded="false" aria-controls="account-menu">
+                            <span id="user-id-display">AS</span>
+                        </button>
+                        <div id="account-menu" class="account-menu" role="menu" aria-label="User account menu">
+                            <div class="account-menu-head">
+                                <div id="account-menu-avatar" class="account-menu-avatar">AS</div>
+                                <strong id="account-menu-name" class="account-menu-name">Traveler</strong>
+                                <span id="account-menu-email" class="account-menu-email">guest@planmytrip.com</span>
+                                <a href="frontend/users.html" class="account-manage-btn">
+                                    <i data-lucide="user-cog" class="w-4 h-4"></i>
+                                    Manage PlanMyTrip Account
+                                </a>
+                            </div>
+                            <div class="account-menu-list">
+                                <a href="frontend/users.html" class="account-menu-link"><span><i data-lucide="user-round" class="w-4 h-4"></i> Profile</span><i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                                <a href="frontend/bookings.html" class="account-menu-link"><span><i data-lucide="calendar-check" class="w-4 h-4"></i> My Bookings</span><i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                                <a href="frontend/plannewtrip.html" class="account-menu-link"><span><i data-lucide="route" class="w-4 h-4"></i> Plan New Trip</span><i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                                <a href="frontend/referral.html" class="account-menu-link"><span><i data-lucide="gift" class="w-4 h-4"></i> Referral Rewards</span><i data-lucide="chevron-right" class="w-4 h-4"></i></a>
+                                <a href="frontend/dashboard.html" class="account-menu-link" style="background: #f0fdfa; border: 1px solid #ccfbf1;"><span><i data-lucide="terminal" class="w-4 h-4" style="color: #0d9488;"></i> Dev Console</span><i data-lucide="shield-check" class="w-4 h-4" style="color: #0d9488;"></i></a>
+                                <a href="frontend/mission.html" class="account-menu-link"><span><i data-lucide="send" class="w-4 h-4"></i> Send Feedback</span><i data-lucide="external-link" class="w-4 h-4"></i></a>
+                            </div>
+                            <div class="account-menu-footer">
+                                <button type="button" onclick="logout()" class="account-menu-link account-logout"><span><i data-lucide="log-out" class="w-4 h-4"></i> Log out</span></button>
+                            </div>
+                        </div>
                     </div>
-                    <a href="frontend/logout.html" title="Logout" class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-1.5 px-3 rounded-xl transition-all text-sm border border-red-100">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">Exit</span>
+                    <a id="auth-login-link" href="login.html" class="auth-action login">
+                        <i data-lucide="log-in" class="w-4 h-4"></i><span>Login</span>
                     </a>
-                    <a href="frontend/users.html" class="relative group block">
-                        <div class="absolute inset-0 bg-indigo-400 rounded-full blur opacity-40 group-hover:opacity-70 transition-opacity"></div>
-                        <img class="relative user-avatar w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm transition-transform group-hover:scale-105" src="https://placehold.co/80x80/4F46E5/FFFFFF?text=SR&font=Montserrat" alt="User Avatar" id="user-avatar-img">
-                    </a>
-                    <!-- Hamburger -->
-                    <button id="mobile-menu-toggle" class="md:hidden flex items-center justify-center w-10 h-10 rounded-xl text-indigo-600 bg-indigo-50 border border-indigo-100 transition-colors hover:bg-indigo-100">
+                    <button id="mobile-menu-toggle" class="mobile-menu-toggle md:hidden w-10 h-10 rounded-lg border border-slate-200 bg-white inline-flex items-center justify-center text-slate-700 shadow-sm" aria-label="Open menu">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
-
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="md:hidden hidden animate-slide-down absolute top-[100%] left-0 right-0 mt-2 mx-4 mb-3 p-4 space-y-1.5 glass rounded-2xl shadow-xl border border-white/40 z-50">
-                <a href="index.html" class="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl transition-all font-bold text-sm">
-                    <i data-lucide="home" class="w-5 h-5"></i> Home Search
-                </a>
-                <a href="destination.html" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-indigo-50/50 hover:text-indigo-700 rounded-xl transition-all font-bold text-sm">
-                    <i data-lucide="map-pin" class="w-5 h-5"></i> Destinations Map
-                </a>
-                <a href="frontend/mission.html" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-indigo-50/50 hover:text-indigo-700 rounded-xl transition-all font-bold text-sm">
-                    <i data-lucide="info" class="w-5 h-5"></i> Premium Mission
-                </a>
-                <a href="frontend/bookings.html" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-indigo-50/50 hover:text-indigo-700 rounded-xl transition-all font-bold text-sm">
-                    <i data-lucide="calendar" class="w-5 h-5"></i> My Bookings Log
-                </a>
-                <a href="frontend/referral.html" class="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-indigo-50/50 hover:text-indigo-700 rounded-xl transition-all font-bold text-sm">
-                    <i data-lucide="gift" class="w-5 h-5"></i> VIP Referrals
-                </a>
-                <div class="h-px bg-indigo-100 my-2"></div>
-                <a href="frontend/plannewtrip.html" class="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold text-white mt-2 bg-gradient-premium shadow-lg shadow-indigo-500/20">
-                    <i data-lucide="rocket" class="w-5 h-5"></i> Craft Custom Trip
-                </a>
-            </div>
+            <nav id="mobile-menu" class="mobile-menu hidden md:hidden">
+                <a id="nav-home-mobile" href="index.html" onclick="switchView('home-view')" class="nav-link active flex px-3 py-3 gap-2"><i data-lucide="home" class="w-4 h-4"></i> Home</a>
+                <a id="nav-plantrip-mobile" href="frontend/plannewtrip.html" onclick="switchView('planning-view')" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="route" class="w-4 h-4"></i> Plan Trip</a>
+                <a id="nav-about-mobile" href="frontend/mission.html" onclick="switchView('about-us-view')" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="target" class="w-4 h-4"></i> Mission</a>
+                <a id="nav-bookings-mobile" href="frontend/bookings.html" onclick="switchView('upcoming-trips-view')" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="calendar-days" class="w-4 h-4"></i> Trips Booking</a>
+                <div class="mobile-trip-grid">
+                    <a href="frontend/hotel.html" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="hotel" class="w-4 h-4"></i> Hotel</a>
+                    <a href="frontend/bus.html" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="bus" class="w-4 h-4"></i> Bus</a>
+                    <a href="frontend/train.html" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="train-front" class="w-4 h-4"></i> Train</a>
+                    <a href="frontend/flight.html" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="plane-takeoff" class="w-4 h-4"></i>Flight</a>
+                </div>
+                <a href="frontend/accomodation.html" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="bed-double" class="w-4 h-4"></i> Accommodation</a>
+                <a id="nav-referrals-mobile" href="frontend/referral.html" onclick="switchView('registered-view')" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="gift" class="w-4 h-4"></i> Referral</a>
+                <button onclick="switchView('planning-view')" class="nav-cta w-full justify-center mt-2">
+                    <i data-lucide="send" class="w-4 h-4"></i> Plan Trip
+                </button>
+                <a id="mobile-user-link" href="frontend/users.html" class="nav-link flex px-3 py-3 gap-2"><i data-lucide="user-round" class="w-4 h-4"></i> User Section</a>
+                <a id="mobile-login-link" href="login.html" class="nav-link flex px-3 py-3 gap-2 text-emerald-700"><i data-lucide="log-in" class="w-4 h-4"></i> Login</a>
+            </nav>
         </header>
 
-        <!-- Dynamic View Container -->
-        <div id="view-container" class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-10">
-
-            <!-- HOME VIEW -->
-            <div id="home-view" class="animate-slide-up">
-
-                <!-- Hero Section -->
-                <div class="relative mb-10 md:mb-14 overflow-hidden rounded-3xl" style="background:linear-gradient(135deg,#0f0c2e 0%,#1a1060 50%,#0c1a3e 100%);min-height:320px;">
-                    <!-- bg orbs -->
-                    <div style="position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.4),transparent 70%);top:-100px;left:-80px;border-radius:50%;pointer-events:none;"></div>
-                    <div style="position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(6,182,212,0.3),transparent 70%);bottom:-60px;right:-40px;border-radius:50%;pointer-events:none;"></div>
-                    <div class="relative z-10 px-6 sm:px-10 md:px-16 py-12 md:py-20 text-center">
-                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-6" style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI-Powered Trip Planning for India
-                        </div>
-                        <h2 class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white mb-4 leading-tight tracking-tight" style="font-family:'Outfit',sans-serif;">
-                            Discover Your <br class="hidden sm:block">
-                            <span style="background:linear-gradient(135deg,#6366f1,#06b6d4,#10b981);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Next Adventure</span>
-                        </h2>
-                        <p class="text-white/60 text-base sm:text-lg max-w-xl mx-auto mb-8">
-                            Explore stunning destinations with personalized budgets and real-time travel support
-                        </p>
-                        <div class="flex flex-wrap justify-center gap-3">
-                            <button onclick="switchView('planning-view')" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white text-sm shadow-lg transition-all hover:scale-105 hover:shadow-indigo-500/50" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);box-shadow:0 6px 24px rgba(79,70,229,0.45);">
-                                <i data-lucide="rocket" class="w-4 h-4"></i> Start Planning
+        <main id="view-container">
+            <section id="home-view">
+                <div class="hero">
+                    <div class="site-shell hero-content">
+                        <span class="kicker bg-indigo-50 text-indigo-600 border border-indigo-100"><i data-lucide="map" class="w-4 h-4"></i> India trips, planned beautifully</span>
+                        <h1 class="hero-title mt-6">Plan your next <span>India Adventure</span> with confidence.</h1>
+                        <p class="hero-copy mt-6 text-slate-500">Pick unforgettable destinations, compare transparent budgets, apply rewards, and checkout with live logistics built in.</p>
+                        <div class="hero-actions mt-8">
+                            <button onclick="switchView('planning-view')" class="btn primary-btn px-8 py-4 text-lg">
+                                <i data-lucide="route" class="w-5 h-5"></i> Start Planning
                             </button>
-                            <a href="destination.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white/80 text-sm transition-all hover:text-white hover:bg-white/10" style="background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);">
-                                <i data-lucide="map" class="w-4 h-4"></i> Browse Destinations
+                            <a href="destination.html" class="btn border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 px-8 py-4 text-lg">
+                                <i data-lucide="image" class="w-5 h-5"></i> Explore Destinations
                             </a>
                         </div>
-                        <!-- Stats -->
-                        <div class="flex flex-wrap justify-center gap-6 mt-10 pt-8" style="border-top:1px solid rgba(255,255,255,0.08);">
-                            <div class="text-center">
-                                <p class="text-2xl font-extrabold text-white">12+</p>
-                                <p class="text-xs text-white/45 mt-0.5">Destinations</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-2xl font-extrabold text-white">4.8★</p>
-                                <p class="text-xs text-white/45 mt-0.5">Avg Rating</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-2xl font-extrabold text-white">₹750</p>
-                                <p class="text-xs text-white/45 mt-0.5">Referral Savings</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-2xl font-extrabold text-white">100%</p>
-                                <p class="text-xs text-white/45 mt-0.5">Safe &amp; Secure</p>
-                            </div>
+                        <div class="hero-stats">
+                            <div class="hero-stat"><strong>12+</strong><span>Curated Places</span></div>
+                            <div class="hero-stat"><strong>Rs 750</strong><span>Referral Reward</span></div>
+                            <div class="hero-stat"><strong>24/7</strong><span>Trip Support</span></div>
+                            <div class="hero-stat"><strong>4.8</strong><span>Average Rating</span></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Image Carousel -->
-                <div class="mb-10 p-5 md:p-8 rounded-3xl card-hover" style="background:rgba(255,255,255,0.88);backdrop-filter:blur(16px);border:1px solid rgba(99,102,241,0.12);box-shadow:0 8px 40px rgba(79,70,229,0.1);">
-                    <div class="flex items-center justify-between mb-5">
-                        <h3 class="text-xl md:text-2xl font-extrabold flex items-center gap-2.5" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                            <i data-lucide="camera" class="w-5 h-5" style="color:#4f46e5;"></i> Vibrant Destinations
-                        </h3>
-                        <span class="text-xs text-gray-400 font-medium animate-pulse">✨ Click to explore</span>
-                    </div>
-                    <div class="relative carousel-wrapper">
-                        <button id="prev-img" class="carousel-control carousel-control-left">
-                            <i data-lucide="chevron-left" class="w-5 h-5" style="color:#4f46e5;"></i>
-                        </button>
-                        <div id="image-carousel" class="flex justify-center items-center overflow-hidden h-56 sm:h-72 md:h-80 gap-4"></div>
-                        <button id="next-img" class="carousel-control carousel-control-right">
-                            <i data-lucide="chevron-right" class="w-5 h-5" style="color:#4f46e5;"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Reviews Carousel -->
-                <div class="mb-10">
-                    <div class="p-6 md:p-8 rounded-3xl card-hover" style="background:linear-gradient(135deg,rgba(79,70,229,0.07),rgba(6,182,212,0.05));backdrop-filter:blur(12px);border:1px solid rgba(99,102,241,0.15);box-shadow:0 8px 40px rgba(79,70,229,0.08);">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl md:text-2xl font-extrabold flex items-center gap-2.5" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                                <i data-lucide="star" class="w-5 h-5" style="color:#f59e0b;"></i> Traveler Testimonials
-                            </h3>
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full" style="background:rgba(79,70,229,0.1);color:#4f46e5;">5.0 ★ Avg</span>
-                        </div>
-                        <div id="review-carousel-window" class="relative overflow-hidden py-4 rounded-2xl" style="background:rgba(255,255,255,0.6);backdrop-filter:blur(8px);"
-                             onmouseenter="pauseReviewScroll()" onmouseleave="startReviewScroll()">
-                            <div id="review-carousel-content" class="flex w-full"></div>
-                        </div>
-                    </div>
-                </div>
-
-                        <!-- Net Banking Modal -->
-                        <div id="netbanking-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" aria-hidden="true" role="dialog" aria-modal="true">
-                            <div id="netbanking-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeNetBankingModal()"></div>
-                            <div class="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-auto p-6 md:p-8 z-10 animate-slide-up">
-                                <button onclick="closeNetBankingModal()" aria-label="Close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
-                                    <i data-lucide="x" class="w-6 h-6"></i>
-                                </button>
-                                <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                                    <i data-lucide="banknote" class="w-6 h-6 mr-2 text-blue-600"></i> Net Banking
-                                </h3>
-                                <p class="text-sm text-gray-600 mb-6">Choose your bank and proceed securely. (Demo - no real payments)</p>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="netbank-select" class="block text-sm font-semibold text-gray-700 mb-2">Select Bank</label>
-                                        <select id="netbank-select" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                                            <option value="hdfc">HDFC Bank</option>
-                                            <option value="icici">ICICI Bank</option>
-                                            <option value="sbi">State Bank of India (SBI)</option>
-                                            <option value="axis">Axis Bank</option>
-                                            <option value="others">Other Banks</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label for="netbank-user" class="block text-sm font-semibold text-gray-700 mb-2">User ID</label>
-                                        <input id="netbank-user" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Enter user ID">
-                                    </div>
-                                    <div class="flex justify-end gap-3 mt-6">
-                                        <button onclick="closeNetBankingModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Cancel</button>
-                                        <button onclick="confirmNetBanking()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Proceed</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- BHIM UPI Modal -->
-                        <div id="bhim-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" aria-hidden="true" role="dialog" aria-modal="true">
-                            <div id="bhim-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeBhimModal()"></div>
-                            <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto p-6 md:p-8 z-10 animate-slide-up">
-                                <button onclick="closeBhimModal()" aria-label="Close" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
-                                    <i data-lucide="x" class="w-6 h-6"></i>
-                                </button>
-                                <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                                    <i data-lucide="qr-code" class="w-6 h-6 mr-2 text-green-600"></i> BHIM UPI
-                                </h3>
-                                <p class="text-sm text-gray-600 mb-6">Enter your UPI ID or scan QR. (Demo - no real payment)</p>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label for="upi-id" class="block text-sm font-semibold text-gray-700 mb-2">UPI ID</label>
-                                        <input id="upi-id" type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500" placeholder="example@upi">
-                                    </div>
-                                    <div class="flex justify-end gap-3 mt-6">
-                                        <button onclick="closeBhimModal()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">Cancel</button>
-                                        <button onclick="confirmBhim()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Proceed</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- CTA Section -->
-                <div class="relative overflow-hidden mb-10 p-8 md:p-12 rounded-3xl text-center" style="background:linear-gradient(135deg,#0f0c2e,#1a1060);border:1px solid rgba(99,102,241,0.25);">
-                    <div style="position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(16,185,129,0.25),transparent 70%);top:-80px;right:-60px;border-radius:50%;pointer-events:none;"></div>
-                    <div class="relative z-10">
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mb-4" style="background:rgba(16,185,129,0.2);border:1px solid rgba(16,185,129,0.35);color:#6ee7b7;"><i data-lucide="sparkles" class="w-3 h-3"></i> Personalized for You</span>
-                        <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-3" style="font-family:'Outfit',sans-serif;">Your Perfect Trip Awaits!</h3>
-                        <p class="text-white/55 mb-7 max-w-md mx-auto">Based on your preferences and budget. Customize your itinerary with our intelligent booking system.</p>
-                        <button onclick="switchView('planning-view')" class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-bold text-white transition-all hover:scale-105" style="background:linear-gradient(135deg,#10b981,#06b6d4);box-shadow:0 6px 24px rgba(16,185,129,0.45);">
-                            <i data-lucide="rocket" class="w-5 h-5"></i> Start Planning Now
-                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ABOUT-US VIEW -->
-            <div id="about-us-view" class="hidden animate-slide-up">
-                <div class="p-6 md:p-10 rounded-3xl" style="background:linear-gradient(135deg,rgba(79,70,229,0.06),rgba(6,182,212,0.04));border:1px solid rgba(99,102,241,0.15);">
-                    <div class="flex items-start gap-5">
-                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);">
-                            <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h2 class="text-2xl md:text-3xl font-extrabold mb-3" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Our Mission: Safety First</h2>
-                            <p class="text-gray-600 leading-relaxed mb-6">PlanMyTrip is dedicated to personalized travel with your safety as our top priority. We implement weather-wise Safety Protocol Acts and provide real-time logistics tracking throughout your journey.</p>
-                            <div class="grid sm:grid-cols-3 gap-4">
-                                <div class="p-4 rounded-2xl text-center" style="background:rgba(79,70,229,0.07);border:1px solid rgba(79,70,229,0.12);">
-                                    <div class="w-10 h-10 rounded-xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg,#4f46e5,#6366f1);"><i data-lucide="lock" class="w-5 h-5 text-white"></i></div>
-                                    <h4 class="font-bold text-indigo-800 mb-1">Secure</h4>
-                                    <p class="text-xs text-gray-500">Your data is encrypted and protected</p>
-                                </div>
-                                <div class="p-4 rounded-2xl text-center" style="background:rgba(6,182,212,0.07);border:1px solid rgba(6,182,212,0.12);">
-                                    <div class="w-10 h-10 rounded-xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg,#06b6d4,#0284c7);"><i data-lucide="zap" class="w-5 h-5 text-white"></i></div>
-                                    <h4 class="font-bold text-cyan-800 mb-1">Fast</h4>
-                                    <p class="text-xs text-gray-500">Quick booking and instant confirmations</p>
-                                </div>
-                                <div class="p-4 rounded-2xl text-center" style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.12);">
-                                    <div class="w-10 h-10 rounded-xl mx-auto mb-3 flex items-center justify-center" style="background:linear-gradient(135deg,#10b981,#059669);"><i data-lucide="users" class="w-5 h-5 text-white"></i></div>
-                                    <h4 class="font-bold text-emerald-800 mb-1">Trusted</h4>
-                                    <p class="text-xs text-gray-500">Thousands of happy travelers</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="upcoming-trips-view" class="hidden animate-slide-up p-8 bg-white rounded-2xl shadow-lg">
-                <div class="flex items-center mb-6">
-                    <i data-lucide="calendar" class="w-8 h-8 text-indigo-600 mr-3"></i>
-                    <h2 class="text-3xl font-bold text-gray-800">Your Bookings</h2>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="p-6 border border-dashed border-gray-300 rounded-lg text-center">
-                        <i data-lucide="inbox" class="w-12 h-12 text-gray-400 mx-auto mb-3"></i>
-                        <p class="text-gray-600">No bookings yet. Start planning your first trip!</p>
-                        <button onclick="switchView('planning-view')" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition inline-flex items-center">
-                            <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Book Now
-                        </button>
-                    </div>
-                </div>
-                <p class="text-sm text-gray-500 mt-6">💡 Real-time logistics status will appear here once you book a trip.</p>
-            </div>
-            
-            <div id="registered-view" class="hidden animate-slide-up p-8 bg-white rounded-2xl shadow-lg border-l-4 border-purple-500">
-                <div class="flex items-center mb-6">
-                    <i data-lucide="gift" class="w-8 h-8 text-purple-600 mr-3"></i>
-                    <h2 class="text-3xl font-bold text-gray-800">Referral Network</h2>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div class="p-6 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200">
-                        <p class="text-sm text-purple-600 font-semibold mb-2">Friends Registered</p>
-                        <p class="text-4xl font-bold text-purple-700">5</p>
-                        <p class="text-xs text-purple-600 mt-2">Invite more friends to earn rewards!</p>
-                    </div>
-                    <div class="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                        <p class="text-sm text-green-600 font-semibold mb-2">Total Discount Earned</p>
-                        <p class="text-4xl font-bold text-green-700">₹ 7,500</p>
-                        <p class="text-xs text-green-600 mt-2">Redeem on your next trip!</p>
-                    </div>
-                </div>
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                            <p class="text-sm text-blue-800">
-                                <strong>Your Referral Code:</strong> <span class="font-mono font-bold text-blue-900">PLANMYTRIP-SHREYAS</span>
-                                <button class="ml-2 text-blue-600 hover:text-blue-800 transition"><i data-lucide="copy" class="w-4 h-4 inline"></i></button>
-                            </p>
-                        </div>
-            </div>
-
-
-            <!-- PLANNING VIEW -->
-            <div id="planning-view" class="hidden animate-slide-up">
-                <div class="mb-8 text-center">
-                    <h2 class="text-3xl md:text-5xl font-extrabold mb-3" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                        Plan &amp; Book Your Trip
-                    </h2>
-                    <p class="text-gray-500">Customize your perfect journey with our intelligent booking system</p>
-                </div>
-                
-                <div class="grid lg:grid-cols-3 gap-5 md:gap-7">
-                    <!-- STEP 1: Planning & Discovery (Column 1-2) -->
-                    <div class="lg:col-span-2">
-                        <div class="step-card p-6 md:p-8">
-                            <h2 class="text-xl md:text-2xl font-extrabold mb-6 pb-4 flex items-center gap-3" style="border-bottom:2px solid rgba(99,102,241,0.3);font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                                <i data-lucide="compass" class="w-6 h-6 flex-shrink-0" style="color:#4f46e5;"></i> Customize Your Journey
-                            </h2>
-                            <!-- Trip Basics -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8 p-4 rounded-2xl" style="background:linear-gradient(135deg,rgba(79,70,229,0.07),rgba(6,182,212,0.05));border:1px solid rgba(99,102,241,0.15);">
-                                <div>
-                                    <label for="people-count" class="block text-sm font-semibold text-indigo-700 mb-2 flex items-center">
-                                        <i data-lucide="users" class="w-4 h-4 mr-1"></i> Travelers
-                                    </label>
-                                    <input type="number" id="people-count" value="1" min="1" oninput="updateTripDetails()"
-                                        class="w-full p-3 border border-indigo-300 rounded-lg font-medium focus:ring-2 focus:ring-indigo-500 transition-all">
-                                </div>
-                                <div>
-                                    <label for="start-date" class="block text-sm font-semibold text-indigo-700 mb-2 flex items-center">
-                                        <i data-lucide="calendar" class="w-4 h-4 mr-1"></i> Start Date
-                                    </label>
-                                    <input type="date" id="start-date" value="2025-11-01" onchange="updateTripDetails()"
-                                        class="w-full p-3 border border-indigo-300 rounded-lg font-medium focus:ring-2 focus:ring-indigo-500 transition-all">
-                                </div>
-                                <div>
-                                    <label for="nights-count" class="block text-sm font-semibold text-indigo-700 mb-2 flex items-center">
-                                        <i data-lucide="moon" class="w-4 h-4 mr-1"></i> Nights
-                                    </label>
-                                    <input type="number" id="nights-count" value="5" min="1" oninput="updateTripDetails()"
-                                        class="w-full p-3 border border-indigo-300 rounded-lg font-medium focus:ring-2 focus:ring-indigo-500 transition-all">
-                                </div>
-                                <div class="self-end">
-                                    <label class="block text-sm font-semibold text-indigo-700 mb-2">End Date</label>
-                                    <p id="end-date" class="w-full p-3 bg-indigo-200 font-bold text-indigo-900 rounded-lg">Nov 06, 2025</p>
-                                </div>
-                            </div>
-
-                            <!-- Budget Input -->
-                            <div class="mb-8 p-4 rounded-2xl" style="background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(6,182,212,0.04));border:1px solid rgba(16,185,129,0.2);">
-                                <label for="budget" class="flex items-center gap-2 text-base font-bold mb-3" style="color:#065f46;">
-                                    <i data-lucide="wallet" class="w-5 h-5" style="color:#10b981;"></i> My Budget (INR)
-                                </label>
-                                <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-xl font-bold text-gray-400">₹</span>
-                                    <input type="number" id="budget" value="50000" min="5000" oninput="calculateTotal()"
-                                        class="w-full pl-10 pr-4 py-3 border-2 rounded-xl font-bold text-lg transition-all" style="border-color:rgba(16,185,129,0.4);">
-                                </div>
-                                <p class="text-xs mt-2" style="color:#059669;">💡 This acts as a filter for all recommendations</p>
-                            </div>
-
-                            <!-- Destination Selection -->
-                            <h3 class="text-base font-extrabold mb-4 flex items-center gap-2" style="color:#1e1b4b;">
-                                <i data-lucide="map-pin" class="w-4 h-4" style="color:#ef4444;"></i> Select Destinations
-                            </h3>
-                            <div id="destination-options" class="grid sm:grid-cols-2 gap-3"></div>
-                        </div>
-                    </div>
-
-                    <!-- STEP 2: Summary & Checkout (Column 3) -->
-                    <div class="lg:col-span-1">
-                        <div class="step-card bg-white p-6 md:p-8 rounded-2xl shadow-lg sticky top-24">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-4 border-b-2 border-green-500 flex items-center">
-                                <i data-lucide="check-circle-2" class="w-6 h-6 mr-2 text-green-600"></i> Summary
-                            </h2>
-
-                            <!-- Itinerary -->
-                            <div class="mb-6">
-                                <h3 class="font-bold text-gray-800 mb-3">Selected Itinerary:</h3>
-                                <ul id="itinerary-summary" class="space-y-2 text-sm">
-                                    <li class="text-red-600 font-medium">No destinations selected</li>
-                                </ul>
-                            </div>
-
-                            <!-- Referral Section -->
-                            <div class="mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-300">
-                                <div class="flex items-center justify-between mb-3">
-                                    <h3 class="font-bold text-purple-800 flex items-center">
-                                        <i data-lucide="gift" class="w-5 h-5 mr-2"></i> Referral Discount
-                                    </h3>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="referral-switch" onclick="toggleReferral()" class="sr-only peer">
-                                        <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                                    </label>
-                                </div>
-                                <input type="text" id="referral-code" value="TRIPWISE101" oninput="applyReferral(false)"
-                                    class="w-full p-2 border border-purple-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 transition-all" placeholder="Enter code">
-                                <p class="text-xs text-purple-700 mt-2">Demo: Use TRIPWISE101</p>
-                            </div>
-                            
-                            <!-- Price Breakdown -->
-                            <h3 class="font-bold text-gray-800 mb-3 flex items-center">
-                                <i data-lucide="receipt" class="w-5 h-5 mr-2"></i> Price Breakdown
-                            </h3>
-                            <div id="price-breakdown" class="space-y-2 text-xs md:text-sm mb-6">
-                                <div class="flex justify-between text-gray-700"><span>Base Cost:</span> <span id="base-trip-cost">₹ 0</span></div>
-                                <div class="flex justify-between text-gray-700"><span>Guide Fee:</span> <span id="guide-fee">₹ 2,500</span></div>
-                                <div class="flex justify-between text-gray-700"><span>Platform Fee:</span> <span id="platform-fee">₹ 1,200</span></div>
-                                <div class="flex justify-between text-red-600"><span>Inconvenience Fee:</span> <span id="inconvenience-fee">₹ 500</span></div>
-                                <div class="flex justify-between text-gray-700"><span>GST (18%):</span> <span id="gst-fee">₹ 555</span></div>
-                                <div class="flex justify-between text-green-600 border-t pt-2 border-dashed border-green-300 font-bold">
-                                    <span>Referral Discount:</span> 
-                                    <span id="referral-discount">- ₹ 0</span>
-                                </div>
-                                <div class="flex justify-between text-2xl font-bold text-blue-700 pt-3 border-t border-gray-300 bg-blue-50 -mx-3 px-3 py-3 rounded">
-                                    <span>Total:</span> <span id="grand-total">₹ 0</span>
-                                </div>
-                            </div>
-
-                            <button onclick="switchView('checkout-view')" class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center group">
-                                <span>Proceed to Checkout</span>
-                                <i data-lucide="arrow-right" class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Logistics Demo Placeholder -->
-                <div id="logistics-placeholder"></div>
-            </div>
-
-            <!-- CHECKOUT VIEW -->
-            <div id="checkout-view" class="hidden animate-slide-up">
-                <div class="mb-8 text-center">
-                    <h2 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600 mb-3">
-                        Final Checkout
-                    </h2>
-                    <p class="text-gray-600">Complete your booking with logistics setup and secure payment</p>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-6 md:gap-8">
-                    
-                    <!-- Logistics Setup -->
-                    <div class="step-card bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-4 border-b-2 border-purple-500 flex items-center">
-                            <i data-lucide="users-check" class="w-6 h-6 mr-3 text-purple-600"></i> Trip Logistics
-                        </h2>
-                        
-                        <div class="space-y-4">
+                <section class="section">
+                    <div class="site-shell">
+                        <div class="section-head">
                             <div>
-                                <label for="referral-type-checkout" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                    <i data-lucide="people-2" class="w-4 h-4 mr-2"></i> Who are you traveling with?
-                                </label>
-                                <select id="referral-type-checkout" onchange="updateLogistics()"
-                                    class="w-full p-3 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-purple-500 transition-all">
+                                <span class="kicker"><i data-lucide="compass" class="w-4 h-4"></i> Featured escapes</span>
+                                <h2 class="section-title">Choose the trip mood first. We handle the moving parts.</h2>
+                            </div>
+                            <div class="flex gap-2 mt-5 md:mt-0">
+                                <button id="prev-img" class="carousel-control" aria-label="Previous destination"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                                <button id="next-img" class="carousel-control" aria-label="Next destination"><i data-lucide="arrow-right" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                        <div class="panel gallery-wrap">
+                            <div id="image-carousel"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section pt-0">
+                    <div class="site-shell feature-grid">
+                        <article class="panel feature-card">
+                            <span class="icon-box"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span>
+                            <h3 class="text-2xl font-black mt-5">Transparent pricing</h3>
+                            <p class="section-copy mt-2">See destination cost, guide fee, platform fee, GST, referral discount, and total before checkout.</p>
+                        </article>
+                        <article class="panel feature-card">
+                            <span class="icon-box"><i data-lucide="shield-check" class="w-5 h-5"></i></span>
+                            <h3 class="text-2xl font-black mt-5">Safer logistics</h3>
+                            <p class="section-copy mt-2">After booking, get guide details, pickup point, vehicle number, and live trip status in one place.</p>
+                        </article>
+                        <article class="panel feature-card">
+                            <span class="icon-box"><i data-lucide="gift" class="w-5 h-5"></i></span>
+                            <h3 class="text-2xl font-black mt-5">Referral rewards</h3>
+                            <p class="section-copy mt-2">Share PlanMyTrip with friends and use referral codes to unlock instant trip discounts.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="section pt-0">
+                    <div class="site-shell cta-band">
+                        <div class="grid lg:grid-cols-[1.1fr_.9fr] gap-8 items-center">
+                            <div>
+                                <span class="kicker bg-white/10 text-white border border-white/20"><i data-lucide="sparkles" class="w-4 h-4"></i> Ready when you are</span>
+                                <h2 class="text-4xl md:text-6xl font-black mt-4">Build a smarter itinerary in under a minute.</h2>
+                                <p class="text-white/75 mt-4 max-w-xl leading-8">Select people, nights, start date, and destinations. The planner updates your total instantly.</p>
+                            </div>
+                            <div class="grid sm:grid-cols-2 gap-3">
+                                <div class="bg-white/10 border border-white/15 p-4 rounded-lg"><strong class="block text-2xl">Live</strong><span class="text-white/70">Budget preview</span></div>
+                                <div class="bg-white/10 border border-white/15 p-4 rounded-lg"><strong class="block text-2xl">Fast</strong><span class="text-white/70">Checkout demo</span></div>
+                                <div class="bg-white/10 border border-white/15 p-4 rounded-lg"><strong class="block text-2xl">Smart</strong><span class="text-white/70">Destination tips</span></div>
+                                <div class="bg-white/10 border border-white/15 p-4 rounded-lg"><strong class="block text-2xl">Secure</strong><span class="text-white/70">Session login</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <section id="planning-view" class="hidden section">
+                <div class="site-shell">
+                    <div class="section-head">
+                        <div>
+                            <span class="kicker"><i data-lucide="route" class="w-4 h-4"></i> Trip planner</span>
+                            <h2 class="section-title">Design your India itinerary.</h2>
+                            <p class="section-copy mt-3">Choose your travel details and destinations. Your estimate updates instantly.</p>
+                        </div>
+                    </div>
+
+                    <div class="planner-grid">
+                        <div class="panel p-5 md:p-7">
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label for="people-count">Travelers</label>
+                                    <input id="people-count" type="number" value="1" min="1" onchange="updateTripDetails()" oninput="updateTripDetails()">
+                                </div>
+                                <div class="field">
+                                    <label for="nights-count">Nights</label>
+                                    <input id="nights-count" type="number" value="5" min="1" onchange="updateTripDetails()" oninput="updateTripDetails()">
+                                </div>
+                                <div class="field">
+                                    <label for="start-date">Start date</label>
+                                    <input id="start-date" type="date" value="2026-05-15" onchange="updateTripDetails()">
+                                </div>
+                            </div>
+
+                            <div class="mt-5 p-4 rounded-lg bg-emerald-50 border border-emerald-100 flex flex-wrap items-center justify-between gap-3">
+                                <span class="font-black text-emerald-900 flex items-center gap-2"><i data-lucide="calendar-days" class="w-5 h-5"></i> Estimated end date</span>
+                                <span id="end-date" class="font-black text-emerald-700">-</span>
+                            </div>
+
+                            <h3 class="text-2xl font-black mt-8">Destinations</h3>
+                            <div id="destination-options"></div>
+                        </div>
+
+                        <aside class="panel summary-card">
+                            <h3 class="text-2xl font-black flex items-center gap-2"><i data-lucide="receipt" class="w-5 h-5 text-emerald-700"></i> Price summary</h3>
+                            <ul id="itinerary-summary" class="mt-4 space-y-2 text-sm"></ul>
+
+                            <div class="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                                <div class="flex items-center justify-between gap-4">
+                                    <label for="referral-switch" class="font-black text-amber-900">Referral discount</label>
+                                    <input type="checkbox" id="referral-switch" onclick="toggleReferral()" class="w-5 h-5">
+                                </div>
+                                <input id="referral-code" type="text" value="TRIPWISE101" oninput="applyReferral(false)" class="mt-3 w-full min-h-11 px-3 border border-amber-200 rounded-lg bg-white">
+                                <p class="text-xs text-amber-800 mt-2 font-bold">Demo code: TRIPWISE101</p>
+                            </div>
+
+                            <div class="mt-5">
+                                <div class="price-line"><span>Base cost</span><strong id="base-trip-cost">Rs 0</strong></div>
+                                <div class="price-line"><span>Guide fee</span><strong id="guide-fee">Rs 0</strong></div>
+                                <div class="price-line"><span>Platform fee</span><strong id="platform-fee">Rs 0</strong></div>
+                                <div class="price-line"><span>Convenience fee</span><strong id="inconvenience-fee">Rs 0</strong></div>
+                                <div class="price-line"><span>GST</span><strong id="gst-fee">Rs 0</strong></div>
+                                <div class="price-line text-emerald-700"><span>Referral discount</span><strong id="referral-discount">Rs 0</strong></div>
+                                <div class="total-line"><span>Total</span><span id="grand-total">Rs 0</span></div>
+                            </div>
+
+                            <button onclick="switchView('checkout-view')" class="btn primary-btn w-full mt-5">
+                                Continue to Checkout <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+
+            <section id="checkout-view" class="hidden section">
+                <div class="site-shell">
+                    <div class="section-head">
+                        <div>
+                            <span class="kicker"><i data-lucide="credit-card" class="w-4 h-4"></i> Checkout</span>
+                            <h2 class="section-title">Confirm your trip.</h2>
+                        </div>
+                    </div>
+                    <div class="checkout-grid">
+                        <div class="panel p-5 md:p-7">
+                            <h3 class="text-2xl font-black">Trip logistics</h3>
+                            <div class="field mt-5">
+                                <label for="referral-type-checkout">Traveling with</label>
+                                <select id="referral-type-checkout" onchange="updateLogistics()">
                                     <option value="friend">Friend</option>
                                     <option value="relative">Relative</option>
                                     <option value="coworker">Co-worker</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-
-                            <div class="p-4 bg-purple-50 rounded-lg border-2 border-purple-200">
-                                <div class="flex items-center justify-between mb-3">
-                                    <label for="stay-together-toggle" class="font-bold text-purple-800 flex items-center">
-                                        <i data-lucide="home" class="w-5 h-5 mr-2"></i> Accommodation
-                                    </label>
-                                    <label class="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" id="stay-together-toggle" class="sr-only peer" checked>
-                                        <div class="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                                    </label>
+                            <div class="mt-5 p-4 bg-emerald-50 border border-emerald-100 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <strong>Accommodation</strong>
+                                    <input id="stay-together-toggle" type="checkbox" checked onchange="updateLogistics()" class="w-5 h-5">
                                 </div>
-                                <p class="text-sm text-purple-700"><span id="stay-text">Stay together</span> in same accommodation</p>
+                                <p class="text-sm text-emerald-800 mt-2"><span id="stay-text">Stay together</span> in same accommodation</p>
                             </div>
-
-                            <div>
-                                <label for="food-preference" class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                    <i data-lucide="utensils" class="w-4 h-4 mr-2"></i> Food Preference
-                                </label>
-                                <select id="food-preference" class="w-full p-3 border border-gray-300 bg-white rounded-lg focus:ring-2 focus:ring-yellow-500 transition-all">
+                            <div class="field mt-5">
+                                <label for="food-preference">Food preference</label>
+                                <select id="food-preference">
                                     <option value="veg">Vegetarian</option>
-                                    <option value="nonveg">Non-Vegetarian</option>
-                                    <option value="mixed">Mixed Group</option>
+                                    <option value="nonveg">Non-vegetarian</option>
+                                    <option value="mixed">Mixed group</option>
                                 </select>
                             </div>
-
-                            <!-- Social Media Sharing -->
-                            <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200">
-                                <p class="font-bold text-gray-800 mb-3 flex items-center">
-                                    <i data-lucide="share-2" class="w-5 h-5 mr-2 text-blue-600"></i> Share Your Trip
-                                </p>
-                                <div class="flex flex-wrap gap-2">
-                                    <button onclick="shareTrip('facebook')" title="Share on Facebook" class="p-2 bg-white rounded-lg hover:bg-blue-100 transition border border-gray-200">
-                                        <i data-lucide="facebook" class="w-5 h-5 text-blue-600"></i>
-                                    </button>
-                                    <button onclick="shareTrip('twitter')" title="Share on Twitter" class="p-2 bg-white rounded-lg hover:bg-sky-100 transition border border-gray-200">
-                                        <i data-lucide="twitter" class="w-5 h-5 text-sky-500"></i>
-                                    </button>
-                                    <button onclick="shareTrip('whatsapp')" title="Share on WhatsApp" class="p-2 bg-white rounded-lg hover:bg-green-100 transition border border-gray-200">
-                                        <i data-lucide="message-circle" class="w-5 h-5 text-green-500"></i>
-                                    </button>
-                                    <button onclick="shareTrip('instagram')" title="Share on Instagram" class="p-2 bg-white rounded-lg hover:bg-pink-100 transition border border-gray-200">
-                                        <i data-lucide="instagram" class="w-5 h-5 text-pink-600"></i>
-                                    </button>
-                                    <button onclick="shareTrip('linkedin')" title="Share on LinkedIn" class="p-2 bg-white rounded-lg hover:bg-blue-200 transition border border-gray-200">
-                                        <i data-lucide="linkedin" class="w-5 h-5 text-blue-700"></i>
-                                    </button>
-                                </div>
+                            <div class="mt-5 flex flex-wrap gap-2">
+                                <button onclick="shareTrip('facebook')" class="btn bg-white border border-slate-200 text-slate-700"><i data-lucide="facebook" class="w-4 h-4"></i></button>
+                                <button onclick="shareTrip('twitter')" class="btn bg-white border border-slate-200 text-slate-700"><i data-lucide="twitter" class="w-4 h-4"></i></button>
+                                <button onclick="shareTrip('whatsapp')" class="btn bg-white border border-slate-200 text-slate-700"><i data-lucide="message-circle" class="w-4 h-4"></i></button>
+                                <button onclick="shareTrip('linkedin')" class="btn bg-white border border-slate-200 text-slate-700"><i data-lucide="linkedin" class="w-4 h-4"></i></button>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Payment -->
-                    <div class="step-card bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-4 border-b-2 border-blue-500 flex items-center">
-                            <i data-lucide="credit-card" class="w-6 h-6 mr-3 text-blue-600"></i> Payment
-                        </h2>
-                        
-                        <div class="mb-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200">
-                            <p class="text-gray-700 mb-1">Total Amount Due</p>
-                            <p class="text-4xl font-bold text-blue-700" id="final-total-checkout">₹ 0</p>
-                        </div>
-
-                        <h4 class="font-bold text-gray-800 mb-4 flex items-center">
-                            <i data-lucide="wallet" class="w-5 h-5 mr-2"></i> Select Payment Method
-                        </h4>
-                        
-                        <div class="grid grid-cols-3 gap-3 mb-6">
-                            <button id="pay-card-btn" onclick="selectPayment('card', true)" 
-                                class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-300 bg-white hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 group">
-                                <i data-lucide="credit-card" class="w-8 h-8 text-gray-600 group-hover:text-blue-600 transition-colors"></i>
-                                <span class="text-xs font-semibold mt-2 text-gray-700 group-hover:text-blue-700">Card</span>
-                            </button>
-                            
-                            <button id="pay-netbank-btn" onclick="selectPayment('netbanking', true); showNetBankingModal();" 
-                                class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-300 bg-white hover:border-green-500 hover:bg-green-50 transition-all duration-200 group">
-                                <i data-lucide="banknote" class="w-8 h-8 text-gray-600 group-hover:text-green-600 transition-colors"></i>
-                                <span class="text-xs font-semibold mt-2 text-gray-700 group-hover:text-green-700">Net Bank</span>
-                            </button>
-                            
-                            <button id="pay-upi-btn" onclick="selectPayment('upi', true); showBhimModal();" 
-                                class="flex flex-col items-center p-4 rounded-xl border-2 border-gray-300 bg-white hover:border-purple-500 hover:bg-purple-50 transition-all duration-200 group">
-                                <i data-lucide="qr-code" class="w-8 h-8 text-gray-600 group-hover:text-purple-600 transition-colors"></i>
-                                <span class="text-xs font-semibold mt-2 text-gray-700 group-hover:text-purple-700">UPI</span>
+                        <div class="panel p-5 md:p-7">
+                            <h3 class="text-2xl font-black">Payment</h3>
+                            <div class="mt-5 p-5 rounded-lg bg-emerald-50 border border-emerald-100">
+                                <span class="block text-sm font-black text-emerald-800">Total amount</span>
+                                <strong id="final-total-checkout" class="block text-4xl mt-1 text-emerald-700">Rs 0</strong>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 mt-5">
+                                <button id="pay-card-btn" onclick="selectPayment('card', true)" class="payment-btn p-4 text-center"><i data-lucide="credit-card" class="w-7 h-7 mx-auto"></i><span class="block text-xs font-black mt-2">Card</span></button>
+                                <button id="pay-netbank-btn" onclick="selectPayment('netbanking', true); showNetBankingModal();" class="payment-btn p-4 text-center"><i data-lucide="landmark" class="w-7 h-7 mx-auto"></i><span class="block text-xs font-black mt-2">Bank</span></button>
+                                <button id="pay-upi-btn" onclick="selectPayment('upi', true); showBhimModal();" class="payment-btn p-4 text-center"><i data-lucide="qr-code" class="w-7 h-7 mx-auto"></i><span class="block text-xs font-black mt-2">UPI</span></button>
+                            </div>
+                            <button onclick="handleBooking()" class="btn primary-btn w-full mt-5">
+                                Pay and Confirm <i data-lucide="check-circle" class="w-5 h-5"></i>
                             </button>
                         </div>
-                        
-                        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg mb-6">
-                            <p class="font-bold text-yellow-800 flex items-center mb-1">
-                                <i data-lucide="zap" class="w-4 h-4 mr-2"></i> Special Offer
-                            </p>
-                            <p class="text-sm text-yellow-700">Get <span class="font-bold">5% extra discount</span> with HDFC, ICICI, or SBI cards!</p>
-                        </div>
-
-                        <button onclick="handleBooking()" 
-                            class="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white text-lg font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center justify-center group">
-                            <i data-lucide="check-circle" class="w-6 h-6 mr-2 group-hover:scale-110 transition-transform"></i>
-                            PAY & CONFIRM
-                        </button>
                     </div>
                 </div>
-            </div>
+            </section>
 
-
-            <!-- Post-Trip Bonus Section -->
-            <section class="mt-10 p-8 md:p-12 rounded-3xl card-hover relative overflow-hidden" style="background:linear-gradient(135deg,#1c1205,#3d2700,#2d1b00);border:1px solid rgba(245,158,11,0.25);">
-                <div style="position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(245,158,11,0.2),transparent 70%);top:-80px;right:-60px;border-radius:50%;pointer-events:none;"></div>
-                <div style="position:absolute;width:250px;height:250px;background:radial-gradient(circle,rgba(239,68,68,0.12),transparent 70%);bottom:-50px;left:-40px;border-radius:50%;pointer-events:none;"></div>
-                <div class="relative z-10">
-                    <h3 class="text-2xl md:text-3xl font-extrabold mb-6 flex items-center gap-3" style="font-family:'Outfit',sans-serif;color:#fcd34d;">
-                        <i data-lucide="trophy" class="w-8 h-8" style="color:#f59e0b;"></i> Post-Trip Welcome Bonus
-                    </h3>
-                    <div class="grid md:grid-cols-2 gap-8 items-center">
-                        <div>
-                            <p class="text-sm mb-5" style="color:rgba(253,230,138,0.75);">After completing your trip, you unlock:</p>
-                            <ul class="space-y-4">
-                                <li class="flex items-start gap-3">
-                                    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(245,158,11,0.25);"><i data-lucide="check" class="w-4 h-4" style="color:#fcd34d;"></i></div>
-                                    <span style="color:#fef3c7;"><strong class="text-amber-300">Welcome Bonus</strong> for your next booking</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(245,158,11,0.25);"><i data-lucide="check" class="w-4 h-4" style="color:#fcd34d;"></i></div>
-                                    <span style="color:#fef3c7;"><strong class="text-amber-300">Exclusive Scratch Card</strong> with lucky draw discount</span>
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <div class="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(245,158,11,0.25);"><i data-lucide="check" class="w-4 h-4" style="color:#fcd34d;"></i></div>
-                                    <span style="color:#fef3c7;"><strong class="text-amber-300">Priority Support</strong> for future trips</span>
-                                </li>
-                            </ul>
+            <section id="about-us-view" class="hidden section">
+                <div class="site-shell">
+                    <span class="kicker"><i data-lucide="sparkles" class="w-4 h-4"></i> Why PlanMyTrip</span>
+                    <h2 class="section-title max-w-3xl">A travel planner built for clarity from first idea to final pickup.</h2>
+                    <div class="feature-grid mt-8">
+                        <article class="panel feature-card"><span class="icon-box"><i data-lucide="map-pinned" class="w-5 h-5"></i></span><h3 class="text-2xl font-black mt-5">Curated India routes</h3><p class="section-copy mt-2">Beaches, temples, mountains, wildlife, cities, and hidden gems selected for real trips.</p></article>
+                        <article class="panel feature-card"><span class="icon-box"><i data-lucide="calculator" class="w-5 h-5"></i></span><h3 class="text-2xl font-black mt-5">Instant estimates</h3><p class="section-copy mt-2">Change nights, people, and places while your budget updates immediately.</p></article>
+                        <article class="panel feature-card"><span class="icon-box"><i data-lucide="car-front" class="w-5 h-5"></i></span><h3 class="text-2xl font-black mt-5">After-booking support</h3><p class="section-copy mt-2">Guide, vehicle, pickup, and status information appear after confirmation.</p></article>
+                    </div>
+                    <div class="panel mt-8 p-5 md:p-7">
+                        <h3 class="text-2xl font-black mb-4">Traveler stories</h3>
+                        <div id="review-carousel-window" class="testimonial-window">
+                            <div id="review-carousel-content"></div>
                         </div>
-                        <div class="text-center">
-                            <a id="btn-view-rewards" href="frontend/referral.html" class="inline-flex items-center justify-center gap-2.5 py-4 px-8 rounded-2xl font-bold transition-all hover:scale-105" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#1c1205;box-shadow:0 8px 32px rgba(245,158,11,0.5);" role="button" aria-label="View My Rewards">
-                                <i data-lucide="gift" class="w-6 h-6"></i>
-                                <span>View My Rewards</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="upcoming-trips-view" class="hidden section" hr>
+                <div class="site-shell">
+                    <span class="kicker"><i data-lucide="calendar-check" class="w-4 h-4"></i> Your trips</span>
+                    <h2 class="section-title">Bookings and trip status.</h2>
+                    <div class="panel p-5 md:p-7 mt-8">
+                        <p class="section-copy">After checkout, live logistics will appear below with your guide, vehicle, pickup point, and trip status.</p>
+                        <div id="logistics-placeholder"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="registered-view" class="hidden section">
+                <div class="site-shell">
+                    <div class="cta-band">
+                        <span class="kicker bg-white/10 text-white border border-white/20"><i data-lucide="gift" class="w-4 h-4"></i> Referral rewards</span>
+                        <h2 class="text-4xl md:text-6xl font-black mt-4">Invite friends. Earn trip discounts.</h2>
+                        <p class="text-white/75 mt-4 max-w-xl leading-8">Share your PlanMyTrip referral code with friends. They get Rs 750 off, and your reward balance updates in the referral dashboard.</p>
+                        <div class="mt-6 flex flex-wrap items-center gap-3">
+                            <button id="home-referral-code" type="button" onclick="copyHomeReferralCode()" class="btn bg-white text-emerald-800">
+                                <i data-lucide="copy" class="w-5 h-5"></i> <span>Copy Referral Code</span>
+                            </button>
+                            <a href="frontend/referral.html" class="btn ghost-btn">
+                                Open Referral Dashboard <i data-lucide="arrow-right" class="w-5 h-5"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </section>
+        </main>
+    </div>
+
+    <div id="netbanking-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/60" onclick="closeNetBankingModal()"></div>
+        <div class="relative panel max-w-lg w-full p-6 z-10 bg-white">
+            <button onclick="closeNetBankingModal()" class="absolute top-4 right-4" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-2xl font-black">Net banking</h3>
+            <div class="field mt-5">
+                <label for="netbank-select">Select bank</label>
+                <select id="netbank-select"><option value="hdfc">HDFC Bank</option><option value="icici">ICICI Bank</option><option value="sbi">State Bank of India</option><option value="axis">Axis Bank</option></select>
+            </div>
+            <div class="field mt-4">
+                <label for="netbank-user">User ID</label>
+                <input id="netbank-user" type="text" placeholder="Enter user ID">
+            </div>
+            <button onclick="confirmNetBanking()" class="btn primary-btn w-full mt-5">Proceed</button>
         </div>
     </div>
 
-    <!-- Load core app modules in order -->
-  <!-- <script src="js/auth.js"></script> -->
+    <div id="bhim-modal" class="fixed inset-0 z-50 hidden items-center justify-center px-4" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/60" onclick="closeBhimModal()"></div>
+        <div class="relative panel max-w-md w-full p-6 z-10 bg-white">
+            <button onclick="closeBhimModal()" class="absolute top-4 right-4" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <h3 class="text-2xl font-black">BHIM UPI</h3>
+            <div class="field mt-5">
+                <label for="upi-id">UPI ID</label>
+                <input id="upi-id" type="text" placeholder="example@upi">
+            </div>
+            <button onclick="confirmBhim()" class="btn primary-btn w-full mt-5">Proceed</button>
+        </div>
+    </div>
 
-<!-- <script>
-const user = localStorage.getItem('planmytrip_user');
-if (!user) {
-  window.location.href = 'login.html';
-}
-
-function logout() {
-  if (confirm('Are you sure you want to logout?')) {
-    localStorage.removeItem('planmytrip_user');
-    window.location.href = 'login.html';
-  }
-}
-
-const currentUser = JSON.parse(user);
-</script> -->
-
-        <!-- // Logout function
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('planmytrip_user');
-                window.location.href = 'login.html';
-            }
-        }
-
-        // Check session on page load
-        const currentUser = checkSession(); -->
+    <script src="js/auth.js"></script>
+    <script src="js/trip.js"></script>
+    <script src="js/carousel.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/maps.js"></script>
+    <script src="js/logistics.js"></script>
+    <script src="js/main.js"></script>
 
     <script>
-        
-        const menuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuToggle && mobileMenu) {
-            menuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        function openReferrals() {
-            // navigate to referral page (relative path used elsewhere in the project)
-            window.location.href = 'frontend/referral.html';
-        }
-        // ===== CORE APPLICATION DATA =====
-        const VIEWS = ['home-view', 'about-us-view', 'upcoming-trips-view', 'registered-view', 'planning-view', 'checkout-view'];
-
-        // Carousel images with high-quality travel destinations
-        const CAROUSEL_IMAGES = [
-            'https://i0.wp.com/claudiosieberphotography.com/wp-content/uploads/2016/02/india-jammu-and-kashmir-leh-ladakh-34.jpg?ssl=1&fit=5760%2C2868',
-            'https://c4.wallpaperflare.com/wallpaper/783/273/75/water-asia-india-andaman-wallpaper-preview.jpg',
-            'https://images.pexels.com/photos/19160083/pexels-photo-19160083.jpeg',
-            'https://thrillingtravel.in/wp-content/uploads/2017/04/IMG_6599-2.jpg',
-            'https://assets.traveltriangle.com/blog/wp-content/uploads/2016/11/Living-root-bridge-6.jpg',
-        ];
-
-        // Enhanced Reviews with user data
-        const REVIEWS = [
-            { user: "Shreyas R.", text: "Outstanding! Saved us ₹5,000 with personalized budgeting. The app's smart filtering is incredible!", photo: "https://placehold.co/50x50/F97316/FFFFFF?text=SR" },
-            { user: "Anuska S.", text: "Real-time tracking was spot-on! Car was exactly where the app said. Professional and reliable service.", photo: "https://placehold.co/50x50/34D399/FFFFFF?text=AS" },
-            { user: "Amar R.", text: "Referral program is game-changing! Earned ₹2,500 simply by sharing with friends. Brilliant concept!", photo: "https://placehold.co/50x50/8B5CF6/FFFFFF?text=AR" },
-            { user: "Saanvi B.", text: "Safety alerts during monsoon were lifesaving. This company truly prioritizes traveler wellness.", photo: "https://placehold.co/50x50/EC4899/FFFFFF?text=SB" },
-            { user: "Saradiya R.", text: "Seamless from booking to checkout. Best travel booking experience I've had. 5 stars!", photo: "https://placehold.co/50x50/22C55E/FFFFFF?text=SR" }
-        ];
-
-        // Enhanced destination data with more details
-        const DESTINATIONS = [
-            { id: 'goa', name: 'South Goa Beaches', costPerPerson: 4000, review: 4.8, weather: "Best enjoyed in afternoons when humidity is lower.", isHiddenGem: false, emoji: '🏖️' },
-            { id: 'udaipur', name: 'Udaipur City Palace', costPerPerson: 5500, review: 4.6, weather: "Early morning visits offer cooler temperatures and fewer crowds.", isHiddenGem: false, emoji: '🏰' },
-            { id: 'meghalaya', name: 'Meghalaya Living Bridges', costPerPerson: 8000, review: 4.9, weather: "Wear sturdy footwear for slippery trails after rain.", isHiddenGem: true, emoji: '🌿' },
-            { id: 'hampi', name: 'Hampi Ruins & Temples', costPerPerson: 3000, review: 4.7, weather: "Early morning photography is absolutely stunning.", isHiddenGem: false, emoji: '⛩️' },
-            { id: 'kashmir', name: 'Kashmir Valley', costPerPerson: 7500, review: 4.9, weather: "Spring tulips (April-May) create magical landscapes.", isHiddenGem: true, emoji: '🌸' },
-            { id: 'leh', name: 'Leh-Ladakh', costPerPerson: 9000, review: 4.8, weather: "Acclimatize for altitude (11,500 ft). Best in summer.", isHiddenGem: false, emoji: '⛰️' },
-            { id: 'kerala', name: 'Kerala Backwaters', costPerPerson: 6000, review: 4.7, weather: "Monsoon offers lush greenery and fewer tourists.", isHiddenGem: false, emoji: '🌊' },
-            { id: 'varanasi', name: 'Varanasi Ghats', costPerPerson: 4500, review: 4.6, weather: "Sunrise boat rides are absolutely magical.", isHiddenGem: false, emoji: '🛕' },
-            { id: 'andaman', name: 'Andaman Islands', costPerPerson: 8500, review: 4.8, weather: "Perfect for water sports during dry season (Nov-May).", isHiddenGem: true, emoji: '🏝️' },
-            { id: 'rann', name: 'Rann of Kutch', costPerPerson: 5500, review: 4.7, weather: "Rann Utsav festival (Dec-Feb) is unmissable.", isHiddenGem: false, emoji: '🌈' },
-            { id: 'coorg', name: 'Coorg Coffee Estates', costPerPerson: 5000, review: 4.8, weather: "Dec-Feb is perfect for coffee plantations.", isHiddenGem: true, emoji: '☕' },
-            { id: 'kaziranga', name: 'Kaziranga National Park', costPerPerson: 7000, review: 4.7, weather: "Nov-Apr is best for rhino spotting.", isHiddenGem: false, emoji: '🦏' },
-        ];
-
-        // ===== TRIP STATE MANAGEMENT =====
-        let tripState = {
-            peopleCount: 1,
-            nightsCount: 5,
-            startDate: '2025-11-01',
-            selectedDestinations: new Set(),
-            isReferralApplied: false,
-            selectedPayment: null,
-        };
-
-        // ===== FEES & PRICING CONSTANTS =====
-        const PRICING = {
-            GUIDE_FEE: 2500,
-            PLATFORM_FEE: 1200,
-            INCONVENIENCE_FEE: 500,
-            GST_RATE: 0.18,
-            REFERRAL_DISCOUNT_AMOUNT: 750,
-            MINIMUM_BUDGET: 5000,
-            MAXIMUM_BUDGET: 500000,
-        };
-
-        // Logistics constants
-        const LOGISTICS = {
-            guideName: "Ravi Singh",
-            guideRating: 4.92,
-            carNumber: "MH 12 AB 3456",
-            pickupSpot: "Terminal 2, Gate C (Near Parking P3)",
-            safetyAct: "Monsoon Safety Act 🌧️",
-        };
-
-        let currentReferralDiscount = 0;
-        let logisticsInterval;
-
-        // ===== UTILITY FUNCTIONS =====
-        const formatINR = (amount) => {
-            return `₹ ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount)}`;
-        };
-
-        const formatSimpleINR = (amount) => {
-            return `₹ ${new Intl.NumberFormat('en-IN').format(Math.round(amount))}`;
-        };
-
-        // Input validation functions
-        const validatePhoneNumber = (phone) => /^[0-9]{10}$/.test(phone.replace(/[^\d]/g, ''));
-        const validateEmail = (email) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
-        const validateBudget = (budget) => budget >= PRICING.MINIMUM_BUDGET && budget <= PRICING.MAXIMUM_BUDGET;
-
-        // ===== DATE CALCULATIONS =====
-        function calculateEndDate() {
-            const startDate = new Date(document.getElementById('start-date').value);
-            const nights = parseInt(document.getElementById('nights-count').value) || 1;
-            
-            if (startDate instanceof Date && !isNaN(startDate)) {
-                const endDate = new Date(startDate);
-                endDate.setDate(endDate.getDate() + nights);
-                const options = { month: 'short', day: 'numeric', year: 'numeric' };
-                document.getElementById('end-date').textContent = endDate.toLocaleDateString('en-US', options);
-            }
-        }
-
-        function updateTripDetails() {
-            tripState.peopleCount = Math.max(1, parseInt(document.getElementById('people-count').value) || 1);
-            tripState.nightsCount = Math.max(1, parseInt(document.getElementById('nights-count').value) || 1);
-            tripState.startDate = document.getElementById('start-date').value;
-            
-            document.getElementById('people-count').value = tripState.peopleCount;
-            document.getElementById('nights-count').value = tripState.nightsCount;
-            
-            calculateEndDate();
-            calculateTotal();
-            renderSummary();
-        }
-
-        // ===== DESTINATION MANAGEMENT =====
-        function toggleDestination(id) {
-            const checkbox = document.getElementById(`dest-check-${id}`);
-            if (checkbox.checked) {
-                tripState.selectedDestinations.add(id);
-            } else {
-                tripState.selectedDestinations.delete(id);
-            }
-            calculateTotal();
-            renderDestinations();
-            renderSummary();
-        }
-
-        function calculateBaseTripCost() {
-            if (tripState.selectedDestinations.size === 0) return 0;
-            
-            let totalCostPerPerson = 0;
-            tripState.selectedDestinations.forEach(id => {
-                const dest = DESTINATIONS.find(d => d.id === id);
-                if (dest) totalCostPerPerson += dest.costPerPerson;
+        // Animations Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            // Entrance Animations
+            const timeline = anime.timeline({
+                easing: 'easeOutExpo',
+                duration: 600
             });
 
-            const baseCost = totalCostPerPerson * tripState.peopleCount * (tripState.nightsCount / 5);
-            return Math.round(baseCost);
-        }
-
-        // ===== PRICING CALCULATIONS =====
-        function calculateTotal() {
-            const baseTripCost = calculateBaseTripCost();
-            const feesTotal = PRICING.GUIDE_FEE + PRICING.PLATFORM_FEE + PRICING.INCONVENIENCE_FEE;
-            const gstAmount = feesTotal * PRICING.GST_RATE;
-            
-            let preDiscountTotal = baseTripCost + feesTotal + gstAmount;
-
-            if (tripState.isReferralApplied) {
-                currentReferralDiscount = PRICING.REFERRAL_DISCOUNT_AMOUNT;
-            } else {
-                currentReferralDiscount = 0;
-            }
-
-            let grandTotal = Math.max(0, preDiscountTotal - currentReferralDiscount);
-
-            // Update UI
-            document.getElementById('base-trip-cost').textContent = formatSimpleINR(baseTripCost);
-            document.getElementById('guide-fee').textContent = formatSimpleINR(PRICING.GUIDE_FEE);
-            document.getElementById('platform-fee').textContent = formatSimpleINR(PRICING.PLATFORM_FEE);
-            document.getElementById('inconvenience-fee').textContent = formatSimpleINR(PRICING.INCONVENIENCE_FEE);
-            document.getElementById('gst-fee').textContent = formatSimpleINR(gstAmount);
-            
-            const discountElement = document.getElementById('referral-discount');
-            discountElement.textContent = `${currentReferralDiscount > 0 ? '- ' : ''}${formatSimpleINR(currentReferralDiscount)}`;
-            
-            document.getElementById('grand-total').textContent = formatSimpleINR(grandTotal);
-            const checkoutTotal = document.getElementById('final-total-checkout');
-            if (checkoutTotal) checkoutTotal.textContent = formatSimpleINR(grandTotal);
-        }
-
-        // ===== REFERRAL CODE HANDLING =====
-        function applyReferral(fromSwitch) {
-            const codeInput = document.getElementById('referral-code').value.toUpperCase().trim();
-            const referralSwitch = document.getElementById('referral-switch');
-            
-            if (codeInput === 'TRIPWISE101' || codeInput === 'PLANMYTRIP-SHREYAS') {
-                if (!fromSwitch) {
-                    referralSwitch.disabled = false;
-                    referralSwitch.checked = true;
-                }
-                tripState.isReferralApplied = referralSwitch.checked;
-            } else {
-                referralSwitch.checked = false;
-                referralSwitch.disabled = true;
-                tripState.isReferralApplied = false;
-            }
-            calculateTotal();
-        }
-
-        function toggleReferral() {
-            applyReferral(true);
-        }
-
-        // ===== DESTINATION RENDERING =====
-        function renderDestinations() {
-            const container = document.getElementById('destination-options');
-            if (!container) return;
-            
-            container.innerHTML = '';
-
-            DESTINATIONS.forEach(dest => {
-                const checked = tripState.selectedDestinations.has(dest.id);
-                const card = document.createElement('div');
-                card.className = `p-4 rounded-lg border-2 transition cursor-pointer card-hover ${checked ? 'bg-green-100 border-green-500 shadow-md' : 'bg-gray-50 border-gray-300 hover:border-gray-400'}`;
-                card.onclick = () => {
-                    document.getElementById(`dest-check-${dest.id}`).click();
-                };
-                
-                card.innerHTML = `
-                    <div class="flex items-start justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <input type="checkbox" id="dest-check-${dest.id}" class="w-5 h-5 text-green-600 rounded cursor-pointer"
-                                onclick="event.stopPropagation(); toggleDestination('${dest.id}')" ${checked ? 'checked' : ''}>
-                            <div>
-                                <label for="dest-check-${dest.id}" class="font-bold text-gray-800 cursor-pointer flex items-center">
-                                    <span class="mr-2">${dest.emoji}</span> ${dest.name}
-                                </label>
-                                <div class="flex items-center mt-1">
-                                    <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-yellow-500 mr-1"></i>
-                                    <span class="text-xs text-gray-600">${dest.review}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <span class="text-sm font-bold text-gray-700 bg-white px-2 py-1 rounded">${formatSimpleINR(dest.costPerPerson)}</span>
-                    </div>
-                    <div class="text-xs text-blue-700 bg-blue-50 p-2 rounded mt-2 flex items-start">
-                        <i data-lucide="info" class="w-4 h-4 mr-2 flex-shrink-0 mt-0.5"></i>
-                        <span><strong>Tip:</strong> ${dest.weather}</span>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-            lucide.createIcons();
-        }
-
-        // ===== SUMMARY RENDERING =====
-        function renderSummary() {
-            const summaryList = document.getElementById('itinerary-summary');
-            if (!summaryList) return;
-            
-            summaryList.innerHTML = '';
-            
-            if (tripState.selectedDestinations.size === 0) {
-                summaryList.innerHTML = '<li class="text-gray-600 font-medium">Select destinations to begin</li>';
-                return;
-            }
-
-            tripState.selectedDestinations.forEach(id => {
-                const dest = DESTINATIONS.find(d => d.id === id);
-                if (dest) {
-                    const li = document.createElement('li');
-                    li.className = 'flex justify-between items-center p-2 bg-gray-50 rounded hover:bg-gray-100 transition';
-                    li.innerHTML = `
-                        <span class="font-medium text-gray-800">${dest.emoji} ${dest.name}</span>
-                        <span class="text-xs text-gray-600">${formatSimpleINR(dest.costPerPerson)}</span>
-                    `;
-                    summaryList.appendChild(li);
-                }
-            });
-        }
-
-        // ===== CAROUSEL FUNCTIONS =====
-        let imageIndex = 0;
-        let imageInterval;
-
-        function renderImageCarousel() {
-            const container = document.getElementById('image-carousel');
-            if (!container) return;
-            
-            container.innerHTML = '';
-
-            const imagesToShow = [];
-            for (let i = -1; i <= 1; i++) {
-                let index = (imageIndex + i + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length;
-                imagesToShow.push({ index: index, src: CAROUSEL_IMAGES[index], active: i === 0 });
-            }
-
-            imagesToShow.forEach(imgData => {
-                const img = document.createElement('img');
-                img.src = imgData.src;
-                img.alt = 'Destination';
-                img.className = `carousel-item h-full object-cover rounded-lg w-40 sm:w-1/2 md:w-1/3 lg:w-1/4 ${imgData.active ? 'active' : ''}`;
-                container.appendChild(img);
-            });
-        }
-
-        function startImageSlider() {
-            renderImageCarousel();
-            clearInterval(imageInterval);
-            imageInterval = setInterval(() => {
-                imageIndex = (imageIndex + 1) % CAROUSEL_IMAGES.length;
-                renderImageCarousel();
-            }, 4000);
-        }
-
-        // ===== REVIEW CAROUSEL =====
-        let reviewCarouselIndex = 0;
-        let reviewCarouselInterval;
-
-        function renderReviews() {
-            const container = document.getElementById('review-carousel-content');
-            if (!container) return;
-            
-            container.innerHTML = '';
-            
-            const fullReviewList = [...REVIEWS, ...REVIEWS, ...REVIEWS];
-            
-            fullReviewList.forEach((review, idx) => {
-                const div = document.createElement('div');
-                div.className = 'review-card bg-white rounded-xl shadow-md flex-shrink-0 border border-gray-200 overflow-hidden group';
-                // alternating slide animations for variety
-                div.classList.add(idx % 2 ? 'animate-slide-in-right' : 'animate-slide-in-left');
-                
-                div.innerHTML = `
-                    <div class="p-4">
-                        <div class="flex items-start mb-3">
-                            <img src="${review.photo}" alt="${review.user}" class="w-12 h-12 rounded-full mr-3 border-2 border-blue-400 object-cover">
-                            <div class="flex-1">
-                                <p class="font-bold text-sm text-blue-800">${review.user}</p>
-                                <div class="flex items-center text-yellow-500 text-xs">
-                                    <i data-lucide="star" class="w-3 h-3 fill-yellow-500 mr-1"></i>
-                                    <span>${review.rating || '4.8'}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="text-gray-700 text-sm leading-relaxed">${review.text}</p>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            updateReviewActiveState();
-            lucide.createIcons();
-        }
-
-        function updateReviewActiveState() {
-            const items = document.querySelectorAll('.review-card');
-            items.forEach((item, index) => {
-                const isActive = index === reviewCarouselIndex + 1;
-                item.classList.toggle('active', isActive);
-                if (isActive) {
-                    item.classList.add('fade-in');
-                    setTimeout(() => item.classList.remove('fade-in'), 500);
-                }
-            });
-        }
-
-        function scrollReviews() {
-            const content = document.getElementById('review-carousel-content');
-            if (!content) return;
-            
-            const firstCard = content.children[0];
-            const scrollDistance = firstCard ? firstCard.offsetWidth + 24 : 374;
-
-            reviewCarouselIndex++;
-            
-            if (reviewCarouselIndex >= REVIEWS.length) {
-                content.style.transition = 'none';
-                content.style.transform = `translateX(-${scrollDistance * (REVIEWS.length - 1)}px)`;
-                reviewCarouselIndex = 0;
-                
-                setTimeout(() => {
-                    content.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    content.style.transform = 'translateX(0)';
-                    updateReviewActiveState();
-                }, 50);
-            } else {
-                content.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                content.style.transform = `translateX(-${reviewCarouselIndex * scrollDistance}px)`;
-                updateReviewActiveState();
-            }
-        }
-
-        function startReviewScroll() {
-            clearInterval(reviewCarouselInterval);
-            reviewCarouselInterval = setInterval(scrollReviews, 3000);
-            updateReviewActiveState();
-        }
-
-        function pauseReviewScroll() {
-            clearInterval(reviewCarouselInterval);
-        }
-
-        // ===== PAYMENT MODE SELECTION =====
-        let selectedPayment = null;
-
-        function selectPayment(method, animate) {
-            selectedPayment = method;
-            tripState.selectedPayment = method;
-            
-            const mapping = {
-                card: 'pay-card-btn',
-                netbanking: 'pay-netbank-btn',
-                upi: 'pay-upi-btn'
-            };
-
-            Object.entries(mapping).forEach(([key, btnId]) => {
-                const btn = document.getElementById(btnId);
-                if (!btn) return;
-
-                if (key === method) {
-                    btn.classList.add('border-2', 'border-blue-500', 'bg-blue-50');
-                    btn.classList.remove('border', 'border-gray-300', 'bg-white');
-                } else {
-                    btn.classList.remove('border-2', 'border-blue-500', 'bg-blue-50');
-                    btn.classList.add('border', 'border-gray-300', 'bg-white');
-                }
+            timeline
+            .add({
+                targets: '.hero .kicker',
+                opacity: [0, 1],
+                translateY: [15, 0],
+                duration: 500
+            })
+            .add({
+                targets: '.hero-title',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                offset: '-=400'
+            })
+            .add({
+                targets: '.hero-copy',
+                opacity: [0, 1],
+                translateY: [15, 0],
+                offset: '-=450'
+            })
+            .add({
+                targets: '.hero-actions .btn',
+                opacity: [0, 1],
+                scale: [0.95, 1],
+                delay: anime.stagger(80),
+                offset: '-=450'
+            })
+            .add({
+                targets: '.hero-stat',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                delay: anime.stagger(100),
+                offset: '-=400'
             });
 
-            if (animate) {
-                const btn = document.getElementById(mapping[method]);
-                if (btn) {
-                    btn.style.transform = 'scale(0.95)';
-                    setTimeout(() => btn.style.transform = '', 150);
-                }
-            }
-        }
-
-        // ===== PAYMENT MODAL HANDLERS =====
-        function showNetBankingModal() {
-            const modal = document.getElementById('netbanking-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.getElementById('netbank-user')?.focus();
-            }
-        }
-
-        function closeNetBankingModal() {
-            const modal = document.getElementById('netbanking-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        function confirmNetBanking() {
-            const bank = document.getElementById('netbank-select').value;
-            const user = document.getElementById('netbank-user').value;
-
-            if (!user.trim()) {
-                alert('Please enter your bank user ID');
-                return;
-            }
-
-            alert(`Proceeding with ${bank.toUpperCase()} net banking...`);
-            closeNetBankingModal();
-            setTimeout(finalizeBooking, 500);
-        }
-
-        function showBhimModal() {
-            const modal = document.getElementById('bhim-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.getElementById('upi-id')?.focus();
-            }
-        }
-
-        function closeBhimModal() {
-            const modal = document.getElementById('bhim-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        function confirmBhim() {
-            const upi = document.getElementById('upi-id').value;
-
-            if (!upi.trim() || !upi.includes('@')) {
-                alert('Please enter a valid UPI ID (e.g., yourname@bank)');
-                return;
-            }
-
-            alert(`Processing UPI payment from ${upi}...`);
-            closeBhimModal();
-            setTimeout(finalizeBooking, 500);
-        }
-
-        // Close modals on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeNetBankingModal();
-                closeBhimModal();
-            }
-        });
-
-        // ===== BOOKING & LOGISTICS =====
-        function handleBooking() {
-            if (!selectedPayment) {
-                alert('Please select a payment method');
-                return;
-            }
-
-            if (selectedPayment === 'card') {
-                alert('Processing card payment (demo)...');
-                setTimeout(finalizeBooking, 800);
-            }
-        }
-
-        function finalizeBooking() {
-            switchView('home-view');
-            
-            // Show logistics section
-            const logisticsDemo = document.getElementById('logistics-demo');
-            if (!logisticsDemo) {
-                const section = document.createElement('section');
-                section.id = 'logistics-demo';
-                section.className = 'mt-12 step-card bg-white p-6 md:p-8 rounded-2xl shadow-lg border-t-4 border-red-500 animate-slide-up';
-                section.innerHTML = `
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6 pb-4 border-b-2 border-red-500 flex items-center">
-                        <i data-lucide="map-route" class="w-7 h-7 mr-3 text-red-600"></i> Real-Time Trip Logistics
-                    </h2>
-                    
-                    <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded">
-                        <p id="safety-act-status" class="font-bold text-red-800 flex items-center">
-                            <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i>
-                            <span>Safety Protocol: Active</span>
-                        </p>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-6 mb-8">
-                        <div class="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
-                            <p class="text-xs font-bold text-blue-700 uppercase tracking-wide mb-3">Tour Guide</p>
-                            <div class="flex items-start mb-3">
-                                <i data-lucide="user-circle" class="w-10 h-10 text-blue-600 mr-3"></i>
-                                <div>
-                                    <p id="guide-name" class="font-bold text-gray-800"></p>
-                                    <div class="flex items-center mt-1">
-                                        <i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-yellow-500 mr-1"></i>
-                                        <span id="guide-rating" class="font-bold text-gray-700"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
-                            <p class="text-xs font-bold text-green-700 uppercase tracking-wide mb-3">Vehicle Info</p>
-                            <div class="flex items-center mb-3">
-                                <i data-lucide="car" class="w-10 h-10 text-green-600 mr-3"></i>
-                                <span id="car-number" class="font-bold text-lg text-gray-800"></span>
-                            </div>
-                            <div class="flex items-start text-sm text-gray-700">
-                                <i data-lucide="map-pin" class="w-4 h-4 text-green-600 mr-2 mt-0.5 flex-shrink-0"></i>
-                                <span id="pickup-spot"></span>
-                            </div>
-                        </div>
-
-                        <div class="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-200 md:col-span-1 col-span-full">
-                            <p class="text-xs font-bold text-purple-700 uppercase tracking-wide mb-3">Live Status</p>
-                            <div id="map-placeholder" class="w-full h-24 rounded-lg flex items-center justify-center text-white font-bold text-center bg-gradient-to-r from-purple-500 to-pink-500 shadow-lg">
-                                <span id="live-status">Initializing...</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-                        <p class="text-sm text-blue-900">
-                            <strong>💡 Tip:</strong> Real-time tracking shows your vehicle location. Your guide will contact you 30 minutes before pickup.
-                        </p>
-                    </div>
-                `;
-                document.getElementById('logistics-placeholder').appendChild(section);
-                lucide.createIcons();
-            }
-
-            if (logisticsDemo) logisticsDemo.classList.remove('hidden');
-            document.getElementById('checkout-view').classList.add('hidden');
-            updateLiveLogistics();
-        }
-
-        function updateLiveLogistics() {
-            clearInterval(logisticsInterval);
-            
-            const statuses = [
-                { status: "🔄 Verifying Driver Details", color: "from-blue-400 to-blue-600" },
-                { status: "🚗 Car is 15 mins away", color: "from-yellow-400 to-yellow-600" },
-                { status: "📍 Car is 5 mins away", color: "from-orange-400 to-orange-600" },
-                { status: "✅ Car Has Arrived!", color: "from-red-500 to-pink-600" },
-                { status: "▶️ Trip in Progress", color: "from-indigo-400 to-indigo-600" },
-                { status: "🏁 Safely Arrived!", color: "from-green-400 to-emerald-600" }
-            ];
-
-            let statusIndex = 0;
-            const updateStatus = () => {
-                const current = statuses[statusIndex % statuses.length];
-                const mapPlaceholder = document.getElementById('map-placeholder');
-                const liveStatusSpan = document.getElementById('live-status');
-                
-                if (mapPlaceholder && liveStatusSpan) {
-                    mapPlaceholder.className = `w-full h-24 rounded-lg flex items-center justify-center text-white font-bold text-center bg-gradient-to-r ${current.color} shadow-lg transition-all duration-1000`;
-                    liveStatusSpan.textContent = current.status;
-                }
-                statusIndex++;
-            };
-
-            updateStatus();
-            logisticsInterval = setInterval(updateStatus, 4000);
-
-            // Update logistics details
-            const guideName = document.getElementById('guide-name');
-            const guideRating = document.getElementById('guide-rating');
-            const carNumber = document.getElementById('car-number');
-            const pickupSpot = document.getElementById('pickup-spot');
-
-            if (guideName) guideName.textContent = LOGISTICS.guideName;
-            if (guideRating) guideRating.textContent = `${LOGISTICS.guideRating} / 5.0`;
-            if (carNumber) carNumber.textContent = LOGISTICS.carNumber;
-            if (pickupSpot) pickupSpot.textContent = LOGISTICS.pickupSpot;
-        }
-
-        function updateLogistics() {
-            const stayToggle = document.getElementById('stay-together-toggle');
-            const stayText = document.getElementById('stay-text');
-            if (stayText) {
-                stayText.textContent = stayToggle.checked ? 'Stay together' : 'Separate';
-            }
-        }
-
-        // ===== SOCIAL MEDIA SHARING =====
-        function shareTrip(platform) {
-            const destinations = Array.from(tripState.selectedDestinations)
-                .map(id => DESTINATIONS.find(d => d.id === id)?.name)
-                .join(', ');
-            
-            const messages = {
-                facebook: `I just booked an amazing ${tripState.nightsCount}-night trip on PlanMyTrip! 🌍✈️ Destinations: ${destinations}. Use code PLANMYTRIP-SHREYAS for ₹750 discount!`,
-                twitter: `Just booked my dream trip on @PlanMyTrip! ${tripState.nightsCount} nights to ${destinations} ✈️🌍 #TravelDiaries #IndiaTravel`,
-                whatsapp: `Hey! Check out this amazing trip I booked! ${destinations} for ${tripState.nightsCount} nights. Use PlanMyTrip and my referral code for discounts! 🌍`,
-                instagram: `Adventure awaits! ✈️🌍 Booking my next trip on PlanMyTrip #TravelAdventures #Wanderlust #ExploreIndia`,
-                linkedin: `Excited to announce my upcoming business trip through PlanMyTrip! #Travel #Innovation`
-            };
-
-            const shareUrls = {
-                facebook: `https://www.facebook.com/sharer/sharer.php?u=https://planmytrip.com&quote=${encodeURIComponent(messages.facebook)}`,
-                twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(messages.twitter)}&url=https://planmytrip.com`,
-                whatsapp: `https://wa.me/?text=${encodeURIComponent(messages.whatsapp)}`,
-                instagram: 'https://www.instagram.com/',
-                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://planmytrip.com`
-            };
-
-            if (platform === 'instagram') {
-                alert('📱 Open Instagram and share your trip photos with the hashtag #PlanMyTrip!');
-            } else if (shareUrls[platform]) {
-                window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-            }
-        }
-
-        // ===== VIEW MANAGEMENT =====
-        function switchView(viewId) {
-            // hide all views then show the selected
-            VIEWS.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
+            // Feature Cards Stagger
+            anime({
+                targets: '.feature-card',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                delay: anime.stagger(200),
+                easing: 'easeOutQuad',
+                autoplay: false
             });
 
-            const target = document.getElementById(viewId);
-            if (target) {
-                target.classList.remove('hidden');
-                target.style.opacity = '0';
-                setTimeout(() => {
-                    target.style.transition = 'opacity 0.3s ease-in';
-                    target.style.opacity = '1';
-                }, 10);
-            }
-
-            // highlight active nav links (desktop + mobile)
-            document.querySelectorAll('.nav-link').forEach(l => {
-                l.classList.remove('text-blue-600', 'font-semibold', 'active');
-            });
-            const map = {
-                'home-view': ['nav-home','nav-home-mobile'],
-                'about-us-view': ['nav-about','nav-about-mobile'],
-                'upcoming-trips-view': ['nav-bookings','nav-bookings-mobile'],
-                'registered-view': ['nav-referrals','nav-referrals-mobile']
-            };
-            (map[viewId]||[]).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.add('text-blue-600','font-semibold','active');
-                }
-            });
-
-            if (viewId === 'planning-view') {
-                updateTripDetails();
-                renderDestinations();
-                clearInterval(logisticsInterval);
-                const logisticsDemo = document.getElementById('logistics-demo');
-                if (logisticsDemo) logisticsDemo.classList.add('hidden');
-            }
-        }
-
-        // ===== INITIALIZATION =====
-        window.addEventListener('load', function() {
-            // Initialize Session
-            const currentUser = checkSession();
-            if (!currentUser) return; // Stop if redirecting
-
-            lucide.createIcons();
-            renderReviews();
-            renderDestinations();
-            selectPayment('card', false);
-            updateTripDetails();
-
-            // Remove login screen - app starts directly
-            document.getElementById('main-app').classList.remove('hidden');
-
-            const windowElement = document.getElementById('review-carousel-window');
-            if (windowElement) {
-                windowElement.addEventListener('mouseenter', pauseReviewScroll);
-                windowElement.addEventListener('mouseleave', startReviewScroll);
-            }
-
-            // mobile menu toggle logic
-            const menuToggle = document.getElementById('mobile-menu-toggle');
-            const mobileMenu = document.getElementById('mobile-menu');
-            if (menuToggle && mobileMenu) {
-                menuToggle.addEventListener('click', () => {
-                    mobileMenu.classList.toggle('hidden');
-                    mobileMenu.classList.add('animate-slide-down');
+            // Scroll detection for feature cards
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        anime({
+                            targets: entry.target,
+                            opacity: [0, 1],
+                            translateY: [30, 0],
+                            duration: 800,
+                            easing: 'easeOutQuad'
+                        });
+                        observer.unobserve(entry.target);
+                    }
                 });
-            }
+            }, { threshold: 0.1 });
 
-            // carousel arrow controls
-            const prevBtn = document.getElementById('prev-img');
-            const nextBtn = document.getElementById('next-img');
-            if (prevBtn) {
-                prevBtn.addEventListener('click', () => {
-                    imageIndex = (imageIndex - 1 + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length;
-                    renderImageCarousel();
-                });
-            }
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    imageIndex = (imageIndex + 1) % CAROUSEL_IMAGES.length;
-                    renderImageCarousel();
-                });
-            }
+            document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
         });
     </script>
-
-    <!-- Load core app modules in order -->
-<script src="js/auth.js"></script>
-<script src="js/trip.js"></script>
-<script src="js/carousel.js"></script>
-<script src="js/payment.js"></script>
-<script src="js/logistics.js"></script>
-<script src="js/main.js"></script>
-
 </body>
 </html>

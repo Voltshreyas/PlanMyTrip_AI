@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Hotel - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/city-autocomplete.js"></script>
+    <script src="../js/notifications.js"></script>
+    <style>
+        :root {
+            --ink: #1e1b4b;
+            --muted: #64748b;
+            --line: rgba(30, 27, 75, 0.12);
+            --paper: #f8fafc;
+            --purple: #7c3aed;
+            --pink: #db2777;
+            --rose: #e11d48;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(124,58,237,0.12), transparent 26rem),
+                radial-gradient(circle at 88% 14%, rgba(219,39,119,0.11), transparent 30rem),
+                linear-gradient(180deg, #f8fafc 0%, #f5f3ff 54%, #fdf2f8 100%);
+        }
+
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', system-ui, sans-serif;
+            letter-spacing: 0;
+        }
+
+        .page-shell {
+            width: min(100% - 1.25rem, 72rem);
+            margin: 0 auto;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.82);
+            color: var(--ink);
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(30,27,75,0.08);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+            padding: 0 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .pill-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(30,27,75,0.12);
+            background: #ffffff;
+        }
+
+        .hero-panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.36);
+            background:
+                linear-gradient(110deg, rgba(15,23,42,0.94), rgba(124,58,237,0.82) 48%, rgba(219,39,119,0.72)),
+                url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1800&auto=format&fit=crop') center / cover no-repeat;
+            color: #ffffff;
+            box-shadow: 0 24px 70px rgba(30,27,75,0.18);
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            padding: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+        }
+
+        .hero-title {
+            margin-top: 1rem;
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            line-height: 1.1;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .hero-description {
+            margin-top: 1rem;
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+            max-width: 42rem;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+        }
+
+        .surface {
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.84);
+            box-shadow: 0 16px 42px rgba(30,27,75,0.08);
+        }
+
+        .panel {
+            transition: transform .2s ease, box-shadow .2s ease;
+            padding: 2rem;
+        }
+
+        .panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 52px rgba(30,27,75,0.12);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--line);
+            border-radius: 0.75rem;
+            background: rgba(255,255,255,0.9);
+            color: var(--ink);
+            font-family: inherit;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .soft-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #7c3aed;
+            background: linear-gradient(135deg, #f3e8ff, #fdf2f8);
+            border: 1px solid rgba(124,58,237,0.14);
+        }
+
+        .soft-icon.pink { color: #db2777; background: #fce7f3; border-color: rgba(219,39,119,0.16); }
+        .soft-icon.emerald { color: #059669; background: #d1fae5; border-color: rgba(5,150,105,0.18); }
+        .soft-icon.rose { color: #be123c; background: #fff1f2; border-color: rgba(225,29,72,0.16); }
+
+        .submit-btn {
+            min-height: 3rem;
+            padding: 0 2rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+            color: #ffffff;
+            transition: transform .2s ease, box-shadow .2s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(124,58,237,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                margin-top: 0.5rem;
+            }
+
+            .pill-button span {
+                display: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link active"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
+        </div>
+    </nav>
+
+    <style>
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #6366f1; }
+        .user-pill { background: #e0e7ff; color: #6366f1; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            document.getElementById('userPillContainer').innerHTML = `
+                <div class="user-pill">
+                    <i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}
+                </div>
+            `;
+            lucide.createIcons();
+        });
+    </script>
+    <div class="page-shell">
+        <div class="top-actions">
+            <a href="../index.html" class="pill-button">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Back to PlanMyTrip</span>
+            </a>
+            <button type="button" onclick="logoutUser()" class="pill-button" style="color: #be123c; background: #fff1f2; border-color: rgba(190,18,60,0.14);">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log out</span>
+            </button>
+        </div>
+
+        <main class="pb-8">
+            <!-- Hero Section -->
+            <section class="hero-panel">
+                <div class="hero-inner">
+                    <h1 class="hero-title">Find Your <span style="background: linear-gradient(135deg, #f472b6, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Perfect Stay</span></h1>
+                    <p class="hero-description">
+                        Discover luxury hotels, cozy boutiques, and comfortable stays for your next adventure.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Hotel Booking Form -->
+            <form id="hotelForm" class="space-y-6 mt-8">
+                <!-- Location & Dates Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Stay Information</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">City or Destination</label>
+                            <input type="text" id="destination" class="form-input" placeholder="e.g., Paris, Mumbai, New York" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Hotel Name (Optional)</label>
+                            <input type="text" id="hotelName" class="form-input" placeholder="Specific hotel you have in mind">
+                        </div>
+                    </div>
+                    <div class="form-grid mt-2">
+                        <div class="form-group">
+                            <label class="form-label">Check-in Date</label>
+                            <input type="date" id="checkIn" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Check-out Date</label>
+                            <input type="date" id="checkOut" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration of Stay</label>
+                        <p id="stayDuration" class="text-slate-600 font-semibold">Select dates to see duration</p>
+                    </div>
+                </section>
+
+                <!-- Guest & Room Information Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon pink"><i data-lucide="users" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Guests & Rooms</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Number of Adults</label>
+                            <select id="adults" class="form-select" required>
+                                <option value="1">1 Adult</option>
+                                <option value="2" selected>2 Adults</option>
+                                <option value="3">3 Adults</option>
+                                <option value="4">4 Adults</option>
+                                <option value="5">5+ Adults</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Children</label>
+                            <select id="children" class="form-select" required>
+                                <option value="0" selected>0 Children</option>
+                                <option value="1">1 Child</option>
+                                <option value="2">2 Children</option>
+                                <option value="3">3 Children</option>
+                                <option value="4">4+ Children</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Rooms</label>
+                            <select id="rooms" class="form-select" required>
+                                <option value="1" selected>1 Room</option>
+                                <option value="2">2 Rooms</option>
+                                <option value="3">3 Rooms</option>
+                                <option value="4">4+ Rooms</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Room Type</label>
+                            <select id="roomType" class="form-select" required>
+                                <option value="">Select Room Type</option>
+                                <option value="standard">Standard Room</option>
+                                <option value="deluxe">Deluxe Room</option>
+                                <option value="suite">Executive Suite</option>
+                                <option value="family">Family Room</option>
+                                <option value="villa">Private Villa</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Personal Information Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon emerald"><i data-lucide="user" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Guest Information</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="fullName" class="form-input" placeholder="Primary guest's full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="+91 9876543210" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Special Requests</label>
+                            <input type="text" id="specialRequests" class="form-input" placeholder="Late check-in, twin beds, etc.">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Payment Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon rose"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Payment Information</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Payment Method</label>
+                            <select id="paymentMethod" class="form-select" required>
+                                <option value="">Select payment method</option>
+                                <option value="card">Credit/Debit Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="netbanking">Net Banking</option>
+                                <option value="pay_at_hotel">Pay at Hotel</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Promo Code (Optional)</label>
+                            <input type="text" id="promoCode" class="form-input" placeholder="Enter coupon code">
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-sm text-purple-800 font-medium">
+                                Free cancellation up to 48 hours before check-in. Your payment details are secured with 256-bit encryption.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="submit-btn">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        Confirm Hotel Booking
+                    </button>
+                    <p class="text-sm text-slate-500 mt-4">By booking, you agree to our terms and conditions</p>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Calculate stay duration
+        document.getElementById('checkIn').addEventListener('change', calculateDuration);
+        document.getElementById('checkOut').addEventListener('change', calculateDuration);
+
+        function calculateDuration() {
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            
+            if (checkIn && checkOut) {
+                const start = new Date(checkIn);
+                const end = new Date(checkOut);
+                
+                if (end <= start) {
+                    document.getElementById('stayDuration').textContent = "Check-out date must be after check-in date";
+                    document.getElementById('stayDuration').classList.add('text-red-500');
+                    return;
+                }
+                
+                document.getElementById('stayDuration').classList.remove('text-red-500');
+                const nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+                document.getElementById('stayDuration').textContent = `${nights} Night${nights > 1 ? 's' : ''}`;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('hotelForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const checkIn = new Date(document.getElementById('checkIn').value);
+            const checkOut = new Date(document.getElementById('checkOut').value);
+            
+            if (checkOut <= checkIn) {
+                pmtNotif.info("Invalid Dates", "Check-out date must be after check-in date.");
+                return;
+            }
+
+            // Get form data
+            const formData = {
+                type: 'hotel',
+                destination: document.getElementById('destination').value,
+                hotelName: document.getElementById('hotelName').value,
+                checkIn: document.getElementById('checkIn').value,
+                checkOut: document.getElementById('checkOut').value,
+                adults: document.getElementById('adults').value,
+                children: document.getElementById('children').value,
+                rooms: document.getElementById('rooms').value,
+                roomType: document.getElementById('roomType').value,
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                specialRequests: document.getElementById('specialRequests').value,
+                paymentMethod: document.getElementById('paymentMethod').value,
+                promoCode: document.getElementById('promoCode').value
+            };
+
+            // Save booking to backend
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = (user ? user.email : null) || document.getElementById('email').value || 'guest@example.com';
+
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const dest = document.getElementById('destination').value;
+            const hotelName = document.getElementById('hotelName').value;
+
+            const newBooking = {
+                id: 'HTL' + Date.now(),
+                type: 'hotel',
+                status: 'Upcoming',
+                title: hotelName ? `${hotelName} in ${dest}` : `Hotel in ${dest}`,
+                date: document.getElementById('checkIn').value,
+                details: `${nights} Night${nights > 1 ? 's' : ''} • ${document.getElementById('roomType').value}`,
+                amount: '₹' + Math.floor(1200 + Math.random() * 8000).toLocaleString('en-IN')
+            };
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, booking: newBooking })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pmtNotif.success("Hotel Reserved!", `Your stay at ${hotelName || 'the hotel'} has been confirmed.`);
+                setTimeout(() => { window.location.href = 'bookings.html?new=true'; }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                pmtNotif.error("Booking Error", "We couldn't confirm your hotel stay. Please try again.");
+            });
+        });
+
+        // Initialize city autocomplete
+        initCityAutocomplete('destination', { accentColor: '#1e3a8a', label: 'Cities', showAirport: false });
+    </script>
+</body>
+</html>

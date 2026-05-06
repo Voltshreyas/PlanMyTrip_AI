@@ -1,4 +1,13 @@
-// ===== CAROUSEL FUNCTIONS =====
+// Curated high-quality travel images
+const DESTINATION_GALLERY = [
+    { title: 'Leh Ladakh', location: 'Jammu & Kashmir', img: 'assets/images/leh ladakh.jpg' },
+    { title: 'Kedarnath Temple', location: 'Uttarakhand', img: 'assets/images/Kedarnath Temple.jpg' },
+    { title: 'Varanasi Ghats', location: 'Uttar Pradesh', img: 'assets/images/Manikarnika Ghat.jpg' },
+    { title: 'Darjeeling Tea Gardens', location: 'West Bengal', img: 'assets/images/Darjeling Tea Garden.jpg' },
+    { title: 'Taj Mahal', location: 'Agra', img: 'assets/images/Taj Mahal.jpg' },
+    { title: 'Hawa Mahal', location: 'Rajasthan', img: 'assets/images/Hawa Mahal.jpg' }
+];
+
 let imageIndex = 0;
 let imageInterval;
 
@@ -8,28 +17,36 @@ function renderImageCarousel() {
     
     container.innerHTML = '';
 
-    const imagesToShow = [];
-    for (let i = -1; i <= 1; i++) {
-        let index = (imageIndex + i + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length;
-        imagesToShow.push({ index: index, src: CAROUSEL_IMAGES[index], active: i === 0 });
+    // Render cards from the current index onwards
+    for (let i = 0; i < DESTINATION_GALLERY.length; i++) {
+        const item = DESTINATION_GALLERY[(imageIndex + i) % DESTINATION_GALLERY.length];
+        
+        const card = document.createElement('div');
+        card.className = 'dest-card-premium group';
+        card.innerHTML = `
+            <img src="${item.img}" alt="${item.title}" class="group-hover:scale-110 transition-transform duration-700">
+            <div class="dest-card-overlay">
+                <div class="mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                    <span class="text-[10px] font-bold uppercase tracking-[2px] text-cyan-400">Hidden Gem</span>
+                    <h4 class="text-xl font-black leading-tight">${item.title}</h4>
+                    <p class="text-xs text-white/70 flex items-center gap-1 mt-1 font-medium">
+                        <i data-lucide="map-pin" class="w-3 h-3"></i> ${item.location}
+                    </p>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
     }
-
-    imagesToShow.forEach(imgData => {
-        const img = document.createElement('img');
-        img.src = imgData.src;
-        img.alt = 'Destination';
-        img.className = `carousel-item h-full object-cover rounded-lg w-40 sm:w-1/2 md:w-1/3 lg:w-1/4 ${imgData.active ? 'active' : ''}`;
-        container.appendChild(img);
-    });
+    lucide.createIcons();
 }
 
 function startImageSlider() {
     renderImageCarousel();
     clearInterval(imageInterval);
     imageInterval = setInterval(() => {
-        imageIndex = (imageIndex + 1) % CAROUSEL_IMAGES.length;
+        imageIndex = (imageIndex + 1) % DESTINATION_GALLERY.length;
         renderImageCarousel();
-    }, 4000);
+    }, 5000); // 5 sec per slide
 }
 
 // ===== REVIEW CAROUSEL =====
@@ -117,3 +134,57 @@ function startReviewScroll() {
 function pauseReviewScroll() {
     clearInterval(reviewCarouselInterval);
 }
+
+// ===== SWIPE SUPPORT =====
+function addSwipeListener(elementId, onSwipeLeft, onSwipeRight) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    el.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+        if (elementId === 'review-carousel-window') pauseReviewScroll();
+    }, { passive: true });
+
+    el.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+        if (elementId === 'review-carousel-window') startReviewScroll();
+    }, { passive: true });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        if (touchEndX < touchStartX - swipeThreshold) {
+            onSwipeLeft();
+        }
+        if (touchEndX > touchStartX + swipeThreshold) {
+            onSwipeRight();
+        }
+    }
+}
+
+// Initialize swipe listeners when DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+    addSwipeListener('image-carousel', 
+        () => { // Swipe Left -> Next
+            imageIndex = (imageIndex + 1) % DESTINATION_GALLERY.length;
+            renderImageCarousel();
+        },
+        () => { // Swipe Right -> Prev
+            imageIndex = (imageIndex - 1 + DESTINATION_GALLERY.length) % DESTINATION_GALLERY.length;
+            renderImageCarousel();
+        }
+    );
+
+    addSwipeListener('review-carousel-window', 
+        () => { // Swipe Left -> Next review
+            scrollReviews();
+        },
+        () => { // Swipe Right -> Previous (simplified to just scrolling forward for now to maintain review index logic)
+            reviewCarouselIndex = (reviewCarouselIndex - 2 + REVIEWS.length) % REVIEWS.length;
+            scrollReviews();
+        }
+    );
+});

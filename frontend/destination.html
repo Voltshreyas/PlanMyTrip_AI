@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlanMyTrip | Explore Destinations</title>
+  <meta name="description" content="Explore curated Indian destinations, compare moods, filter by travel style, and start planning with PlanMyTrip.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    :root {
+      --page: #f5f8f6;
+      --ink: #16211f;
+      --muted: #5f6f6b;
+      --line: rgba(22, 33, 31, 0.12);
+      --teal: #0f766e;
+      --green: #16a34a;
+      --coral: #e85d3f;
+      --gold: #b7791f;
+      --mist: #e9f4ef;
+      --white: #ffffff;
+      --shadow: 0 18px 48px rgba(22, 33, 31, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+      background: var(--page);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      display: none !important;
+    }
+
+    h1,
+    h2,
+    h3,
+    .font-outfit {
+      font-family: 'Outfit', sans-serif;
+      letter-spacing: 0;
+    }
+
+    a,
+    button,
+    input,
+    .destination-shell,
+    .hero,
+    .hero-panel,
+    .hero-note,
+    .section-card,
+    .destination-card,
+    .image-wrap,
+    .chip,
+    .badge,
+    .price,
+    .mini-card,
+    .route-card,
+    .stat-card,
+    .empty,
+    .mobile-menu,
+    .nav-pill,
+    .brand-icon,
+    .avatar-chip {
+      border-radius: 8px !important;
+    }
+
+    .bg-gradient-premium,
+    .primary-action {
+      background: linear-gradient(135deg, var(--teal), var(--green));
+    }
+
+    .destination-shell {
+      width: min(100% - 1.5rem, 80rem);
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .header-inner {
+      min-height: 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-weight: 900;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      box-shadow: 0 10px 24px rgba(15, 118, 110, 0.2);
+    }
+
+    .brand-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .desktop-nav,
+    .account-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .nav-pill,
+    .account-link,
+    .menu-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      min-height: 2.5rem;
+      padding: 0 0.8rem;
+      border: 1px solid transparent;
+      color: #43524f;
+      font-size: 0.9rem;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nav-pill:hover,
+    .account-link:hover,
+    .menu-button:hover {
+      color: var(--teal);
+      background: var(--mist);
+      border-color: rgba(15, 118, 110, 0.16);
+    }
+
+    .nav-pill.active {
+      color: var(--teal);
+      background: var(--mist);
+      border-color: rgba(15, 118, 110, 0.18);
+    }
+
+    .account-link.danger {
+      color: #b91c1c;
+      background: #fff1f1;
+      border-color: rgba(185, 28, 28, 0.14);
+    }
+
+    .avatar-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      min-height: 2.5rem;
+      padding: 0 0.8rem;
+      color: var(--teal);
+      background: var(--mist);
+      border: 1px solid rgba(15, 118, 110, 0.16);
+      font-size: 0.8rem;
+      font-weight: 900;
+      max-width: 10rem;
+    }
+
+    .menu-button {
+      display: none;
+      width: 2.6rem;
+      padding: 0;
+      background: var(--mist);
+      border-color: rgba(15, 118, 110, 0.16);
+      color: var(--teal);
+    }
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.55rem);
+      left: 0.75rem;
+      right: 0.75rem;
+      padding: 0.65rem;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .mobile-menu.open {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .mobile-menu a {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.85rem;
+      color: #43524f;
+      font-weight: 850;
+      text-decoration: none;
+    }
+
+    .mobile-menu a.active {
+      color: var(--teal);
+      background: var(--mist);
+    }
+
+    main {
+      padding: 1.25rem 0 3rem;
+    }
+
+    .page-stack {
+      display: grid;
+      gap: 1.1rem;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 42rem;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(15, 32, 28, 0.9), rgba(15, 32, 28, 0.56) 58%, rgba(15, 32, 28, 0.18)),
+        url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2200&auto=format&fit=crop') center / cover no-repeat;
+      box-shadow: 0 24px 70px rgba(22, 33, 31, 0.14);
+    }
+
+    .hero-grid {
+      min-height: 42rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.45fr);
+      gap: 1rem;
+      padding: clamp(1rem, 4vw, 3rem);
+      align-items: center;
+    }
+
+    .eyebrow,
+    .section-kicker,
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      width: fit-content;
+      font-size: 0.74rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .eyebrow {
+      padding: 0.55rem 0.8rem;
+      color: white;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-title {
+      max-width: 46rem;
+      margin: 1.25rem 0 0;
+      color: white;
+      font-size: 4.65rem;
+      line-height: 1.02;
+      font-weight: 900;
+    }
+
+    .hero-text {
+      max-width: 39rem;
+      margin: 1.25rem 0 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 1.08rem;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    .primary-action,
+    .secondary-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      min-height: 3.25rem;
+      padding: 0 1.15rem;
+      color: white;
+      font-weight: 900;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+    }
+
+    .primary-action:hover,
+    .secondary-action:hover {
+      transform: translateY(-2px);
+    }
+
+    .secondary-action {
+      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin-top: 2rem;
+      max-width: 45rem;
+    }
+
+    .hero-stat {
+      padding: 0.95rem;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .hero-stat span {
+      display: block;
+      margin-top: 0.3rem;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .hero-panel {
+      align-self: stretch;
+      display: grid;
+      align-content: space-between;
+      gap: 1rem;
+      padding: 1rem;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-panel-image {
+      min-height: 19rem;
+      overflow: hidden;
+    }
+
+    .hero-panel-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+
+    .mini-card {
+      padding: 0.85rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .mini-card span {
+      display: block;
+      color: rgba(255, 255, 255, 0.66);
+      font-size: 0.72rem;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .mini-card strong {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+
+    .section-card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-inner {
+      padding: clamp(1rem, 2vw, 1.5rem);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-kicker {
+      padding: 0.5rem 0.75rem;
+      color: var(--teal);
+      background: var(--mist);
+      border: 1px solid rgba(15, 118, 110, 0.12);
+    }
+
+    .section-title {
+      margin: 0.8rem 0 0;
+      color: var(--ink);
+      font-size: 2.45rem;
+      line-height: 1.08;
+      font-weight: 900;
+    }
+
+    .section-copy {
+      max-width: 42rem;
+      margin: 0.8rem 0 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .mood-card {
+      min-height: 15rem;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid var(--line);
+    }
+
+    .mood-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      transition: transform 0.5s ease;
+    }
+
+    .mood-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 32, 28, 0.86), rgba(15, 32, 28, 0.16));
+      z-index: -1;
+    }
+
+    .mood-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .mood-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1rem;
+      color: white;
+    }
+
+    .mood-content h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 900;
+    }
+
+    .mood-content p {
+      margin: 0.4rem 0 0;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .utility-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.44fr);
+      gap: 1rem;
+    }
+
+    .search-box {
+      position: relative;
+      margin-top: 1.25rem;
+    }
+
+    .search-box input {
+      width: 100%;
+      min-height: 3.25rem;
+      padding: 0 1rem 0 3rem;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      font-weight: 700;
+      outline: none;
+    }
+
+    .search-box input:focus {
+      border-color: rgba(15, 118, 110, 0.45);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.1);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 1rem;
+    }
+
+    .chip {
+      min-height: 2.6rem;
+      padding: 0 0.9rem;
+      color: #42514e;
+      background: white;
+      border: 1px solid var(--line);
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .chip.active {
+      color: white;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      border-color: transparent;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      height: 100%;
+    }
+
+    .stat-card {
+      padding: 1rem;
+      background: #f9fbfa;
+      border: 1px solid var(--line);
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-top: 0.5rem;
+      color: var(--ink);
+      font-size: 1.9rem;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .destination-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .destination-card {
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .destination-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(15, 118, 110, 0.25);
+      box-shadow: 0 24px 54px rgba(22, 33, 31, 0.12);
+    }
+
+    .image-wrap {
+      position: relative;
+      height: 17rem;
+      overflow: hidden;
+      background: #dce8e3;
+    }
+
+    .image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .destination-card:hover .image-wrap img {
+      transform: scale(1.05);
+    }
+
+    .image-shade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(15, 32, 28, 0.88), rgba(15, 32, 28, 0.15) 55%, transparent);
+    }
+
+    .card-labels,
+    .card-title {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .card-labels {
+      top: 1rem;
+    }
+
+    .card-title {
+      bottom: 1rem;
+      align-items: flex-end;
+    }
+
+    .badge,
+    .price {
+      min-height: 2.1rem;
+      padding: 0 0.7rem;
+      font-size: 0.75rem;
+    }
+
+    .badge {
+      color: white;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .price {
+      display: inline-flex;
+      align-items: center;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.95);
+      font-weight: 900;
+    }
+
+    .card-title h3 {
+      margin: 0;
+      color: white;
+      font-size: 1.55rem;
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .rating {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.55rem;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.85rem;
+      font-weight: 850;
+    }
+
+    .destination-body {
+      padding: 1rem;
+    }
+
+    .destination-body p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.68;
+    }
+
+    .highlight-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1rem;
+    }
+
+    .highlight {
+      display: inline-flex;
+      align-items: center;
+      min-height: 2rem;
+      padding: 0 0.65rem;
+      color: var(--teal);
+      background: var(--mist);
+      border: 1px solid rgba(15, 118, 110, 0.1);
+      font-size: 0.78rem;
+      font-weight: 850;
+    }
+
+    .tip-box {
+      margin-top: 1rem;
+      padding: 0.9rem;
+      background: #f9fbfa;
+      border: 1px solid var(--line);
+    }
+
+    .tip-box p + p {
+      margin-top: 0.45rem;
+    }
+
+    .book-button {
+      width: 100%;
+      min-height: 3rem;
+      margin-top: 1rem;
+      color: white;
+      background: linear-gradient(135deg, var(--teal), var(--green));
+      border: 0;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .book-button:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    .empty {
+      display: none;
+      padding: 2.5rem 1rem;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px dashed rgba(22, 33, 31, 0.22);
+    }
+
+    .empty-icon {
+      width: 3.5rem;
+      height: 3.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      color: var(--teal);
+      background: var(--mist);
+      border: 1px solid rgba(15, 118, 110, 0.12);
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .route-card {
+      padding: 1rem;
+      background: white;
+      border: 1px solid var(--line);
+    }
+
+    .route-card h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 900;
+    }
+
+    .route-card p {
+      margin: 0.65rem 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .route-steps {
+      display: grid;
+      gap: 0.45rem;
+      margin-top: 1rem;
+    }
+
+    .route-steps span {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: var(--teal);
+      font-weight: 850;
+      font-size: 0.9rem;
+    }
+
+    .cta {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 32, 28, 0.92), rgba(15, 118, 110, 0.88)),
+        url('https://images.unsplash.com/photo-1518002054494-3a6f94352e9d?q=80&w=1800&auto=format&fit=crop') center / cover no-repeat;
+    }
+
+    .cta h2 {
+      margin: 0;
+      font-size: 2.35rem;
+      line-height: 1.08;
+      font-weight: 900;
+    }
+
+    .cta p {
+      max-width: 42rem;
+      margin: 0.75rem 0 0;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1100px) {
+      .hero,
+      .hero-grid {
+        min-height: auto;
+      }
+
+      .hero-grid,
+      .utility-grid,
+      .cta {
+        grid-template-columns: 1fr;
+      }
+
+      .destination-grid,
+      .route-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mood-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 780px) {
+      .desktop-nav,
+      .account-actions {
+        display: none;
+      }
+
+      .menu-button {
+        display: inline-flex;
+      }
+
+      .header-inner {
+        min-height: 3.7rem;
+      }
+
+      .hero-title {
+        font-size: 3.15rem;
+      }
+
+      .hero-stats,
+      .mini-grid,
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-heading {
+        display: block;
+      }
+
+      .section-title,
+      .cta h2 {
+        font-size: 2rem;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .destination-shell {
+        width: min(100% - 1rem, 80rem);
+      }
+
+      main {
+        padding-top: 0.75rem;
+      }
+
+      .hero-grid,
+      .section-inner,
+      .cta {
+        padding: 1rem;
+      }
+
+      .hero-title {
+        font-size: 2.4rem;
+      }
+
+      .hero-actions a,
+      .hero-actions {
+        width: 100%;
+      }
+
+      .hero-stats,
+      .mini-grid,
+      .mood-grid,
+      .stats-grid,
+      .destination-grid,
+      .route-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel-image,
+      .image-wrap {
+        height: 14.5rem;
+        min-height: 14.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="destination-shell header-inner">
+      <a href="index.html" class="brand" aria-label="PlanMyTrip home">
+        <span class="brand-icon"><i data-lucide="plane" class="w-5 h-5"></i></span>
+        <span class="brand-text">PlanMyTrip</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="index.html" class="nav-pill"><i data-lucide="home" class="w-4 h-4"></i> Home</a>
+        <a href="destination.html" class="nav-pill active"><i data-lucide="map-pin" class="w-4 h-4"></i> Destinations</a>
+        <a href="frontend/mission.html" class="nav-pill"><i data-lucide="info" class="w-4 h-4"></i> Mission</a>
+        <a href="frontend/bookings.html" class="nav-pill"><i data-lucide="calendar" class="w-4 h-4"></i> Bookings</a>
+        <a href="frontend/referral.html" class="nav-pill"><i data-lucide="gift" class="w-4 h-4"></i> Referrals</a>
+        <a href="frontend/plannewtrip.html" class="nav-pill primary-action"><i data-lucide="rocket" class="w-4 h-4"></i> Plan Trip</a>
+      </nav>
+
+      <div class="account-actions">
+        <span class="avatar-chip"><i data-lucide="user-circle" class="w-4 h-4"></i><span id="user-display">Traveler</span></span>
+        <a href="frontend/logout.html" class="account-link danger"><i data-lucide="log-out" class="w-4 h-4"></i> Exit</a>
+      </div>
+
+      <button id="mobile-menu-toggle" class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+        <i data-lucide="menu" class="w-5 h-5"></i>
+      </button>
+
+      <div id="mobile-menu" class="mobile-menu">
+        <a href="index.html"><i data-lucide="home" class="w-5 h-5"></i> Home</a>
+        <a href="destination.html" class="active"><i data-lucide="map-pin" class="w-5 h-5"></i> Destinations</a>
+        <a href="frontend/mission.html"><i data-lucide="info" class="w-5 h-5"></i> Mission</a>
+        <a href="frontend/bookings.html"><i data-lucide="calendar" class="w-5 h-5"></i> Bookings</a>
+        <a href="frontend/referral.html"><i data-lucide="gift" class="w-5 h-5"></i> Referrals</a>
+        <a href="frontend/plannewtrip.html"><i data-lucide="rocket" class="w-5 h-5"></i> Plan Trip</a>
+        <a href="frontend/logout.html"><i data-lucide="log-out" class="w-5 h-5"></i> Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="destination-shell page-stack">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow"><i data-lucide="sparkles" class="w-4 h-4"></i> Curated Indian escapes</span>
+            <h1 id="hero-title" class="hero-title">Find the place your next story starts.</h1>
+            <p class="hero-text">Explore beach breaks, mountain air, cultural routes, and slow nature days. Filter the gallery, compare the mood, and move straight into planning when a destination feels right.</p>
+            <div class="hero-actions">
+              <a href="frontend/plannewtrip.html" class="primary-action"><i data-lucide="rocket" class="w-5 h-5"></i> Start Planning</a>
+              <a href="#destinations-grid" class="secondary-action"><i data-lucide="gallery-vertical-end" class="w-5 h-5"></i> Browse Places</a>
+            </div>
+            <div class="hero-stats" aria-label="Destination page highlights">
+              <div class="hero-stat"><strong>8</strong><span>Curated Places</span></div>
+              <div class="hero-stat"><strong>4.9</strong><span>Avg Rating</span></div>
+              <div class="hero-stat"><strong>INR 3K</strong><span>Starting Budget</span></div>
+              <div class="hero-stat"><strong>4</strong><span>Travel Moods</span></div>
+            </div>
+          </div>
+
+          <aside class="hero-panel" aria-label="Featured destination">
+            <div>
+              <div class="hero-panel-image">
+                <img src="https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=1200&auto=format&fit=crop" alt="Lake and palace view in Udaipur">
+              </div>
+              <h2 class="mt-4 text-2xl font-black">Featured Route: Lakes, forts, and old streets</h2>
+              <p class="mt-2 text-white/75 leading-relaxed">A relaxed Rajasthan route for travelers who want heritage, views, and easy evenings.</p>
+            </div>
+            <div class="mini-grid">
+              <div class="mini-card"><span>Good For</span><strong>Friends</strong></div>
+              <div class="mini-card"><span>Best Length</span><strong>4 Nights</strong></div>
+              <div class="mini-card"><span>Style</span><strong>Culture</strong></div>
+              <div class="mini-card"><span>Budget</span><strong>Mid Range</strong></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="mood-title">
+        <div class="section-inner">
+          <div class="section-heading">
+            <div>
+              <span class="section-kicker"><i data-lucide="compass" class="w-4 h-4"></i> Travel Moods</span>
+              <h2 id="mood-title" class="section-title">Choose by feeling, not just by city.</h2>
+              <p class="section-copy">Start with the kind of day you want, then let the destination cards below do the narrowing.</p>
+            </div>
+          </div>
+          <div class="mood-grid">
+            <article class="mood-card">
+              <img src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1000&auto=format&fit=crop" alt="Palm trees and beach in Goa">
+              <div class="mood-content">
+                <h3>Coastal Calm</h3>
+                <p>Soft beaches, late breakfasts, and easy sunsets.</p>
+              </div>
+            </article>
+            <article class="mood-card">
+              <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1000&auto=format&fit=crop" alt="Mountain road in Ladakh">
+              <div class="mood-content">
+                <h3>High Roads</h3>
+                <p>Mountain passes, clean air, and long scenic drives.</p>
+              </div>
+            </article>
+            <article class="mood-card">
+              <img src="https://images.unsplash.com/photo-1627894483216-2138af692e32?q=80&w=1000&auto=format&fit=crop" alt="Historic ruins in Hampi">
+              <div class="mood-content">
+                <h3>Ancient Trails</h3>
+                <p>Temples, stone cities, and history under open skies.</p>
+              </div>
+            </article>
+            <article class="mood-card">
+              <img src="https://images.unsplash.com/photo-1593693411515-c20261bcad6e?q=80&w=1000&auto=format&fit=crop" alt="Green hills and waterfalls in Meghalaya">
+              <div class="mood-content">
+                <h3>Green Adventure</h3>
+                <p>Waterfalls, bridges, treks, and misty mornings.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card" aria-labelledby="filter-title">
+        <div class="section-inner">
+          <div class="utility-grid">
+            <div>
+              <span class="section-kicker"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i> Smart Filters</span>
+              <h2 id="filter-title" class="section-title">Shortlist destinations quickly.</h2>
+              <p class="section-copy">Search by place, highlight, category, weather tip, or season. Tap a category to narrow the gallery instantly.</p>
+              <div class="search-box">
+                <i data-lucide="search" class="w-5 h-5"></i>
+                <input id="search-input" type="text" placeholder="Search beaches, mountains, palaces, trekking">
+              </div>
+              <div class="filter-row" id="filter-group" aria-label="Destination categories">
+                <button class="chip active" type="button" data-category="all">All</button>
+                <button class="chip" type="button" data-category="beach">Beaches</button>
+                <button class="chip" type="button" data-category="mountain">Mountains</button>
+                <button class="chip" type="button" data-category="cultural">Cultural</button>
+                <button class="chip" type="button" data-category="adventure">Adventure</button>
+              </div>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span>Showing</span>
+                <strong id="results-count">0</strong>
+              </div>
+              <div class="stat-card">
+                <span>Category</span>
+                <strong id="active-category-label">All</strong>
+              </div>
+              <div class="stat-card">
+                <span>Lowest</span>
+                <strong id="lowest-budget">INR 0</strong>
+              </div>
+              <div class="stat-card">
+                <span>Top Match</span>
+                <strong id="top-match">-</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="gallery-title">
+        <div class="section-heading">
+          <div>
+            <span class="section-kicker"><i data-lucide="map" class="w-4 h-4"></i> Destination Gallery</span>
+            <h2 id="gallery-title" class="section-title">Handpicked places across India.</h2>
+            <p class="section-copy">Each card carries the essentials: mood, season, starting budget, highlights, and the planning handoff.</p>
+          </div>
+        </div>
+        <div id="empty-state" class="empty">
+          <div class="empty-icon"><i data-lucide="search-x" class="w-7 h-7"></i></div>
+          <h3 class="text-2xl font-black">No destinations match that search.</h3>
+          <p class="mt-3 text-slate-600">Try another keyword or choose a different category.</p>
+        </div>
+        <div id="destinations-grid" class="destination-grid"></div>
+      </section>
+
+      <section class="section-card" aria-labelledby="routes-title">
+        <div class="section-inner">
+          <span class="section-kicker"><i data-lucide="route" class="w-4 h-4"></i> Route Ideas</span>
+          <h2 id="routes-title" class="section-title">Ready-made combinations for faster planning.</h2>
+          <p class="section-copy">Use these as starting points when one destination is not enough.</p>
+          <div class="route-grid mt-5">
+            <article class="route-card">
+              <h3>Beach Reset</h3>
+              <p>South Goa with Andaman for slow mornings, blue water, and quiet evenings.</p>
+              <div class="route-steps">
+                <span><i data-lucide="waves" class="w-4 h-4"></i> Goa</span>
+                <span><i data-lucide="ship" class="w-4 h-4"></i> Andaman</span>
+              </div>
+            </article>
+            <article class="route-card">
+              <h3>Palace Weekend</h3>
+              <p>Udaipur and Hampi for architecture, stone trails, and relaxed exploration.</p>
+              <div class="route-steps">
+                <span><i data-lucide="landmark" class="w-4 h-4"></i> Udaipur</span>
+                <span><i data-lucide="camera" class="w-4 h-4"></i> Hampi</span>
+              </div>
+            </article>
+            <article class="route-card">
+              <h3>Mountain Air</h3>
+              <p>Kashmir and Ladakh for snow views, high roads, and long scenic days.</p>
+              <div class="route-steps">
+                <span><i data-lucide="mountain-snow" class="w-4 h-4"></i> Kashmir</span>
+                <span><i data-lucide="bike" class="w-4 h-4"></i> Ladakh</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta">
+        <div>
+          <h2>Carry your shortlist into a real itinerary.</h2>
+          <p>Select a destination, start planning, and keep budget, dates, travelers, logistics, and checkout in one flow.</p>
+        </div>
+        <a href="frontend/plannewtrip.html" class="primary-action"><i data-lucide="calendar-plus" class="w-5 h-5"></i> Plan New Trip</a>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    const destinations = [
+      {
+        id: 'goa',
+        name: 'South Goa Beaches',
+        category: 'beach',
+        price: 4000,
+        rating: 4.8,
+        image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=1500&auto=format&fit=crop',
+        description: 'Calm beaches, coastal stays, local food, and a gentler pace for travelers who want room to breathe.',
+        highlights: ['Beach Resort', 'Water Sports', 'Seafood', 'Sunset Walks'],
+        bestTime: 'November to February',
+        weather: 'Afternoons are easier when humidity is lower.'
+      },
+      {
+        id: 'udaipur',
+        name: 'Udaipur City Palace',
+        category: 'cultural',
+        price: 5500,
+        rating: 4.6,
+        image: 'https://images.unsplash.com/photo-1599661046827-dacff0c0f09a?q=80&w=1500&auto=format&fit=crop',
+        description: 'Lakeside views, palace architecture, boat rides, and elegant old-city evenings.',
+        highlights: ['City Palace', 'Lake Pichola', 'Boat Ride', 'Local Bazaar'],
+        bestTime: 'September to March',
+        weather: 'Early visits bring cooler weather and softer light.'
+      },
+      {
+        id: 'meghalaya',
+        name: 'Meghalaya Living Bridges',
+        category: 'adventure',
+        price: 8000,
+        rating: 4.9,
+        image: 'https://images.unsplash.com/photo-1593693411515-c20261bcad6e?q=80&w=1500&auto=format&fit=crop',
+        description: 'Green trails, living root bridges, waterfalls, and misty hill-country exploration.',
+        highlights: ['Root Bridges', 'Waterfalls', 'Trekking', 'Local Culture'],
+        bestTime: 'August to October',
+        weather: 'Sturdy footwear matters after rain.'
+      },
+      {
+        id: 'hampi',
+        name: 'Hampi Ruins and Temples',
+        category: 'cultural',
+        price: 3000,
+        rating: 4.7,
+        image: 'https://images.unsplash.com/photo-1627894483216-2138af692e32?q=80&w=1500&auto=format&fit=crop',
+        description: 'Open-air history, ancient stone landscapes, temple trails, and warm golden evenings.',
+        highlights: ['Ancient Ruins', 'Temples', 'Photography', 'History'],
+        bestTime: 'December to February',
+        weather: 'Morning light is especially strong for photos.'
+      },
+      {
+        id: 'kashmir',
+        name: 'Kashmir Valley',
+        category: 'mountain',
+        price: 7500,
+        rating: 4.9,
+        image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=1500&auto=format&fit=crop',
+        description: 'Snow-lined peaks, shikara moments, garden walks, and peaceful mountain stays.',
+        highlights: ['Dal Lake', 'Houseboats', 'Snow Views', 'Tulip Gardens'],
+        bestTime: 'April to May',
+        weather: 'Spring brings some of the best valley colors.'
+      },
+      {
+        id: 'leh',
+        name: 'Leh-Ladakh',
+        category: 'mountain',
+        price: 9000,
+        rating: 4.8,
+        image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=1500&auto=format&fit=crop',
+        description: 'High-altitude roads, monasteries, wide valleys, and cinematic mountain travel.',
+        highlights: ['Pangong Lake', 'Passes', 'Monasteries', 'Adventure Drives'],
+        bestTime: 'June to September',
+        weather: 'Acclimatize before a full travel day.'
+      },
+      {
+        id: 'andaman',
+        name: 'Andaman Islands',
+        category: 'beach',
+        price: 8500,
+        rating: 4.8,
+        image: 'https://images.unsplash.com/photo-1589308078059-be1415eab4c3?q=80&w=1500&auto=format&fit=crop',
+        description: 'Clear water, island time, reef days, and a quieter version of tropical travel.',
+        highlights: ['Snorkeling', 'Island Hopping', 'Blue Water', 'Beach Cafes'],
+        bestTime: 'November to May',
+        weather: 'Dry season is best for water activities.'
+      },
+      {
+        id: 'varanasi',
+        name: 'Varanasi Ghats',
+        category: 'cultural',
+        price: 4500,
+        rating: 4.6,
+        image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?q=80&w=1500&auto=format&fit=crop',
+        description: 'Sunrise boats, old lanes, spiritual rituals, and a city rhythm unlike anywhere else.',
+        highlights: ['Ghats', 'Boat Ride', 'Old City', 'Aarti'],
+        bestTime: 'October to March',
+        weather: 'Sunrise is the calmest time to explore.'
+      }
+    ];
+
+    const state = {
+      category: 'all',
+      search: ''
+    };
+
+    const labels = {
+      all: 'All',
+      beach: 'Beaches',
+      mountain: 'Mountains',
+      cultural: 'Cultural',
+      adventure: 'Adventure'
+    };
+
+    const formatMoney = (value) => `INR ${new Intl.NumberFormat('en-IN').format(value)}`;
+
+    const getFilteredDestinations = () => {
+      const query = state.search.trim().toLowerCase();
+      return destinations.filter((destination) => {
+        const matchesCategory = state.category === 'all' || destination.category === state.category;
+        const searchableText = [
+          destination.name,
+          destination.description,
+          destination.category,
+          destination.bestTime,
+          destination.weather,
+          ...destination.highlights
+        ].join(' ').toLowerCase();
+
+        return matchesCategory && searchableText.includes(query);
+      });
+    };
+
+    function renderDestinations() {
+      const grid = document.getElementById('destinations-grid');
+      const empty = document.getElementById('empty-state');
+      const resultsCount = document.getElementById('results-count');
+      const activeCategory = document.getElementById('active-category-label');
+      const lowestBudget = document.getElementById('lowest-budget');
+      const topMatch = document.getElementById('top-match');
+      const items = getFilteredDestinations();
+
+      resultsCount.textContent = String(items.length);
+      activeCategory.textContent = labels[state.category];
+      lowestBudget.textContent = items.length ? formatMoney(Math.min(...items.map((item) => item.price))) : 'INR 0';
+      topMatch.textContent = items.length ? items.reduce((best, item) => item.rating > best.rating ? item : best, items[0]).name.split(' ')[0] : '-';
+
+      grid.innerHTML = '';
+
+      if (!items.length) {
+        empty.style.display = 'block';
+        lucide.createIcons();
+        return;
+      }
+
+      empty.style.display = 'none';
+
+      items.forEach((destination) => {
+        const card = document.createElement('article');
+        card.className = 'destination-card';
+        card.innerHTML = `
+          <div class="image-wrap">
+            <img src="${destination.image}" alt="${destination.name}">
+            <div class="image-shade"></div>
+            <div class="card-labels">
+              <span class="badge"><i data-lucide="compass" class="w-3.5 h-3.5"></i>${labels[destination.category]}</span>
+              <span class="price">${formatMoney(destination.price)}</span>
+            </div>
+            <div class="card-title">
+              <div>
+                <h3>${destination.name}</h3>
+                <span class="rating"><i data-lucide="star" class="w-4 h-4"></i>${destination.rating}/5.0</span>
+              </div>
+            </div>
+          </div>
+          <div class="destination-body">
+            <p>${destination.description}</p>
+            <div class="highlight-row">
+              ${destination.highlights.map((highlight) => `<span class="highlight">${highlight}</span>`).join('')}
+            </div>
+            <div class="tip-box">
+              <p><strong>Best time:</strong> ${destination.bestTime}</p>
+              <p><strong>Tip:</strong> ${destination.weather}</p>
+            </div>
+            <button class="book-button" type="button" onclick="bookDestination('${destination.id}')">Book This Destination</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function bookDestination(id) {
+      const destination = destinations.find((item) => item.id === id);
+      if (!destination) return;
+
+      localStorage.setItem('planmytrip_selected_destination', JSON.stringify({
+        id: destination.id,
+        name: destination.name
+      }));
+      window.location.href = `frontend/plannewtrip.html?destination=${encodeURIComponent(destination.name)}`;
+    }
+
+    function setupMobileMenu() {
+      const toggle = document.getElementById('mobile-menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+
+      toggle.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const isOpen = menu.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      menu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+          menu.classList.remove('open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+
+    function setupFilters() {
+      document.getElementById('search-input').addEventListener('input', (event) => {
+        state.search = event.target.value;
+        renderDestinations();
+      });
+
+      document.querySelectorAll('.chip').forEach((button) => {
+        button.addEventListener('click', () => {
+          state.category = button.dataset.category;
+          document.querySelectorAll('.chip').forEach((item) => {
+            item.classList.toggle('active', item === button);
+          });
+          renderDestinations();
+        });
+      });
+    }
+
+    function setupUserDisplay() {
+      if (!window.currentUser) return;
+
+      const display = document.getElementById('user-display');
+      if (currentUser.phone) {
+        display.textContent = `User ${String(currentUser.phone).slice(-4)}`;
+      } else if (currentUser.email) {
+        display.textContent = currentUser.email.split('@')[0];
+      }
+    }
+
+    setupMobileMenu();
+    setupFilters();
+    setupUserDisplay();
+    renderDestinations();
+    lucide.createIcons();
+  </script>
+</body>
+</html>

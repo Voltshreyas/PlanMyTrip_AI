@@ -5,554 +5,647 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Referral Program - PlanMyTrip</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
+        :root {
+            --ink: #14213d;
+            --muted: #617084;
+            --line: rgba(20, 33, 61, 0.12);
+            --paper: #f7fbfa;
+            --teal: #0f766e;
+            --blue: #2563eb;
+            --amber: #f59e0b;
+            --rose: #e11d48;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(245,158,11,0.12), transparent 26rem),
+                radial-gradient(circle at 88% 14%, rgba(37,99,235,0.11), transparent 30rem),
+                linear-gradient(180deg, #f7fbfa 0%, #eef7ff 54%, #fff7ed 100%);
         }
-        
+
         h1, h2, h3, .font-outfit {
-            font-family: 'Outfit', sans-serif;
+            font-family: 'Outfit', system-ui, sans-serif;
+            letter-spacing: 0;
         }
 
-        .referral-card {
-            transform: translateY(0);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .page-shell {
+            width: min(100% - 1.25rem, 72rem);
+            margin: 0 auto;
         }
 
-        .referral-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-            border: 2px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .benefit-icon {
+        .top-actions {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            width: 60px;
-            height: 60px;
+            gap: 0.55rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.82);
+            color: var(--ink);
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(20,33,61,0.08);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+            padding: 0 1rem;
+            cursor: pointer;
+        }
+
+        .pill-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(20,33,61,0.12);
+            background: #ffffff;
+        }
+
+        .hero-panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.36);
+            background:
+                linear-gradient(110deg, rgba(15,23,42,0.94), rgba(15,118,110,0.82) 48%, rgba(37,99,235,0.72)),
+                url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1800&auto=format&fit=crop') center / cover no-repeat;
+            color: #ffffff;
+            box-shadow: 0 24px 70px rgba(20,33,61,0.18);
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: clamp(1rem, 3vw, 2rem);
+        }
+
+        .profile-avatar {
+            width: clamp(5.4rem, 14vw, 8rem);
+            aspect-ratio: 1 / 1;
             border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #6366f1);
-            color: white;
-            font-size: 28px;
+            display: grid;
+            place-items: center;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 30% 22%, rgba(255,255,255,0.28), transparent 28%),
+                linear-gradient(135deg, #0f766e 0%, #2563eb 56%, #7c3aed 100%);
+            border: 4px solid #fbbf24;
+            box-shadow: 0 20px 48px rgba(0,0,0,0.28), 0 0 0 7px rgba(251,191,36,0.16);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            font-family: 'Outfit', system-ui, sans-serif;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 2rem;
+            padding: 0 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.24);
+            background: rgba(255,255,255,0.13);
+            color: rgba(255,255,255,0.9);
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .hero-title {
+            margin-top: 0.8rem;
+            font-size: clamp(2.1rem, 6vw, 3.2rem);
+            line-height: 0.95;
+            font-weight: 900;
+        }
+
+        .hero-email {
+            margin-top: 0.65rem;
+            color: rgba(255,255,255,0.78);
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .hero-actions {
+            display: grid;
+            gap: 0.75rem;
+            min-width: 12rem;
+        }
+
+        .hero-action {
+            min-height: 3rem;
+            padding: 0 1rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            font-weight: 900;
+            background: #ffffff;
+            color: #0f766e;
+            transition: transform .2s ease, box-shadow .2s ease;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .hero-action.secondary {
+            background: rgba(255,255,255,0.13);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.24);
+        }
+
+        .hero-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 22rem;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .surface {
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.84);
+            box-shadow: 0 16px 42px rgba(20,33,61,0.08);
+        }
+
+        .stat-card,
+        .panel {
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .stat-card:hover,
+        .panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 52px rgba(20,33,61,0.12);
+        }
+
+        .soft-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f766e;
+            background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+            border: 1px solid rgba(15,118,110,0.14);
+        }
+
+        .soft-icon.blue { color: #2563eb; background: #eff6ff; border-color: rgba(37,99,235,0.16); }
+        .soft-icon.amber { color: #b45309; background: #fffbeb; border-color: rgba(245,158,11,0.18); }
+        .soft-icon.rose { color: #be123c; background: #fff1f2; border-color: rgba(225,29,72,0.16); }
+
+        .row-link {
+            width: 100%;
+            min-height: 4.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.9rem;
+            border-radius: 0.85rem;
+            border: 1px solid rgba(20,33,61,0.1);
+            background: #ffffff;
+            text-align: left;
+            transition: background .2s ease, transform .2s ease, border-color .2s ease;
+            cursor: pointer;
+        }
+
+        .row-link:hover {
+            background: linear-gradient(90deg, #f0fdfa, #eff6ff);
+            border-color: rgba(15,118,110,0.2);
+            transform: translateX(3px);
+        }
+
+        @media (max-width: 960px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .hero-actions {
+                width: min(100%, 28rem);
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
-        .animate-slide-up {
-            animation: slideUp 0.6s ease-out;
-        }
+        @media (max-width: 560px) {
+            .top-actions {
+                padding-top: 0.75rem;
+            }
 
-        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
-        .bg-gradient-premium { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); }
+            .pill-button span {
+                display: none;
+            }
 
-        /* Small-screen adjustments for better responsiveness */
-        @media (max-width: 640px) {
-            .benefit-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
+            .hero-panel {
+                border-radius: 1rem;
             }
-            .referral-card {
-                padding: 1.5rem;
+
+            .hero-actions {
+                grid-template-columns: 1fr;
             }
-            .stat-box .text-4xl {
-                font-size: 1.75rem;
+
+            .stat-grid {
+                grid-template-columns: 1fr;
             }
-            h1 {
-                font-size: 2.25rem;
-            }
-            /* Make cards full width and adjust grid spacing for small screens */
-            .referral-card {
-                width: 100%;
-                box-sizing: border-box;
-            }
-            .grid.md\:grid-cols-4 {
-                gap: 1rem;
-            }
-            .referral-card .text-xl {
-                font-size: 1.05rem;
-            }
-            .bg-white.p-8.md\:p-12 {
-                padding: 1rem;
+
+            .row-link {
+                align-items: flex-start;
             }
         }
     </style>
 </head>
-    <!-- Premium Header & Navigation -->
-    <header class="sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-4">
-            <!-- Logo -->
-            <a href="../index.html" class="flex items-center gap-2.5 group flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-300/40 transition-transform group-hover:scale-110">
-                    <i data-lucide="plane" class="w-5 h-5 text-white"></i>
-                </div>
-                <span class="text-xl font-extrabold" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                    PlanMyTrip
-                </span>
+<body>
+    <div class="page-shell">
+        <div class="top-actions">
+            <a href="../index.html" class="pill-button">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Back to PlanMyTrip</span>
             </a>
-
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center gap-1">
-                <a id="nav-home" href="../index.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="home" class="w-4 h-4"></i> Home
-                </a>
-                <a id="nav-destinations" href="../destination.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-                </a>
-                <a id="nav-about" href="mission.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="info" class="w-4 h-4"></i> Mission
-                </a>
-                <a id="nav-bookings" href="bookings.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-                </a>
-                <a id="nav-referrals" href="referral.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-indigo-600 bg-indigo-50 font-semibold transition-all">
-                    <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-                </a>
-                <a href="plannewtrip.html" class="ml-3 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-md shadow-indigo-300/40 transition-all hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);">
-                    <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Plan Trip
-                </a>
-            </nav>
-
-            <!-- Right side -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
-                    <i data-lucide="user-circle" class="w-4 h-4 text-indigo-500"></i>
-                    <span class="text-xs font-bold text-indigo-700 max-w-[80px] truncate" id="user-id-display">User</span>
-                </div>
-                <a href="logout.html" title="Logout" class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-semibold py-1.5 px-3 rounded-xl transition-all text-sm border border-red-100">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Logout</span>
-                </a>
-                <a href="users.html"><img class="user-avatar w-9 h-9 rounded-full object-cover cursor-pointer" src="https://placehold.co/40x40/4F46E5/FFFFFF?text=SR" alt="User Avatar" id="user-avatar-img"></a>
-                <!-- Hamburger -->
-                <button id="mobile-menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-xl text-gray-600" style="background:rgba(79,70,229,0.07);border:1.5px solid rgba(79,70,229,0.12);">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-            </div>
+            <button type="button" onclick="logoutUser()" class="pill-button" style="color: #be123c; background: #fff1f2; border-color: rgba(190,18,60,0.14);">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log out</span>
+            </button>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden animate-slide-down mx-4 mb-3 p-3 space-y-1" style="background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-radius:1rem;border:1px solid rgba(79,70,229,0.1);box-shadow:0 8px 32px rgba(79,70,229,0.1);">
-            <a id="nav-home-mobile" href="../index.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="home" class="w-4 h-4"></i> Home
-            </a>
-            <a id="nav-destinations-mobile" href="../destination.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-            </a>
-            <a id="nav-about-mobile" href="mission.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="info" class="w-4 h-4"></i> Our Mission
-            </a>
-            <a id="nav-bookings-mobile" href="bookings.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-            </a>
-            <a id="nav-referrals-mobile" href="referral.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-            </a>
-            <a href="plannewtrip.html" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white mt-1" style="background:linear-gradient(135deg,#4f46e5,#06b6d4);">
-                <i data-lucide="rocket" class="w-4 h-4"></i> Start Planning
-            </a>
-        </div>
-    </header>
+        <main class="pb-8">
+            <!-- Hero Section -->
+            <section class="hero-panel">
+                <div class="hero-inner">
+                    <div id="profile-avatar" class="profile-avatar">🎁</div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10">
-        <!-- Hero Section -->
-        <div class="relative overflow-hidden mb-12 p-8 md:p-16 rounded-3xl text-center shadow-2xl" 
-             style="background: linear-gradient(135deg, #0f0c2e 0%, #1a1060 100%);">
-            <!-- Background Orbs -->
-            <div style="position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,0.25),transparent 70%);top:-150px;left:-100px;border-radius:50%;pointer-events:none;"></div>
-            <div style="position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(6,182,212,0.2),transparent 70%);bottom:-100px;right:-50px;border-radius:50%;pointer-events:none;"></div>
-            
-            <div class="relative z-10 animate-slide-up">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-6" 
-                     style="background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;">
-                    <i data-lucide="gift" class="w-3.5 h-3.5"></i> Referral Exclusive Rewards
-                </div>
-                <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight tracking-tight">
-                    Share the Joy, <br>
-                    <span class="hero-title">Multiply the Rewards</span>
-                </h1>
-                <p class="text-white/60 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-medium">
-                    Invite your friends to PlanMyTrip and unlock amazing discounts on your next adventure across India.
-                </p>
-                <div class="flex justify-center">
-                    <a href="#how-it-works" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-bold bg-white text-indigo-900 transition-all hover:scale-105 shadow-xl">
-                        Explore Benefits <i data-lucide="chevron-down" class="w-5 h-5"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
+                    <div>
+                        <span class="status-pill">
+                            <i data-lucide="gift" class="w-4 h-4"></i>
+                            Referral Program
+                        </span>
+                        <h1 class="hero-title">Share & Earn</h1>
+                        <p class="hero-email">Invite friends and unlock amazing rewards</p>
+                    </div>
 
-        <!-- How It Works Section -->
-        <section id="how-it-works" class="mb-16 scroll-mt-24">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">How It Works</h2>
-                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
-            </div>
-            
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Step 1 -->
-                <div class="step-card p-8 text-center group">
-                    <div class="flex justify-center mb-6">
-                        <div class="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-sm border border-indigo-100">
-                            <i data-lucide="link" class="w-8 h-8 text-indigo-600"></i>
-                        </div>
+                    <div class="hero-actions">
+                        <button onclick="shareNow()" class="hero-action">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                            Share Code
+                        </button>
+                        <a href="#referral-stats" class="hero-action secondary">
+                            <i data-lucide="trending-up" class="w-4 h-4"></i>
+                            My Stats
+                        </a>
                     </div>
-                    <div class="mb-2">
-                        <span class="text-xs font-bold text-indigo-500 uppercase tracking-widest">Step 01</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Share Your Code</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Send your unique referral link to friends via WhatsApp or social media.</p>
                 </div>
+            </section>
 
-                <!-- Step 2 -->
-                <div class="step-card p-8 text-center group" style="animation-delay: 0.1s;">
-                    <div class="flex justify-center mb-6">
-                        <div class="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:-rotate-3 shadow-sm border border-emerald-100">
-                            <i data-lucide="user-plus" class="w-8 h-8 text-emerald-600"></i>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-xs font-bold text-emerald-500 uppercase tracking-widest">Step 02</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">They Sign Up</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Your friends create their account using your referral code during registration.</p>
-                </div>
+            <!-- Stats Section -->
+            <section class="stat-grid" id="referral-stats">
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon"><i data-lucide="users" class="w-5 h-5"></i></div>
+                    <p id="friends-joined-stat" class="mt-4 text-3xl font-black">0</p>
+                    <p class="text-sm text-slate-500 font-bold">Friends Joined</p>
+                </article>
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon blue"><i data-lucide="gift" class="w-5 h-5"></i></div>
+                    <p id="total-earned-stat" class="mt-4 text-3xl font-black">Rs 0</p>
+                    <p class="text-sm text-slate-500 font-bold">Total Earned</p>
+                </article>
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon amber"><i data-lucide="plane" class="w-5 h-5"></i></div>
+                    <p id="trips-booked-stat" class="mt-4 text-3xl font-black">0</p>
+                    <p class="text-sm text-slate-500 font-bold">Trips Booked</p>
+                </article>
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon rose"><i data-lucide="star" class="w-5 h-5"></i></div>
+                    <p class="mt-4 text-3xl font-black">Platinum</p>
+                    <p class="text-sm text-slate-500 font-bold">Your Tier</p>
+                </article>
+            </section>
 
-                <!-- Step 3 -->
-                <div class="step-card p-8 text-center group" style="animation-delay: 0.2s;">
-                    <div class="flex justify-center mb-6">
-                        <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-sm border border-amber-100">
-                            <i data-lucide="plane-takeoff" class="w-8 h-8 text-amber-600"></i>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Step 03</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">They Book a Trip</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">They embark on their first journey booked through PlanMyTrip.</p>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="step-card p-8 text-center group" style="animation-delay: 0.3s;">
-                    <div class="flex justify-center mb-6">
-                        <div class="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 group-hover:-rotate-3 shadow-sm border border-rose-100">
-                            <i data-lucide="gift" class="w-8 h-8 text-rose-600"></i>
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-xs font-bold text-rose-500 uppercase tracking-widest">Step 04</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">You Earn Rewards</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed">Get a ₹750 discount credited instantly for every successful referral.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Your Referral Code Section -->
-        <section class="mb-16">
-            <div class="relative overflow-hidden p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/20" 
-                 style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
-                <!-- Abstract Bg Elements -->
-                <div class="absolute -top-12 -right-12 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
-                <div class="absolute -bottom-12 -left-12 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl"></div>
-                
-                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div class="text-center md:text-left">
-                        <h2 class="text-3xl font-black text-white mb-2 tracking-tight">Your Referral Code</h2>
-                        <p class="text-indigo-100 text-lg">Share this unique code to start earning.</p>
-                    </div>
-                    
-                    <div class="w-full md:w-auto">
-                        <div class="bg-white/10 backdrop-blur-xl border border-white/30 p-2 rounded-2xl flex items-center gap-2">
-                            <div class="px-6 py-4 bg-white/20 rounded-xl border border-white/20">
-                                <span id="referral-code" class="text-2xl md:text-3xl font-black text-white font-mono tracking-wider">PLANMYTRIP-AS0603</span>
+            <!-- Main Content Grid -->
+            <section class="section-grid">
+                <div class="space-y-4">
+                    <!-- Your Referral Code -->
+                    <article class="surface panel p-5 md:p-7" style="background: linear-gradient(135deg, #0f766e 0%, #2563eb 56%); border-color: rgba(255,255,255,0.2); color: white;">
+                        <div class="flex items-start justify-between gap-4 mb-5">
+                            <div>
+                                <h2 class="text-2xl font-black text-white">Your Referral Code</h2>
+                                <p class="text-white/70 mt-1">Share this unique code with your friends.</p>
                             </div>
-                            <button onclick="copyReferralCode()" class="flex items-center gap-2 bg-white text-indigo-600 hover:bg-indigo-50 px-6 py-4 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg">
-                                <i data-lucide="copy" class="w-5 h-5"></i> <span class="hidden sm:inline">Copy</span>
+                            <div style="width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: inline-flex; align-items: center; justify-content: center; color: white; background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.24); font-size: 1.25rem;">📋</div>
+                        </div>
+                        <div class="grid gap-3">
+                            <button onclick="copyReferralCode()" class="row-link" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white;">
+                                <span class="flex items-center gap-3">
+                                    <span style="width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: inline-flex; align-items: center; justify-content: center; color: #fbbf24; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2);"><i data-lucide="code" class="w-5 h-5"></i></span>
+                                    <span><strong id="referral-code-display" class="block text-white font-mono" style="font-size: 1.1rem;">PLANMYTRIP-AS0603</strong><small class="text-white/60">Click to copy</small></span>
+                                </span>
+                                <i data-lucide="copy" class="w-5 h-5 text-white/60"></i>
+                            </button>
+                            <button onclick="copyAndShare()" class="row-link" style="background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.2); color: white; padding: 1rem;">
+                                <span class="flex items-center gap-3" style="color: white;">
+                                    <span style="width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);"><i data-lucide="share-2" class="w-5 h-5"></i></span>
+                                    <span><strong class="block text-white">Share & Earn</strong><small class="text-white/60">Copy and share instantly</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-white/60"></i>
                             </button>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    </article>
 
-        <!-- Benefits Section -->
-        <section class="mb-16">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">Your Benefits</h2>
-                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Benefit 1 -->
-                <div class="step-card p-8 group">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-sm border border-indigo-100">💰</div>
-                        <h3 class="text-xl font-bold text-gray-900">Instant Discounts</h3>
-                    </div>
-                    <p class="text-gray-500 text-sm leading-relaxed">Receive a ₹750 discount coupon for every friend who signs up and books their first trip.</p>
-                </div>
-
-                <!-- Benefit 2 -->
-                <div class="step-card p-8 group" style="animation-delay: 0.1s;">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-sm border border-indigo-100">🌟</div>
-                        <h3 class="text-xl font-bold text-gray-900">Special Perks</h3>
-                    </div>
-                    <p class="text-gray-500 text-sm leading-relaxed">Unlock exclusive early access to holiday deals and premium travel guides curated by experts.</p>
-                </div>
-
-                <!-- Benefit 3 -->
-                <div class="step-card p-8 group" style="animation-delay: 0.2s;">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-sm border border-indigo-100">🎁</div>
-                        <h3 class="text-xl font-bold text-gray-900">Elite Status</h3>
-                    </div>
-                    <p class="text-gray-500 text-sm leading-relaxed">Refer 10 friends to become a Platinum Member and enjoy zero convenience fees on all bookings.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Stats Section -->
-        <section class="mb-16">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <div class="stat-card p-6 text-center">
-                    <div class="text-3xl md:text-4xl font-black text-indigo-600 mb-1">5</div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Friends Joined</p>
-                </div>
-                <div class="stat-card p-6 text-center" style="animation-delay: 0.1s;">
-                    <div class="text-3xl md:text-4xl font-black text-emerald-600 mb-1">₹3,750</div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Earned</p>
-                </div>
-                <div class="stat-card p-6 text-center" style="animation-delay: 0.2s;">
-                    <div class="text-3xl md:text-4xl font-black text-amber-600 mb-1">2</div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Trips Booked</p>
-                </div>
-                <div class="stat-card p-6 text-center" style="animation-delay: 0.3s;">
-                    <div class="text-3xl md:text-4xl font-black text-indigo-600 mb-1">35%</div>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Avg. Savings</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Share Section -->
-        <section class="mb-16">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">Spread the Word</h2>
-                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
-            </div>
-            
-            <div class="bg-white p-8 md:p-12 rounded-[2rem] shadow-xl border border-indigo-50 text-center">
-                <p class="text-gray-500 text-lg mb-10 max-w-2xl mx-auto">
-                    Choose your favorite platform and share the magic of travel with your network.
-                </p>
-                
-                <div class="flex flex-wrap justify-center gap-4">
-                    <button onclick="shareToSocial('facebook')" class="group flex items-center gap-3 bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#1877F2] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
-                        <i data-lucide="facebook" class="w-6 h-6"></i>
-                        <span>Facebook</span>
-                    </button>
-                    <button onclick="shareToSocial('twitter')" class="group flex items-center gap-3 bg-[#1DA1F2]/10 hover:bg-[#1DA1F2] text-[#1DA1F2] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
-                        <i data-lucide="twitter" class="w-6 h-6"></i>
-                        <span>Twitter</span>
-                    </button>
-                    <button onclick="shareToSocial('whatsapp')" class="group flex items-center gap-3 bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
-                        <i data-lucide="message-circle" class="w-6 h-6"></i>
-                        <span>WhatsApp</span>
-                    </button>
-                    <button onclick="shareToSocial('linkedin')" class="group flex items-center gap-3 bg-[#0077B5]/10 hover:bg-[#0077B5] text-[#0077B5] hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
-                        <i data-lucide="linkedin" class="w-6 h-6"></i>
-                        <span>LinkedIn</span>
-                    </button>
-                    <button onclick="shareToSocial('email')" class="group flex items-center gap-3 bg-rose-50 hover:bg-rose-500 text-rose-500 hover:text-white font-bold py-4 px-8 rounded-2xl transition-all hover:scale-105 shadow-sm hover:shadow-lg">
-                        <i data-lucide="mail" class="w-6 h-6"></i>
-                        <span>Email</span>
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Leaderboard Section -->
-        <section class="mb-16">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl md:text-4xl font-black text-indigo-900 mb-4 tracking-tight">Top Referrers</h2>
-                <div class="w-20 h-1.5 bg-gradient-to-r from-indigo-500 to-cyan-400 mx-auto rounded-full"></div>
-            </div>
-            
-            <div class="bg-white rounded-3xl shadow-xl border border-indigo-50 overflow-hidden">
-                <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 p-6 text-white text-center">
-                    <h3 class="text-xl font-bold flex items-center justify-center gap-2">
-                        <i data-lucide="trophy" class="w-5 h-5"></i> Global Leaderboard
-                    </h3>
-                </div>
-                
-                <div class="divide-y divide-indigo-50">
-                    <!-- Rank 1 -->
-                    <div class="p-6 flex items-center justify-between hover:bg-indigo-50/30 transition duration-300">
-                        <div class="flex items-center gap-6">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shadow-sm border border-amber-200">🥇</div>
+                    <!-- How It Works -->
+                    <article class="surface panel p-5 md:p-7">
+                        <div class="flex items-start justify-between gap-4 mb-5">
                             <div>
-                                <p class="font-bold text-gray-900 text-lg">Kaushik M.</p>
-                                <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">₹15,000 Earned</p>
+                                <h2 class="text-2xl font-black">How It Works</h2>
+                                <p class="text-slate-500 mt-1">Four simple steps to start earning.</p>
+                            </div>
+                            <div class="soft-icon blue"><i data-lucide="zap" class="w-5 h-5"></i></div>
+                        </div>
+                        <div class="grid gap-3">
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon amber"><strong class="text-amber-700" style="font-size: 0.9rem;">1</strong></span>
+                                    <span><strong class="block">Share Your Code</strong><small class="text-slate-500">Send your unique referral link via any platform</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon"><strong class="text-teal-700" style="font-size: 0.9rem;">2</strong></span>
+                                    <span><strong class="block">They Sign Up</strong><small class="text-slate-500">Friends register using your referral code</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon blue"><strong class="text-blue-700" style="font-size: 0.9rem;">3</strong></span>
+                                    <span><strong class="block">Book a Trip</strong><small class="text-slate-500">They make their first booking with us</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon rose"><strong class="text-rose-700" style="font-size: 0.9rem;">4</strong></span>
+                                    <span><strong class="block">Earn Rewards</strong><small class="text-slate-500">Get ₹750 discount instantly</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-black text-2xl text-indigo-900">20</p>
-                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-tighter">Referrals</p>
-                        </div>
-                    </div>
+                    </article>
 
-                    <!-- Rank 2 -->
-                    <div class="p-6 flex items-center justify-between hover:bg-indigo-50/30 transition duration-300">
-                        <div class="flex items-center gap-6">
-                            <div class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-2xl shadow-sm border border-slate-200">🥈</div>
+                    <!-- Your Benefits -->
+                    <article class="surface panel p-5 md:p-7">
+                        <div class="flex items-start justify-between gap-4 mb-5">
                             <div>
-                                <p class="font-bold text-gray-900 text-lg">Divya K.</p>
-                                <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">₹12,500 Earned</p>
+                                <h2 class="text-2xl font-black">Your Benefits</h2>
+                                <p class="text-slate-500 mt-1">Exclusive perks for referrers.</p>
+                            </div>
+                            <div class="soft-icon rose"><i data-lucide="gift" class="w-5 h-5"></i></div>
+                        </div>
+                        <div class="grid gap-3">
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon blue"><i data-lucide="coins" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">₹750 per Referral</strong><small class="text-slate-500">Instant discount for every successful sign-up</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon amber"><i data-lucide="star" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Platinum Tier</strong><small class="text-slate-500">After 5 referrals, unlock exclusive perks</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </div>
+                            <div class="row-link" style="cursor: default;">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon rose"><i data-lucide="zap" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Zero Fees</strong><small class="text-slate-500">No convenience fees on bookings at Platinum</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-black text-2xl text-indigo-900">17</p>
-                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-tighter">Referrals</p>
-                        </div>
-                    </div>
+                    </article>
+                </div>
 
-                    <!-- Rank 3 -->
-                    <div class="p-6 flex items-center justify-between hover:bg-indigo-50/30 transition duration-300">
-                        <div class="flex items-center gap-6">
-                            <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-2xl shadow-sm border border-orange-100">🥉</div>
-                            <div>
-                                <p class="font-bold text-gray-900 text-lg">Arjun P.</p>
-                                <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider">₹11,250 Earned</p>
+                <!-- Right Sidebar -->
+                <aside class="space-y-4">
+                    <!-- Next Milestone -->
+                    <article class="surface panel p-5 md:p-7" style="background: linear-gradient(135deg, rgba(15,118,110,0.1), rgba(37,99,235,0.1)); border-color: rgba(15,118,110,0.2);">
+                        <h3 class="text-lg font-black mb-4 flex items-center gap-2">
+                            <i data-lucide="target" class="w-5 h-5 text-teal-600"></i>
+                            Next Milestone
+                        </h3>
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs font-bold text-slate-600 mb-2">
+                                <span>5 referrals</span>
+                                <span>Platinum</span>
+                            </div>
+                            <div style="height: 0.5rem; border-radius: 999px; background: rgba(20,33,61,0.1); overflow: hidden;">
+                                <div id="milestone-progress" style="width: 62.5%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #0f766e, #2563eb); transition: width 0.3s ease;"></div>
                             </div>
                         </div>
-                        <div class="text-right">
-                            <p class="font-black text-2xl text-indigo-900">15</p>
-                            <p class="text-[0.65rem] font-bold text-gray-400 uppercase tracking-tighter">Referrals</p>
+                        <p id="milestone-text" class="text-xs text-slate-600"><strong>3 more referrals</strong> to unlock Platinum status</p>
+                    </article>
+
+                    <!-- Share Social -->
+                    <article class="surface panel p-5 md:p-7">
+                        <h3 class="text-lg font-black mb-4 flex items-center gap-2">
+                            <i data-lucide="share-2" class="w-5 h-5 text-blue-600"></i>
+                            Share
+                        </h3>
+                        <div class="space-y-2">
+                            <button onclick="shareToSocial('whatsapp')" class="w-full py-2 px-3 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white font-bold text-sm transition-all flex items-center gap-2 justify-center">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
+                            </button>
+                            <button onclick="shareToSocial('twitter')" class="w-full py-2 px-3 rounded-lg bg-[#1DA1F2]/10 hover:bg-[#1DA1F2] text-[#1DA1F2] hover:text-white font-bold text-sm transition-all flex items-center gap-2 justify-center">
+                                <i data-lucide="twitter" class="w-4 h-4"></i> Twitter
+                            </button>
+                            <button onclick="shareToSocial('facebook')" class="w-full py-2 px-3 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#1877F2] hover:text-white font-bold text-sm transition-all flex items-center gap-2 justify-center">
+                                <i data-lucide="facebook" class="w-4 h-4"></i> Facebook
+                            </button>
                         </div>
+                    </article>
+
+                    <!-- Tips -->
+                    <article class="surface panel p-5 md:p-7" style="background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2);">
+                        <h3 class="text-lg font-black mb-3 text-amber-900">💡 Pro Tips</h3>
+                        <ul class="space-y-2 text-xs text-amber-900/70 font-medium">
+                            <li>• Share with travel enthusiasts for best results</li>
+                            <li>• WhatsApp works great for close friends</li>
+                            <li>• Social posts get more engagement</li>
+                            <li>• Refer 10+ for Elite status</li>
+                        </ul>
+                    </article>
+                </aside>
+            </section>
+
+            <!-- Top Referrers -->
+            <section class="mt-8">
+                <article class="surface panel p-5 md:p-7">
+                    <h2 class="text-2xl font-black mb-6 flex items-center gap-2">
+                        <i data-lucide="trophy" class="w-6 h-6 text-amber-600"></i>
+                        Top Referrers
+                    </h2>
+                    <div class="space-y-3">
+                        <button class="row-link" style="cursor: default;">
+                            <span class="flex items-center gap-3">
+                                <span style="width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: inline-flex; align-items: center; justify-content: center; background: #fef3c7; border: 1px solid rgba(245,158,11,0.3); font-size: 1.25rem;">🥇</span>
+                                <span><strong class="block">Kaushik M.</strong><small class="text-slate-500">₹15,000 earned • 20 referrals</small></span>
+                            </span>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-amber-600">1st</p>
+                            </div>
+                        </button>
+                        <button class="row-link" style="cursor: default;">
+                            <span class="flex items-center gap-3">
+                                <span style="width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: inline-flex; align-items: center; justify-content: center; background: #f3f4f6; border: 1px solid rgba(107,114,128,0.3); font-size: 1.25rem;">🥈</span>
+                                <span><strong class="block">Divya K.</strong><small class="text-slate-500">₹12,500 earned • 17 referrals</small></span>
+                            </span>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-slate-400">2nd</p>
+                            </div>
+                        </button>
+                        <button class="row-link" style="cursor: default;">
+                            <span class="flex items-center gap-3">
+                                <span style="width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; display: inline-flex; align-items: center; justify-content: center; background: #fed7aa; border: 1px solid rgba(251,146,60,0.3); font-size: 1.25rem;">🥉</span>
+                                <span><strong class="block">Arjun P.</strong><small class="text-slate-500">₹11,250 earned • 15 referrals</small></span>
+                            </span>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-orange-600">3rd</p>
+                            </div>
+                        </button>
                     </div>
-                </div>
-                
-                <div class="p-6 bg-indigo-50/50 text-center">
-                    <p class="text-sm text-indigo-600 font-semibold italic">You are just 3 referrals away from entering the top 10! 🚀</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="mb-12">
-            <div class="relative overflow-hidden p-10 md:p-16 rounded-[3rem] text-center shadow-2xl" 
-                 style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                <div class="absolute -top-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
-                <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-black/5 rounded-full blur-2xl"></div>
-                
-                <div class="relative z-10 animate-slide-up">
-                    <h2 class="text-3xl md:text-5xl font-black text-white mb-6 tracking-tight">Ready to Start Earning?</h2>
-                    <p class="text-emerald-50 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-medium">
-                        Join thousands of travelers who are exploring India for less. Share your code today!
-                    </p>
-                    <button onclick="startSharing()" class="group inline-flex items-center gap-3 bg-white text-emerald-700 hover:bg-emerald-50 px-10 py-5 rounded-[2rem] font-black text-lg transition-all hover:scale-105 shadow-xl">
-                        <i data-lucide="share-2" class="w-6 h-6 group-hover:rotate-12 transition-transform"></i>
-                        Share Now
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Simple Footer -->
-    <footer class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-10 border-t border-gray-100 text-center">
-        <p class="text-gray-400 text-sm font-medium">© 2026 PlanMyTrip. All rights reserved.</p>
-        <div class="flex justify-center gap-6 mt-4">
-            <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors text-xs font-bold uppercase tracking-widest">Privacy Policy</a>
-            <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors text-xs font-bold uppercase tracking-widest">Terms of Service</a>
-            <a href="#" class="text-gray-400 hover:text-indigo-600 transition-colors text-xs font-bold uppercase tracking-widest">Help Center</a>
-        </div>
-    </footer>
+                </article>
+            </section>
+        </main>
+    </div>
 
     <script>
-        // Initialize Lucide Icons
         lucide.createIcons();
 
-        // Mobile Menu Toggle
-        const menuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuToggle && mobileMenu) {
-            menuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
+        function getStoredUser() {
+            try {
+                const user = JSON.parse(localStorage.getItem('planmytrip_user') || 'null');
+                return user && typeof user === 'object' ? user : null;
+            } catch (error) {
+                return null;
+            }
         }
 
-        // Copy Referral Code
+        function setReferralStat(id, value) {
+            const element = document.getElementById(id);
+            if (!element) return;
+            const numericValue = Number(value) || 0;
+            element.textContent = `${new Intl.NumberFormat('en-IN').format(numericValue)}`;
+        }
+
+        async function hydrateReferralDashboard() {
+            const user = getStoredUser();
+            const codeDisplay = document.getElementById('referral-code-display');
+
+            if (codeDisplay && user?.referralCode) {
+                codeDisplay.textContent = user.referralCode;
+            }
+
+            if (!user?.userId) return;
+
+            try {
+                const response = await fetch(`/api/referrals/stats/${encodeURIComponent(user.userId)}`);
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!data.success) return;
+
+                if (codeDisplay && data.referralCode) codeDisplay.textContent = data.referralCode;
+                setReferralStat('friends-joined-stat', data.totalSignups ?? data.friendsRegistered ?? data.totalReferrals);
+                setReferralStat('total-earned-stat', data.totalEarned ?? data.totalDiscount);
+                setReferralStat('trips-booked-stat', data.tripsBooked);
+            } catch (error) {
+                console.warn('Could not load live stats:', error.message);
+            }
+        }
+
+        hydrateReferralDashboard();
+
         function copyReferralCode() {
-            const code = document.getElementById('referral-code').textContent;
+            const code = document.getElementById('referral-code-display').textContent;
             navigator.clipboard.writeText(code).then(() => {
-                const btn = event.currentTarget;
-                const originalContent = btn.innerHTML;
-                btn.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i> Copied!';
-                btn.classList.add('bg-emerald-50', 'text-emerald-600');
-                lucide.createIcons();
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalContent;
-                    btn.classList.remove('bg-emerald-50', 'text-emerald-600');
-                    lucide.createIcons();
-                }, 2000);
+                alert('Code copied: ' + code);
+            }).catch(() => {
+                alert('Failed to copy code');
             });
         }
 
-        // Social Sharing Logic
+        function copyAndShare() {
+            const code = document.getElementById('referral-code-display').textContent;
+            navigator.clipboard.writeText(code);
+            shareNow();
+        }
+
+        function shareNow() {
+            document.querySelector('.share').scrollIntoView({ behavior: 'smooth' });
+        }
+
         function shareToSocial(platform) {
-            const code = document.getElementById('referral-code').textContent;
+            const code = document.getElementById('referral-code-display').textContent;
             const messages = {
                 facebook: `Check out PlanMyTrip! Use my referral code ${code} to get ₹750 discount on your next trip across India! 🌍✈️`,
                 twitter: `I'm earning amazing rewards with PlanMyTrip referral program! 🎁 Use my code ${code} for ₹750 discount #TravelIndia #PlanMyTrip`,
                 whatsapp: `Hey! Use my PlanMyTrip referral code: ${code} to get ₹750 discount on your trip booking! 🌍🎉`,
-                linkedin: `I'm part of the PlanMyTrip referral program and loving it! Share code ${code} for travel rewards 🌟`,
-                email: `PlanMyTrip Referral - Use code: ${code}`
             };
 
             const shareUrls = {
                 facebook: `https://www.facebook.com/sharer/sharer.php?u=https://planmytrip.com&quote=${encodeURIComponent(messages.facebook)}`,
                 twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(messages.twitter)}`,
                 whatsapp: `https://wa.me/?text=${encodeURIComponent(messages.whatsapp)}`,
-                linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://planmytrip.com`,
-                email: `mailto:?subject=PlanMyTrip Referral&body=${encodeURIComponent(messages.email)}`
             };
 
             if (shareUrls[platform]) {
-                if (platform === 'email') {
-                    window.location.href = shareUrls[platform];
-                } else {
-                    window.open(shareUrls[platform], '_blank', 'width=600,height=400');
-                }
+                window.open(shareUrls[platform], '_blank', 'width=600,height=400');
             }
         }
 
-        // Start Sharing CTA
-        function startSharing() {
-            document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                alert('🎉 Great choice! Choose a platform above to start sharing your unique code!');
-            }, 800);
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
+            }
         }
     </script>
 </body>

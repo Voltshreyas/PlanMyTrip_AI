@@ -4,987 +4,606 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plan New Trip - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/maps.js"></script>
+    <script src="../js/notifications.js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, .font-outfit { font-family: 'Outfit', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); }
-        .bg-gradient-premium { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); }
-        .fade-in { animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        /* Premium Modal Overlays */
-        .modal-overlay { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); animation: fadeInOverlay 0.3s ease-out; }
-        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.5); }
-        @keyframes slideUpModal { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        :root {
+            --ink: #14213d;
+            --muted: #617084;
+            --line: rgba(20, 33, 61, 0.12);
+            --paper: #f7fbfa;
+            --teal: #0f766e;
+            --blue: #2563eb;
+            --amber: #f59e0b;
+            --rose: #e11d48;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(245,158,11,0.12), transparent 26rem),
+                radial-gradient(circle at 88% 14%, rgba(37,99,235,0.11), transparent 30rem),
+                linear-gradient(180deg, #f7fbfa 0%, #eef7ff 54%, #fff7ed 100%);
+        }
+
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', system-ui, sans-serif;
+            letter-spacing: 0;
+        }
+
+        .page-shell {
+            width: min(100% - 1.25rem, 72rem);
+            margin: 0 auto;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.82);
+            color: var(--ink);
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(20,33,61,0.08);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+            padding: 0 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .pill-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(20,33,61,0.12);
+            background: #ffffff;
+        }
+
+        .hero-panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.36);
+            background:
+                linear-gradient(110deg, rgba(15,23,42,0.94), rgba(15,118,110,0.82) 48%, rgba(37,99,235,0.72)),
+                url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1800&auto=format&fit=crop') center / cover no-repeat;
+            color: #ffffff;
+            box-shadow: 0 24px 70px rgba(20,33,61,0.18);
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            padding: clamp(2rem, 5vw, 3.5rem);
+            text-align: center;
+        }
+
+        .hero-title {
+            margin-top: 1rem;
+            font-size: clamp(2.5rem, 6vw, 4.2rem);
+            line-height: 1.1;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+
+        .hero-description {
+            margin-top: 1rem;
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+            max-width: 42rem;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: clamp(1rem, 2vw, 1.2rem);
+        }
+
+        .surface {
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.84);
+            box-shadow: 0 16px 42px rgba(20,33,61,0.08);
+        }
+
+        .panel {
+            transition: transform .2s ease, box-shadow .2s ease;
+            padding: 2rem;
+        }
+
+        .panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 52px rgba(20,33,61,0.12);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--line);
+            border-radius: 0.75rem;
+            background: rgba(255,255,255,0.9);
+            color: var(--ink);
+            font-family: inherit;
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(15,118,110,0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .soft-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f766e;
+            background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+            border: 1px solid rgba(15,118,110,0.14);
+        }
+
+        .soft-icon.blue { color: #2563eb; background: #eff6ff; border-color: rgba(37,99,235,0.16); }
+        .soft-icon.amber { color: #b45309; background: #fffbeb; border-color: rgba(245,158,11,0.18); }
+        .soft-icon.rose { color: #be123c; background: #fff1f2; border-color: rgba(225,29,72,0.16); }
+
+        .submit-btn {
+            min-height: 3rem;
+            padding: 0 2rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #0f766e 0%, #2563eb 100%);
+            color: #ffffff;
+            transition: transform .2s ease, box-shadow .2s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(15,118,110,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                margin-top: 0.5rem;
+            }
+
+            .pill-button span {
+                display: none;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-indigo-50/20 min-h-screen flex flex-col relative overflow-x-hidden">
-    <!-- Premium Header & Navigation -->
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100/50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-4">
-            <!-- Logo -->
-            <a href="../index.html" class="flex items-center gap-2.5 group flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-300/40 transition-transform group-hover:scale-110">
-                    <i data-lucide="plane" class="w-5 h-5 text-white"></i>
-                </div>
-                <span class="text-xl font-extrabold" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                    PlanMyTrip
-                </span>
-            </a>
-
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center gap-1">
-                <a id="nav-home" href="../index.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="home" class="w-4 h-4"></i> Home
-                </a>
-                <a id="nav-destinations" href="../destination.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-                </a>
-                <a id="nav-about" href="mission.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="info" class="w-4 h-4"></i> Mission
-                </a>
-                <a id="nav-bookings" href="bookings.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-                </a>
-                <a id="nav-referrals" href="referral.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-                </a>
-                <a href="plannewtrip.html" class="ml-3 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-md shadow-indigo-300/40 transition-all hover:scale-105 bg-gradient-premium">
-                    <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Plan Trip
-                </a>
-            </nav>
-
-            <!-- Right side -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
-                    <i data-lucide="user-circle" class="w-4 h-4 text-indigo-500"></i>
-                    <span class="text-xs font-bold text-indigo-700 max-w-[80px] truncate" id="user-id-display">User</span>
-                </div>
-                <a href="logout.html" title="Logout" class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-semibold py-1.5 px-3 rounded-xl transition-all text-sm border border-red-100">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Logout</span>
-                </a>
-                <a href="users.html"><img class="user-avatar w-9 h-9 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all" src="https://placehold.co/40x40/4F46E5/FFFFFF?text=SR" alt="User Avatar" id="user-avatar-img"></a>
-                <!-- Hamburger -->
-                <button id="mobile-menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-xl text-slate-600" style="background:rgba(79,70,229,0.07);border:1.5px solid rgba(79,70,229,0.12);">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-            </div>
+<body>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
         </div>
+    </nav>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden animate-slide-down mx-4 mb-3 p-3 space-y-1" style="background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-radius:1rem;border:1px solid rgba(79,70,229,0.1);box-shadow:0 8px 32px rgba(79,70,229,0.1);">
-            <a id="nav-home-mobile" href="../index.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="home" class="w-4 h-4"></i> Home
-            </a>
-            <a id="nav-destinations-mobile" href="../destination.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-            </a>
-            <a id="nav-about-mobile" href="mission.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="info" class="w-4 h-4"></i> Our Mission
-            </a>
-            <a id="nav-bookings-mobile" href="bookings.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-            </a>
-            <a id="nav-referrals-mobile" href="referral.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-            </a>
-        </div>
-    </header>
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 relative z-10 fade-in">
-        <div class="text-center mb-10">
-            <h2 class="text-4xl md:text-6xl font-black mb-4 tracking-tight" style="color:transparent; background:linear-gradient(135deg,#4f46e5,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Plan Your Dream Trip</h2>
-            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Tell us about your travel preferences and we'll create a personalized itinerary just for you.</p>
-        </div>
+    <style>
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #6366f1; }
+        .user-pill { background: #e0e7ff; color: #6366f1; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    </style>
 
-        <form id="tripForm" class="space-y-8">
-            <!-- Travel Information Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="map-pin" class="w-6 h-6 text-indigo-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Travel Information</h3>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            document.getElementById('userPillContainer').innerHTML = `
+                <div class="user-pill">
+                    <i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}
                 </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Destination</label>
-                        <input type="text" id="destination" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="e.g., Goa, Leh, Kerala" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Number of Travelers</label>
-                        <select id="travelers" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select travelers</option>
-                            <option value="1">1 Person</option>
-                            <option value="2">2 People</option>
-                            <option value="3">3 People</option>
-                            <option value="4">4 People</option>
-                            <option value="5">5+ People</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+            `;
+            lucide.createIcons();
+        });
+    </script>
 
-            <!-- Personal Information Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="user" class="w-6 h-6 text-blue-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Personal Information</h3>
+        <main class="pb-8">
+            <!-- Hero Section -->
+            <section class="hero-panel">
+                <div class="hero-inner">
+                    <h1 class="hero-title">Plan Your <span style="background: linear-gradient(135deg, #fbbf24, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Dream Trip</span></h1>
+                    <p class="hero-description">
+                        Tell us about your travel preferences and we'll create a personalized itinerary just for you.
+                    </p>
                 </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
-                        <input type="text" id="fullName" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="Your full name" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
-                        <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="your@email.com" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
-                        <input type="tel" id="phone" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="+91 9876543210" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Age Group</label>
-                        <select id="ageGroup" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select age group</option>
-                            <option value="18-25">18-25 years</option>
-                            <option value="26-35">26-35 years</option>
-                            <option value="36-50">36-50 years</option>
-                            <option value="51+">51+ years</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+            </section>
 
-            <!-- Date Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="calendar" class="w-6 h-6 text-green-600"></i>
+            <!-- Trip Planning Form -->
+            <form id="tripForm" class="space-y-6 mt-8">
+                <!-- Travel Information Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Travel Information</h2>
                     </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Travel Dates</h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Departure Date</label>
-                        <input type="date" id="departureDate" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Return Date</label>
-                        <input type="date" id="returnDate" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Trip Duration</label>
-                    <p id="tripDuration" class="text-slate-600">Select dates to see duration</p>
-                </div>
-            </div>
-
-            <!-- Budget Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="wallet" class="w-6 h-6 text-yellow-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Budget</h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Budget Range (per person)</label>
-                        <select id="budgetRange" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select budget</option>
-                            <option value="5000-10000">₹5,000 - ₹10,000</option>
-                            <option value="10000-20000">₹10,000 - ₹20,000</option>
-                            <option value="20000-35000">₹20,000 - ₹35,000</option>
-                            <option value="35000-50000">₹35,000 - ₹50,000</option>
-                            <option value="50000+">₹50,000+</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Preferred Currency</label>
-                        <select id="currency" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="INR">Indian Rupee (INR)</option>
-                            <option value="USD">US Dollar (USD)</option>
-                            <option value="EUR">Euro (EUR)</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Accommodation Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="home" class="w-6 h-6 text-purple-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Accommodation Preferences</h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Accommodation Type</label>
-                        <select id="accommodationType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select type</option>
-                            <option value="budget">Budget (Hostel/Guesthouse)</option>
-                            <option value="standard">Standard (3-star Hotel)</option>
-                            <option value="premium">Premium (4-5 star Hotel)</option>
-                            <option value="luxury">Luxury (Resort/Villa)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Room Type</label>
-                        <select id="roomType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select room type</option>
-                            <option value="single">Single Room</option>
-                            <option value="double">Double Room</option>
-                            <option value="triple">Triple Room</option>
-                            <option value="suite">Suite</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Special Requirements</label>
-                    <textarea id="accommodationNotes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="Any special accommodation needs (e.g., accessibility, pet-friendly, etc.)"></textarea>
-                </div>
-            </div>
-
-            <!-- Food Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="utensils" class="w-6 h-6 text-orange-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Food Preferences</h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Meal Plan</label>
-                        <select id="mealPlan" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select meal plan</option>
-                            <option value="none">No meals included</option>
-                            <option value="breakfast">Breakfast only</option>
-                            <option value="half-board">Breakfast + Dinner</option>
-                            <option value="full-board">All meals included</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Dietary Restrictions</label>
-                        <select id="dietaryRestrictions" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm">
-                            <option value="none">No restrictions</option>
-                            <option value="vegetarian">Vegetarian</option>
-                            <option value="vegan">Vegan</option>
-                            <option value="gluten-free">Gluten-free</option>
-                            <option value="halal">Halal</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Food Preferences</label>
-                    <textarea id="foodNotes" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="Any specific food preferences or allergies"></textarea>
-                </div>
-            </div>
-
-            <!-- Payment Section -->
-            <div class="form-section glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                        <i data-lucide="credit-card" class="w-6 h-6 text-red-600"></i>
-                    </div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Payment Information</h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Payment Method</label>
-                        <select id="paymentMethod" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select payment method</option>
-                            <option value="card">Credit/Debit Card</option>
-                            <option value="upi">UPI</option>
-                            <option value="netbanking">Net Banking</option>
-                            <option value="wallet">Digital Wallet</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Booking Type</label>
-                        <select id="bookingType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" required>
-                            <option value="">Select booking type</option>
-                            <option value="full">Full Payment</option>
-                            <option value="partial">Partial Payment (20%)</option>
-                            <option value="installment">Installment Plan</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
-                        <p class="text-sm text-blue-800">
-                            <strong>Payment Note:</strong> Your payment information is secure and encrypted. You can pay the remaining balance upon trip confirmation.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Submit Section -->
-            <div id="submitSection" class="text-center">
-                <button type="submit" class="bg-gradient-premium text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-indigo-500/30 transition-all hover:scale-105 flex items-center gap-3 mx-auto">
-                    <i data-lucide="send" class="w-6 h-6"></i>
-                    Plan My Trip
-                </button>
-                <p class="text-sm text-gray-500 mt-4">By submitting, you agree to our terms and conditions</p>
-            </div>
-
-            <!-- Trip Summary Section (Hidden until submission) -->
-            <div id="summarySection" class="hidden">
-                <div class="bg-gradient-premium text-white p-8 rounded-3xl mb-8">
-                    <div class="flex items-center gap-3 mb-4">
-                        <i data-lucide="check-circle" class="w-8 h-8"></i>
-                        <h3 class="text-3xl font-extrabold">Trip Confirmed!</h3>
-                    </div>
-                    <p class="text-lg opacity-90">Your trip has been successfully planned. Your booking ID is: <span id="bookingId" class="font-bold">PMT-7829410</span></p>
-                </div>
-
-                <!-- Trip Summary Card -->
-                <div class="glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all mb-8">
-                    <h3 class="text-2xl font-extrabold text-slate-800 mb-6">Trip Summary</h3>
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                <i data-lucide="map-pin" class="w-6 h-6 text-indigo-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-bold uppercase">Destination</p>
-                                <p id="summaryDestination" class="text-lg font-bold text-slate-800">Goa</p>
-                            </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Destination</label>
+                            <input type="text" id="destination" class="form-input" placeholder="e.g., Goa, Leh, Kerala" required>
                         </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <i data-lucide="calendar" class="w-6 h-6 text-blue-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-bold uppercase">Duration</p>
-                                <p id="summaryDuration" class="text-lg font-bold text-slate-800">5 Days</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                                <i data-lucide="users" class="w-6 h-6 text-green-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-bold uppercase">Travelers</p>
-                                <p id="summaryTravelers" class="text-lg font-bold text-slate-800">2 People</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                                <i data-lucide="wallet" class="w-6 h-6 text-yellow-600"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-gray-400 font-bold uppercase">Budget</p>
-                                <p id="summaryBudget" class="text-lg font-bold text-slate-800">₹10,000</p>
-                            </div>
+                        <div class="form-group">
+                            <label class="form-label">Number of Travelers</label>
+                            <select id="travelers" class="form-select" required>
+                                <option value="">Select travelers</option>
+                                <option value="1">1 Person</option>
+                                <option value="2">2 People</option>
+                                <option value="3">3 People</option>
+                                <option value="4">4 People</option>
+                                <option value="5">5+ People</option>
+                            </select>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <!-- Action Buttons -->
-                <div class="glass rounded-[2rem] shadow-xl p-6 md:p-10 mb-8 border border-white hover:shadow-2xl transition-all">
-                    <h3 class="text-2xl font-extrabold text-slate-800 mb-6">What would you like to do?</h3>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <button class="btn-action download-pdf flex items-center gap-3 bg-blue-50 hover:bg-blue-100 text-blue-700 px-6 py-4 rounded-2xl font-bold transition-all">
-                            <i data-lucide="download" class="w-5 h-5"></i>
-                            Download PDF
-                        </button>
-                        <button class="btn-action print-invoice flex items-center gap-3 bg-green-50 hover:bg-green-100 text-green-700 px-6 py-4 rounded-2xl font-bold transition-all">
-                            <i data-lucide="printer" class="w-5 h-5"></i>
-                            Print Invoice
-                        </button>
-                        <button class="btn-action download-itinerary flex items-center gap-3 bg-purple-50 hover:bg-purple-100 text-purple-700 px-6 py-4 rounded-2xl font-bold transition-all">
-                            <i data-lucide="map" class="w-5 h-5"></i>
-                            Download Itinerary
-                        </button>
-                        <button class="btn-action share-itinerary flex items-center gap-3 bg-orange-50 hover:bg-orange-100 text-orange-700 px-6 py-4 rounded-2xl font-bold transition-all">
-                            <i data-lucide="share" class="w-5 h-5"></i>
-                            Share Itinerary
-                        </button>
-                        <button class="btn-action rate-trip flex items-center gap-3 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-6 py-4 rounded-2xl font-bold transition-all">
-                            <i data-lucide="star" class="w-5 h-5"></i>
-                            Rate Trip
-                        </button>
-                        <button class="btn-action rebook-trip flex items-center gap-3 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 px-6 py-4 rounded-2xl font-bold transition-all">
-                            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
-                            Rebook Trip
-                        </button>
-                        <button class="btn-action cancel-booking flex items-center gap-3 bg-red-50 hover:bg-red-100 text-red-700 px-6 py-4 rounded-2xl font-bold transition-all col-span-full md:col-span-1">
-                            <i data-lucide="x-circle" class="w-5 h-5"></i>
-                            Cancel Booking
-                        </button>
-                        <button class="btn-action back-home flex items-center gap-3 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-4 rounded-2xl font-bold transition-all col-span-full md:col-span-1">
-                            <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                            Back to Home
-                        </button>
+                <!-- Personal Information Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon blue"><i data-lucide="user" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Personal Information</h2>
                     </div>
-                </div>
-            </div>
-        </form>
-    </main>
-
-    <!-- Download PDF Modal -->
-    <div id="pdfModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Download as PDF</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6">
-                    <p class="text-sm text-blue-800">Your trip details will be downloaded as a PDF file containing accommodation, food, and payment information.</p>
-                </div>
-                <div class="flex gap-4">
-                    <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                        Cancel
-                    </button>
-                    <button id="confirmPdfDownload" class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-blue-700 transition-colors">
-                        <i data-lucide="download" class="w-5 h-5 inline mr-2"></i>
-                        Download PDF
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Print Invoice Modal -->
-    <div id="printModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Print Invoice</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
-                    <p class="text-sm text-green-800">Prepare your invoice for printing. You can customize page settings in the print dialog.</p>
-                </div>
-                <div class="flex gap-4">
-                    <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                        Cancel
-                    </button>
-                    <button id="confirmPrint" class="flex-1 bg-green-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-green-700 transition-colors">
-                        <i data-lucide="printer" class="w-5 h-5 inline mr-2"></i>
-                        Print Now
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Download Itinerary Modal -->
-    <div id="itineraryDownloadModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Download Itinerary</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4 mb-6">
-                    <p class="text-sm text-purple-800">Download your detailed day-by-day itinerary including activities, accommodation, and food information.</p>
-                </div>
-                <div class="flex gap-4">
-                    <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                        Cancel
-                    </button>
-                    <button id="confirmItineraryDownload" class="flex-1 bg-purple-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-purple-700 transition-colors">
-                        <i data-lucide="download" class="w-5 h-5 inline mr-2"></i>
-                        Download
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Share Itinerary Modal -->
-    <div id="shareModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Share Itinerary</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="space-y-4 mb-6">
-                    <button class="share-btn share-email w-full flex items-center gap-3 bg-blue-50 hover:bg-blue-100 text-blue-700 p-4 rounded-2xl font-bold transition-colors">
-                        <i data-lucide="mail" class="w-5 h-5"></i>
-                        Share via Email
-                    </button>
-                    <button class="share-btn share-whatsapp w-full flex items-center gap-3 bg-green-50 hover:bg-green-100 text-green-700 p-4 rounded-2xl font-bold transition-colors">
-                        <i data-lucide="message-circle" class="w-5 h-5"></i>
-                        Share via WhatsApp
-                    </button>
-                    <button class="share-btn share-link w-full flex items-center gap-3 bg-purple-50 hover:bg-purple-100 text-purple-700 p-4 rounded-2xl font-bold transition-colors">
-                        <i data-lucide="link" class="w-5 h-5"></i>
-                        Copy Share Link
-                    </button>
-                </div>
-                <button class="close-modal w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                    Close
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rate Trip Modal -->
-    <div id="rateModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Rate Your Trip</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="mb-6">
-                    <h4 class="text-lg font-extrabold text-slate-800 mb-4">How was your trip?</h4>
-                    <div class="flex gap-2" id="starRating">
-                        <button class="star-btn text-gray-300 hover:text-yellow-400 text-4xl" data-rating="1">★</button>
-                        <button class="star-btn text-gray-300 hover:text-yellow-400 text-4xl" data-rating="2">★</button>
-                        <button class="star-btn text-gray-300 hover:text-yellow-400 text-4xl" data-rating="3">★</button>
-                        <button class="star-btn text-gray-300 hover:text-yellow-400 text-4xl" data-rating="4">★</button>
-                        <button class="star-btn text-gray-300 hover:text-yellow-400 text-4xl" data-rating="5">★</button>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="fullName" class="form-input" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" class="form-input" placeholder="+91 9876543210" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Age Group</label>
+                            <select id="ageGroup" class="form-select" required>
+                                <option value="">Select age group</option>
+                                <option value="18-25">18-25 years</option>
+                                <option value="26-35">26-35 years</option>
+                                <option value="36-50">36-50 years</option>
+                                <option value="51+">51+ years</option>
+                            </select>
+                        </div>
                     </div>
-                    <p class="text-sm text-slate-600 mt-2" id="ratingText">Click to rate</p>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Share your experience</label>
-                    <textarea id="reviewText" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm" placeholder="Tell us about your trip..."></textarea>
-                </div>
-                <div class="flex gap-4">
-                    <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                        Skip
-                    </button>
-                    <button id="submitRating" class="flex-1 bg-yellow-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-yellow-700 transition-colors">
-                        <i data-lucide="send" class="w-5 h-5 inline mr-2"></i>
-                        Submit Review
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+                </section>
 
-    <!-- Rebook Trip Modal -->
-    <div id="rebookModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Rebook Trip</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="space-y-4 mb-6">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">New Check-in Date</label>
-                        <input type="date" id="rebookCheckIn" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm">
+                <!-- Travel Dates Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon amber"><i data-lucide="calendar" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Travel Dates</h2>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">New Check-out Date</label>
-                        <input type="date" id="rebookCheckOut" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Departure Date</label>
+                            <input type="date" id="departureDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Return Date</label>
+                            <input type="date" id="returnDate" class="form-input" required>
+                        </div>
                     </div>
-                </div>
-                <div class="flex gap-4">
-                    <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                        Cancel
-                    </button>
-                    <button id="submitRebook" class="flex-1 bg-cyan-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-cyan-700 transition-colors">
-                        <i data-lucide="calendar" class="w-5 h-5 inline mr-2"></i>
-                        Confirm Rebook
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trip Duration</label>
+                        <p id="tripDuration" class="text-slate-600 font-semibold">Select dates to see duration</p>
+                    </div>
+                </section>
 
-    <!-- Cancel Booking Modal -->
-    <div id="cancelModal" class="fixed inset-0 modal-overlay hidden z-50">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="modal-content rounded-3xl max-w-2xl w-full p-8 shadow-2xl">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-extrabold text-slate-800">Cancel Booking</h2>
-                    <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="bg-red-50 border border-red-200 rounded-2xl p-6 mb-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
-                        <h3 class="text-lg font-extrabold text-red-800">Cancellation Policy</h3>
+                <!-- Budget Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon rose"><i data-lucide="wallet" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Budget</h2>
                     </div>
-                    <ul class="text-sm text-red-700 space-y-2">
-                        <li>• <strong>30+ days before departure:</strong> Full refund</li>
-                        <li>• <strong>15-30 days before departure:</strong> 70% refund</li>
-                        <li>• <strong>7-14 days before departure:</strong> 50% refund</li>
-                        <li>• <strong>Less than 7 days:</strong> No refund</li>
-                    </ul>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Reason for Cancellation</label>
-                    <select id="cancelReason" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-cyan-400 bg-white/60 backdrop-blur-sm">
-                        <option value="">Select a reason</option>
-                        <option value="change_dates">Change of travel dates</option>
-                        <option value="personal_emergency">Personal emergency</option>
-                        <option value="health_issues">Health issues</option>
-                        <option value="financial_issues">Financial issues</option>
-                        <option value="other">Other reason</option>
-                    </select>
-                </div>
-                <div class="flex gap-4">
-                    <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                        Keep Booking
-                    </button>
-                    <button id="confirmCancel" class="flex-1 bg-red-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-red-700 transition-colors">
-                        <i data-lucide="x-circle" class="w-5 h-5 inline mr-2"></i>
-                        Confirm Cancellation
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Budget Range (per person)</label>
+                            <select id="budgetRange" class="form-select" required>
+                                <option value="">Select budget</option>
+                                <option value="5000-10000">₹5,000 - ₹10,000</option>
+                                <option value="10000-20000">₹10,000 - ₹20,000</option>
+                                <option value="20000-35000">₹20,000 - ₹35,000</option>
+                                <option value="35000-50000">₹35,000 - ₹50,000</option>
+                                <option value="50000+">₹50,000+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Currency</label>
+                            <select id="currency" class="form-select" required>
+                                <option value="INR">Indian Rupee (INR)</option>
+                                <option value="USD">US Dollar (USD)</option>
+                                <option value="EUR">Euro (EUR)</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-            <p>&copy; 2024 PlanMyTrip. All rights reserved.</p>
-        </div>
-    </footer>
+                <!-- Accommodation Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon blue"><i data-lucide="home" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Accommodation Preferences</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Accommodation Type</label>
+                            <select id="accommodationType" class="form-select" required>
+                                <option value="">Select type</option>
+                                <option value="budget">Budget (Hostel/Guesthouse)</option>
+                                <option value="standard">Standard (3-star Hotel)</option>
+                                <option value="premium">Premium (4-5 star Hotel)</option>
+                                <option value="luxury">Luxury (Resort/Villa)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Room Type</label>
+                            <select id="roomType" class="form-select" required>
+                                <option value="">Select room type</option>
+                                <option value="single">Single Room</option>
+                                <option value="double">Double Room</option>
+                                <option value="triple">Triple Room</option>
+                                <option value="suite">Suite</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Special Requirements</label>
+                        <textarea id="accommodationNotes" rows="3" class="form-textarea" placeholder="Any special accommodation needs..."></textarea>
+                    </div>
+                </section>
+
+                <!-- Food Preferences Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon amber"><i data-lucide="utensils" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Food Preferences</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Meal Plan</label>
+                            <select id="mealPlan" class="form-select" required>
+                                <option value="">Select meal plan</option>
+                                <option value="none">No meals included</option>
+                                <option value="breakfast">Breakfast only</option>
+                                <option value="half-board">Breakfast + Dinner</option>
+                                <option value="full-board">All meals included</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dietary Restrictions</label>
+                            <select id="dietaryRestrictions" class="form-select">
+                                <option value="none">No restrictions</option>
+                                <option value="vegetarian">Vegetarian</option>
+                                <option value="vegan">Vegan</option>
+                                <option value="gluten-free">Gluten-free</option>
+                                <option value="halal">Halal</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Food Preferences</label>
+                        <textarea id="foodNotes" rows="3" class="form-textarea" placeholder="Any specific food preferences or allergies..."></textarea>
+                    </div>
+                </section>
+
+                <!-- Payment Section -->
+                <section class="surface panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="soft-icon rose"><i data-lucide="credit-card" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black">Payment Information</h2>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Payment Method</label>
+                            <select id="paymentMethod" class="form-select" required>
+                                <option value="">Select payment method</option>
+                                <option value="card">Credit/Debit Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="netbanking">Net Banking</option>
+                                <option value="wallet">Digital Wallet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Booking Type</label>
+                            <select id="bookingType" class="form-select" required>
+                                <option value="">Select booking type</option>
+                                <option value="full">Full Payment</option>
+                                <option value="partial">Partial Payment (20%)</option>
+                                <option value="installment">Installment Plan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="info" class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-sm text-blue-800 font-medium">
+                                Your payment information is secure and encrypted. You can pay the remaining balance upon trip confirmation.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="submit-btn">
+                        <i data-lucide="rocket" class="w-5 h-5"></i>
+                        Plan My Trip
+                    </button>
+                    <p class="text-sm text-slate-500 mt-4">By submitting, you agree to our terms and conditions</p>
+                </div>
+            </form>
+        </main>
+    </div>
 
     <script>
         lucide.createIcons();
 
-        
-        const menuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuToggle && mobileMenu) {
-            menuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
-        
-        // Form handling
-        const tripForm = document.getElementById('tripForm');
-        const departureDate = document.getElementById('departureDate');
-        const returnDate = document.getElementById('returnDate');
-        const tripDuration = document.getElementById('tripDuration');
-        const submitSection = document.getElementById('submitSection');
-        const summarySection = document.getElementById('summarySection');
-
-        // Modal references
-        const modals = {
-            pdf: document.getElementById('pdfModal'),
-            print: document.getElementById('printModal'),
-            itinerary: document.getElementById('itineraryDownloadModal'),
-            share: document.getElementById('shareModal'),
-            rate: document.getElementById('rateModal'),
-            rebook: document.getElementById('rebookModal'),
-            cancel: document.getElementById('cancelModal')
-        };
-
-        // Close modal buttons
-        document.querySelectorAll('.close-modal').forEach(button => {
-            button.addEventListener('click', () => {
-                Object.values(modals).forEach(modal => modal.classList.add('hidden'));
-            });
-        });
-
-        // Close modal when clicking outside
-        Object.values(modals).forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                }
-            });
-        });
-
-        // Calculate trip duration
-        function calculateDuration() {
-            const start = new Date(departureDate.value);
-            const end = new Date(returnDate.value);
-            if (start && end && end > start) {
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                tripDuration.textContent = `${diffDays} days`;
-            } else {
-                tripDuration.textContent = 'Select dates to see duration';
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
             }
         }
 
-        departureDate.addEventListener('change', calculateDuration);
-        returnDate.addEventListener('change', calculateDuration);
+        // Calculate trip duration
+        document.getElementById('departureDate').addEventListener('change', calculateDuration);
+        document.getElementById('returnDate').addEventListener('change', calculateDuration);
 
-        // Form submission
-        tripForm.addEventListener('submit', function(e) {
+        function calculateDuration() {
+            const departure = document.getElementById('departureDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+            
+            if (departure && returnDate) {
+                const start = new Date(departure);
+                const end = new Date(returnDate);
+                const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                document.getElementById('tripDuration').textContent = `${days} Day${days > 1 ? 's' : ''}`;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('tripForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const destination = document.getElementById('destination').value;
-            const travelers = document.getElementById('travelers').value;
-            const departDateVal = document.getElementById('departureDate').value;
-            const returnDateVal = document.getElementById('returnDate').value;
-            const budgetRange = document.getElementById('budgetRange').value;
-
-            // Collect full form data
+            
+            // Get form data
             const formData = {
-                destination: destination,
-                travelers: travelers,
+                destination: document.getElementById('destination').value,
+                travelers: document.getElementById('travelers').value,
                 fullName: document.getElementById('fullName').value,
                 email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
                 ageGroup: document.getElementById('ageGroup').value,
-                departureDate: departDateVal,
-                returnDate: returnDateVal,
-                budgetRange: budgetRange,
+                departureDate: document.getElementById('departureDate').value,
+                returnDate: document.getElementById('returnDate').value,
+                budgetRange: document.getElementById('budgetRange').value,
                 currency: document.getElementById('currency').value,
                 accommodationType: document.getElementById('accommodationType').value,
                 roomType: document.getElementById('roomType').value,
-                accommodationNotes: document.getElementById('accommodationNotes').value,
                 mealPlan: document.getElementById('mealPlan').value,
                 dietaryRestrictions: document.getElementById('dietaryRestrictions').value,
-                foodNotes: document.getElementById('foodNotes').value,
                 paymentMethod: document.getElementById('paymentMethod').value,
-                bookingType: document.getElementById('bookingType').value,
-                submittedAt: new Date().toISOString()
+                bookingType: document.getElementById('bookingType').value
             };
 
-            // Validation
-            if (!departDateVal || !returnDateVal) {
-                alert('Please select both departure and return dates.');
-                return;
-            }
+            // Save to backend
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = (user ? user.email : null) || formData.email || 'guest@example.com';
 
-            if (new Date(departDateVal) >= new Date(returnDateVal)) {
-                alert('Return date must be after departure date.');
-                return;
-            }
-
-            // Calculate days
-            const start = new Date(departDateVal);
-            const end = new Date(returnDateVal);
-            const diffTime = Math.abs(end - start);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            // Store form data globally for modals
-            window.tripData = formData;
-
-            // Update summary
-            document.getElementById('summaryDestination').textContent = destination;
-            document.getElementById('summaryDuration').textContent = diffDays + ' Days';
-            document.getElementById('summaryTravelers').textContent = travelers + ' People';
-            document.getElementById('summaryBudget').textContent = budgetRange;
-
-            // Log data
-            console.log('Trip planning data:', formData);
-
-            // Show summary, hide form
-            submitSection.classList.add('hidden');
-            summarySection.classList.remove('hidden');
-
-            // Scroll to summary
-            summarySection.scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Action buttons
-        document.querySelectorAll('.download-pdf').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.pdf.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.print-invoice').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.print.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.download-itinerary').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.itinerary.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.share-itinerary').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.share.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.rate-trip').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.rate.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.rebook-trip').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.rebook.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.cancel-booking').forEach(btn => {
-            btn.addEventListener('click', () => {
-                modals.cancel.classList.remove('hidden');
-            });
-        });
-
-        document.querySelectorAll('.back-home').forEach(btn => {
-            btn.addEventListener('click', () => {
-                window.location.href = 'index.html';
-            });
-        });
-
-        // PDF Download
-        document.getElementById('confirmPdfDownload').addEventListener('click', () => {
-            alert('PDF downloaded successfully!\nFile: Trip-Details-' + new Date().getTime() + '.pdf');
-            modals.pdf.classList.add('hidden');
-        });
-
-        // Print Invoice
-        document.getElementById('confirmPrint').addEventListener('click', () => {
-            window.print();
-            modals.print.classList.add('hidden');
-        });
-
-        // Download Itinerary
-        document.getElementById('confirmItineraryDownload').addEventListener('click', () => {
-            alert('Itinerary downloaded successfully!\nFile: Travel-Itinerary-' + new Date().getTime() + '.pdf');
-            modals.itinerary.classList.add('hidden');
-        });
-
-        // Share Itinerary
-        document.querySelectorAll('.share-email').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const email = window.tripData?.email || '';
-                alert('Email share link sent to: ' + email);
-                modals.share.classList.add('hidden');
-            });
-        });
-
-        document.querySelectorAll('.share-whatsapp').forEach(btn => {
-            btn.addEventListener('click', () => {
-                alert('WhatsApp share link copied to clipboard!');
-                modals.share.classList.add('hidden');
-            });
-        });
-
-        document.querySelectorAll('.share-link').forEach(btn => {
-            btn.addEventListener('click', () => {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Share link copied to clipboard!');
-                modals.share.classList.add('hidden');
-            });
-        });
-
-        // Rate Trip
-        let currentRating = 0;
-        const starButtons = document.querySelectorAll('.star-btn');
-        const ratingText = document.getElementById('ratingText');
-
-        starButtons.forEach((star, index) => {
-            star.addEventListener('click', () => {
-                currentRating = index + 1;
-                updateStarDisplay(currentRating);
-                updateRatingText(currentRating);
-            });
-
-            star.addEventListener('mouseenter', () => {
-                updateStarDisplay(index + 1);
-            });
-
-            star.addEventListener('mouseleave', () => {
-                updateStarDisplay(currentRating);
-            });
-        });
-
-        function updateStarDisplay(rating) {
-            starButtons.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.remove('text-gray-300');
-                    star.classList.add('text-yellow-400');
-                } else {
-                    star.classList.remove('text-yellow-400');
-                    star.classList.add('text-gray-300');
-                }
-            });
-        }
-
-        function updateRatingText(rating) {
-            const texts = {
-                0: 'Click to rate',
-                1: 'Poor',
-                2: 'Fair',
-                3: 'Good',
-                4: 'Very Good',
-                5: 'Excellent!'
+            const newBooking = {
+                id: 'PMT' + Date.now(),
+                type: 'trip',
+                status: 'Upcoming',
+                title: `Trip to ${formData.destination}`,
+                date: formData.departureDate,
+                details: `${formData.travelers} Traveler(s) • ${formData.budgetRange} ${formData.currency}`,
+                amount: 'Custom'
             };
-            ratingText.textContent = texts[rating];
-        }
 
-        document.getElementById('submitRating').addEventListener('click', () => {
-            if (currentRating === 0) {
-                alert('Please select a rating');
-                return;
-            }
-            alert('Thank you! Your rating has been submitted.');
-            modals.rate.classList.add('hidden');
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, booking: newBooking })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pmtNotif.success("Trip Confirmed!", "Your personalized trip plan has been saved successfully.");
+                setTimeout(() => {
+                    window.location.href = 'bookings.html?new=true';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btn.disabled = false;
+                lucide.createIcons();
+                pmtNotif.error("Planning Failed", "We couldn't save your trip plan. Please check your connection.");
+            });
         });
 
-        // Rebook Trip
-        document.getElementById('submitRebook').addEventListener('click', () => {
-            const checkIn = document.getElementById('rebookCheckIn').value;
-            const checkOut = document.getElementById('rebookCheckOut').value;
-
-            if (!checkIn || !checkOut) {
-                alert('Please select both dates');
-                return;
+        // Initialize Google Maps Autocomplete
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof initAutocomplete === 'function') {
+                initAutocomplete('destination');
             }
-
-            if (new Date(checkIn) >= new Date(checkOut)) {
-                alert('Check-out date must be after check-in date');
-                return;
-            }
-
-            alert('Rebooking request submitted! You will receive confirmation within 24 hours.');
-            modals.rebook.classList.add('hidden');
-        });
-
-        // Cancel Booking
-        document.getElementById('confirmCancel').addEventListener('click', () => {
-            const reason = document.getElementById('cancelReason').value;
-
-            if (!reason) {
-                alert('Please select a cancellation reason');
-                return;
-            }
-
-            alert('Your booking cancellation request has been submitted.\nRefund will be processed within 5-7 business days.');
-            modals.cancel.classList.add('hidden');
         });
     </script>
 </body>

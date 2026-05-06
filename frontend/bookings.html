@@ -3,1460 +3,818 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bookings - PlanMyTrip</title>
+    <title>My Bookings | PlanMyTrip</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Tools -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/maps.js"></script>
+
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, .font-outfit { font-family: 'Outfit', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); }
-        .bg-gradient-premium { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .animate-pulse-subtle { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        
-        .booking-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid rgba(255,255,255,0.8); }
-        .booking-card:hover { transform: translateY(-8px); box-shadow: 0 30px 60px -10px rgba(79, 70, 229, 0.15); border-color: rgba(79, 70, 229, 0.1); }
-        
-        .fade-in { animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #0ea5e9;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.85);
+            --border: rgba(226, 232, 240, 0.8);
+        }
 
-        .tab-btn { transition: all 0.3s ease; }
-        .tab-btn.active { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); color: white; box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3); }
-        .tab-btn:not(.active):hover { background: rgba(79, 70, 229, 0.05); color: #4f46e5; }
-
-        /* Modal Animations */
-        .modal-overlay { animation: fadeInOverlay 0.3s ease-out; }
-        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { animation: slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes slideUpModal { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        * { box-sizing: border-box; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--ink);
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Premium Nav Bar */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        
+        .nav-link.active {
+            position: relative;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .user-pill {
+            background: #e0e7ff;
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Layout */
+        .dashboard-layout {
+            max-width: 1200px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+        }
+
+        /* Sidebar Filters */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.02), 0 4px 6px -2px rgba(0,0,0,0.01);
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .filter-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 1rem;
+            color: var(--muted);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            margin-bottom: 0.4rem;
+        }
+
+        .filter-btn:hover { background: #f8fafc; color: var(--ink); }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        .header-group h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 900;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+        }
+
+        .header-group p {
+            color: var(--muted);
+            font-size: 1.05rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Booking Cards */
+        .bookings-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 2rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border-color: var(--primary);
+        }
+
+        .icon-box {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .booking-card:hover .icon-box { transform: scale(1.1) rotate(-5deg); }
+
+        .type-flight { background: #e0e7ff; color: #4338ca; }
+        .type-hotel { background: #fdf4ff; color: #a21caf; }
+        .type-bus { background: #dcfce7; color: #15803d; }
+        .type-train { background: #fee2e2; color: #b91c1c; }
+        .type-trip { background: #fff7ed; color: #c2410c; }
+
+        .booking-content { flex: 1; min-width: 0; }
+
+        .booking-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-upcoming { background: #dcfce7; color: #166534; }
+        .status-past { background: #f1f5f9; color: #475569; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+
+        .details-row {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .booking-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+            min-width: 140px;
+        }
+
+        .price-tag {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .action-btn {
+            padding: 0.6rem 1.15rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: fit-content;
+        }
+
+        .btn-view { background: #f1f5f9; color: var(--ink); }
+        .btn-view:hover { background: #e2e8f0; }
+
+        .btn-cancel { background: #fff1f2; color: #e11d48; }
+        .btn-cancel:hover { background: #ffe4e6; }
+
+        .btn-sell { background: #fefce8; color: #a16207; border: 1px solid #fef08a; }
+        .btn-sell:hover { background: #fef9c3; }
+
+        .btn-rebook { background: var(--primary); color: white; }
+        .btn-rebook:hover { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4); }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 2rem;
+            padding: 5rem 2rem;
+            text-align: center;
+            border: 2px dashed var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .empty-icon {
+            width: 5rem;
+            height: 5rem;
+            background: #f1f5f9;
+            color: #94a3b8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .empty-title { font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem; }
+        .empty-subtitle { color: var(--muted); font-weight: 500; margin-bottom: 2.5rem; max-width: 25rem; line-height: 1.6; }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 3rem;
+            font-weight: 800;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3); }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal-container {
+            background: white;
+            border-radius: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-header {
+            padding: 2rem 2.5rem 1.5rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; }
+
+        .modal-body { padding: 0 2.5rem 2.5rem 2.5rem; }
+
+        .itinerary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .itinerary-label { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+        .itinerary-value { font-weight: 800; color: var(--ink); }
+
+        .sell-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .sell-input:focus { border-color: var(--primary); }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 1.15rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 1.25rem;
+            font-weight: 800;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-confirm:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        @media (max-width: 640px) {
+            .nav-bar { padding: 0.75rem 1rem; }
+            .nav-links { display: none; }
+            .booking-card { flex-direction: column; align-items: flex-start; }
+            .booking-actions { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 1rem; margin-top: 0.5rem; }
+        }
     </style>
 </head>
-<body class="bg-indigo-50/20 min-h-screen flex flex-col relative overflow-x-hidden">
-    <!-- Premium Header & Navigation -->
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100/50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-4">
-            <!-- Logo -->
-            <a href="../index.html" class="flex items-center gap-2.5 group flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-300/40 transition-transform group-hover:scale-110">
-                    <i data-lucide="plane" class="w-5 h-5 text-white"></i>
-                </div>
-                <span class="text-xl font-extrabold" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                    PlanMyTrip
-                </span>
-            </a>
+<body>
 
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center gap-1">
-                <a id="nav-home" href="../index.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="home" class="w-4 h-4"></i> Home
-                </a>
-                <a id="nav-destinations" href="../destination.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-                </a>
-                <a id="nav-about" href="mission.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="info" class="w-4 h-4"></i> Mission
-                </a>
-                <a id="nav-bookings" href="bookings.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-indigo-600 bg-indigo-50 font-semibold transition-all">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-                </a>
-                <a id="nav-referrals" href="referral.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-                </a>
-                <a href="plannewtrip.html" class="ml-3 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-md shadow-indigo-300/40 transition-all hover:scale-105 bg-gradient-premium">
-                    <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Plan Trip
-                </a>
-            </nav>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link active"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
+        </div>
+    </nav>
 
-            <!-- Right side -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
-                    <i data-lucide="user-circle" class="w-4 h-4 text-indigo-500"></i>
-                    <span class="text-xs font-bold text-indigo-700 max-w-[80px] truncate" id="user-id-display">User</span>
-                </div>
-                <a href="logout.html" title="Logout" class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-semibold py-1.5 px-3 rounded-xl transition-all text-sm border border-red-100">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Logout</span>
-                </a>
-                <a href="users.html"><img class="user-avatar w-9 h-9 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all" src="https://placehold.co/40x40/4F46E5/FFFFFF?text=SR" alt="User Avatar" id="user-avatar-img"></a>
-                <!-- Hamburger -->
-                <button id="mobile-menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-xl text-gray-600" style="background:rgba(79,70,229,0.07);border:1.5px solid rgba(79,70,229,0.12);">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-title"><i data-lucide="layers" class="w-4 h-4"></i> Filter Trips</div>
+                <button class="filter-btn active" data-status="Upcoming">
+                    <i data-lucide="calendar-clock" class="w-5 h-5"></i> Upcoming
+                </button>
+                <button class="filter-btn" data-status="Past">
+                    <i data-lucide="history" class="w-5 h-5"></i> Past Trips
+                </button>
+                <button class="filter-btn" data-status="Cancelled">
+                    <i data-lucide="ban" class="w-5 h-5"></i> Cancelled
+                </button>
+                <button class="filter-btn" data-status="Marketplace">
+                    <i data-lucide="shopping-bag" class="w-5 h-5"></i> Marketplace
                 </button>
             </div>
-        </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden animate-slide-down mx-4 mb-3 p-3 space-y-1" style="background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-radius:1rem;border:1px solid rgba(79,70,229,0.1);box-shadow:0 8px 32px rgba(79,70,229,0.1);">
-            <a id="nav-home-mobile" href="../index.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="home" class="w-4 h-4"></i> Home
-            </a>
-            <a id="nav-destinations-mobile" href="../destination.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-            </a>
-            <a id="nav-about-mobile" href="mission.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="info" class="w-4 h-4"></i> Our Mission
-            </a>
-            <a id="nav-bookings-mobile" href="bookings.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-            </a>
-            <a id="nav-referrals-mobile" href="referral.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-            </a>
-        </div>
-    </header>
+            <div class="sidebar-card">
+                <div class="sidebar-title"><i data-lucide="zap" class="w-4 h-4"></i> Inspiration</div>
+                <p class="text-xs font-medium text-slate-500 mb-4 leading-relaxed">Planning a trip increases happiness by up to 10% before you even leave!</p>
+                <a href="plannewtrip.html" class="cta-button text-sm py-3 px-6 rounded-xl block text-center">
+                    New Adventure
+                </a>
+            </div>
+        </aside>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
-        <!-- Hero Section -->
-        <div class="relative overflow-hidden mb-12 p-8 md:p-14 rounded-[2.5rem] shadow-2xl bg-gradient-to-br from-indigo-900 via-indigo-800 to-blue-900 text-white fade-in" style="border: 1px solid rgba(255,255,255,0.1);">
-            <div class="absolute -top-32 -right-32 w-[30rem] h-[30rem] bg-cyan-400/20 rounded-full blur-[100px] pointer-events-none"></div>
-            <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-            
-            <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
-                <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-5 bg-white/10 border border-white/20 text-cyan-200">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Manage Your Journeys
-                    </div>
-                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-4 tracking-tight" style="line-height:1.1;">Your Travel<br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-indigo-300">Command Center</span></h1>
-                    <p class="text-indigo-100 text-lg md:text-xl font-medium max-w-lg opacity-90">Review upcoming adventures, cherish past memories, and manage your travel history effortlessly.</p>
-                </div>
-                <div class="flex-shrink-0 animate-slide-down" style="animation-delay:0.3s;">
-                    <a href="plannewtrip.html" class="group bg-white text-indigo-900 px-8 py-4 rounded-2xl font-black shadow-[0_15px_30px_rgba(0,0,0,0.2)] hover:shadow-[0_20px_40px_rgba(255,255,255,0.3)] transition-all hover:scale-105 flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center group-hover:rotate-90 transition-transform duration-500">
-                            <i data-lucide="plus" class="w-5 h-5 text-indigo-600"></i>
-                        </div>
-                        Craft New Journey
-                    </a>
+        <main class="main-content">
+            <div class="header-group">
+                <h1 id="greeting">Hello Traveler!</h1>
+                <p>Ready for your next journey? Your travel world in one view.</p>
+            </div>
+
+            <!-- Map View -->
+            <div id="bookings-map-container" class="mt-8 h-48 rounded-3xl overflow-hidden border border-slate-200 hidden relative group">
+                <div id="bookings-map" class="w-full h-full bg-slate-100"></div>
+                <div class="absolute inset-0 pointer-events-none bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                <div class="absolute bottom-4 left-6 text-white font-bold text-sm flex items-center gap-2">
+                    <i data-lucide="map" class="w-4 h-4"></i> Your Travel Map
                 </div>
             </div>
-        </div>
 
-        <!-- Bookings Tabs -->
-        <div class="flex gap-2 md:gap-4 mb-10 p-2 bg-white/60 backdrop-blur-xl shadow-xl shadow-indigo-100/50 rounded-[1.5rem] w-full md:w-fit overflow-x-auto border border-white fade-in" style="animation-delay: 0.1s;">
-            <button class="tab-btn active px-6 md:px-8 py-3.5 rounded-xl font-bold whitespace-nowrap" data-tab="upcoming">
-                <i data-lucide="clock" class="inline w-4 h-4 mr-2 mb-0.5"></i>Upcoming
-            </button>
-            <button class="tab-btn px-6 md:px-8 py-3.5 rounded-xl font-bold text-gray-500 whitespace-nowrap" data-tab="past">
-                <i data-lucide="check-circle-2" class="inline w-4 h-4 mr-2 mb-0.5"></i>Past Trips
-            </button>
-            <button class="tab-btn px-6 md:px-8 py-3.5 rounded-xl font-bold text-gray-500 whitespace-nowrap" data-tab="cancelled">
-                <i data-lucide="x-circle" class="inline w-4 h-4 mr-2 mb-0.5"></i>Cancelled
-            </button>
-        </div>
-
-        <!-- Upcoming Trips Tab -->
-        <div id="upcoming" class="tab-content active">
-            <div class="grid gap-6 md:gap-8">
-                <!-- Sample Upcoming Booking Card -->
-                <div class="booking-card glass bg-white/80 rounded-3xl shadow-xl overflow-hidden group fade-in hover:bg-white/95">
-                    <div class="flex flex-col lg:flex-row">
-                        <!-- Image/Destination Info -->
-                        <div class="lg:w-1/3 relative">
-                            <img src="https://images.pexels.com/photos/19160083/pexels-photo-19160083.jpeg" alt="Destination" class="w-full h-full object-cover min-h-[200px] md:min-h-[250px]">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
-                                <span class="px-3 py-1 bg-indigo-600 rounded-full text-xs font-bold mb-2 inline-block">5 NIGHTS</span>
-                                <h3 class="text-xl md:text-2xl font-extrabold">Leh-Ladakh Adventure</h3>
-                            </div>
-                        </div>
-
-                        <!-- Details & Tracking -->
-                        <div class="lg:w-2/3 p-6 md:p-8">
-                            <div class="flex flex-wrap justify-between items-start mb-6 md:mb-8 gap-4">
-                                <div class="space-y-1">
-                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">BOOKING ID</p>
-                                    <p class="text-lg font-bold text-gray-800">PMT-7829410</p>
-                                </div>
-                                <div class="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl border border-emerald-100 italic">
-                                    <span class="status-dot bg-emerald-500 animate-pulse-subtle"></span>
-                                    <span class="font-bold">Booking Confirmed</span>
-                                </div>
-                            </div>
-
-                            <div class="grid sm:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="calendar" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">DATE</p>
-                                        <p class="text-sm font-bold">Nov 01, 2025</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">TRAVELERS</p>
-                                        <p class="text-sm font-bold">2 Persons</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="wallet" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">TOTAL PAID</p>
-                                        <p class="text-sm font-bold text-indigo-600">₹ 45,600.00</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Tracking Bar -->
-                            <div class="relative pt-1">
-                                <div class="flex mb-4 items-center justify-between">
-                                    <div>
-                                        <span class="text-xs font-bold inline-block py-1 px-3 uppercase rounded-full text-indigo-600 bg-indigo-200">
-                                            Logistics Setup
-                                        </span>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-xs font-bold inline-block text-indigo-600">
-                                            65% Complete
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-indigo-100">
-                                    <div style="width:65%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500 transition-all duration-500"></div>
-                                </div>
-                                <p class="text-xs text-gray-500 italic">
-                                    <i data-lucide="info" class="w-3.5 h-3.5 inline mr-1"></i>
-                                    Your guide, Ravi Singh, will contact you 24 hours before pickup.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Actions -->
-                    <div class="bg-gray-50 px-6 md:px-8 py-4 flex flex-wrap justify-between items-center gap-4 border-t border-gray-100">
-                        <div class="flex flex-wrap gap-4">
-                            <button class="view-invoice flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                <i data-lucide="file-text" class="w-4 h-4"></i> View Invoice
-                            </button>
-                            <button class="view-itinerary flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                <i data-lucide="map" class="w-4 h-4"></i> View Itinerary
-                            </button>
-                        </div>
-                        <button class="cancel-booking flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-700 transition-colors" 
-                                data-booking-id="PMT-7829410" 
-                                data-trip-name="Leh-Ladakh Adventure" 
-                                data-departure-date="2025-11-01" 
-                                data-total-paid="45600">
-                            <i data-lucide="x-circle" class="w-4 h-4"></i> Cancel Booking
-                        </button>
-                    </div>
-                </div>
+            <div id="bookingsList" class="bookings-grid">
+                <!-- Dynamically populated -->
             </div>
-        </div>
+        </main>
+    </div>
 
-        <!-- Past Trips Tab -->
-        <div id="past" class="tab-content">
-            <div class="grid gap-6 md:gap-8">
-                <!-- Sample Past Trip Card -->
-                <div class="booking-card glass bg-white/80 rounded-3xl shadow-xl overflow-hidden group fade-in hover:bg-white/95">
-                    <div class="flex flex-col lg:flex-row">
-                        <div class="lg:w-1/3 relative">
-                            <img src="https://images.pexels.com/photos/1583336/pexels-photo-1583336.jpeg" alt="Goa" class="w-full h-full object-cover min-h-[200px] md:min-h-[250px]">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
-                                <span class="px-3 py-1 bg-green-600 rounded-full text-xs font-bold mb-2 inline-block">COMPLETED</span>
-                                <h3 class="text-xl md:text-2xl font-extrabold">Goa Beach Paradise</h3>
-                            </div>
-                        </div>
-
-                        <div class="lg:w-2/3 p-6 md:p-8">
-                            <div class="flex flex-wrap justify-between items-start mb-6 md:mb-8 gap-4">
-                                <div class="space-y-1">
-                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">BOOKING ID</p>
-                                    <p class="text-lg font-bold text-gray-800">PMT-6728391</p>
-                                </div>
-                                <div class="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-xl border border-green-100 italic">
-                                    <span class="status-dot bg-green-500"></span>
-                                    <span class="font-bold">Trip Completed</span>
-                                </div>
-                            </div>
-
-                            <div class="grid sm:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="calendar" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">DATE</p>
-                                        <p class="text-sm font-bold">Aug 15, 2024</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">TRAVELERS</p>
-                                        <p class="text-sm font-bold">3 Persons</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="wallet" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">TOTAL PAID</p>
-                                        <p class="text-sm font-bold text-indigo-600">₹ 32,400.00</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-green-50 border border-green-200 rounded-2xl p-4">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <i data-lucide="star" class="w-5 h-5 text-yellow-500"></i>
-                                    <span class="font-bold text-green-800">Trip Rating: 4.8/5</span>
-                                </div>
-                                <p class="text-sm text-green-700 italic">"Amazing experience! The beaches were breathtaking and the local cuisine was incredible."</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 px-6 md:px-8 py-4 flex flex-wrap justify-between items-center gap-4 border-t border-gray-100">
-                        <div class="flex flex-wrap gap-4">
-                            <button class="view-invoice flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                <i data-lucide="file-text" class="w-4 h-4"></i> View Invoice
-                            </button>
-                            <button class="view-itinerary flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                <i data-lucide="map" class="w-4 h-4"></i> View Itinerary
-                            </button>
-                            <button class="rate-trip flex items-center gap-2 text-sm font-bold text-green-600 hover:text-green-700 transition-colors">
-                                <i data-lucide="star" class="w-4 h-4"></i> Rate Trip
-                            </button>
-                        </div>
-                    </div>
-                </div>
+    <!-- Modals -->
+    <div id="itineraryModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Trip Itinerary</h3>
+                <button onclick="closeModal('itineraryModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
-        </div>
-
-        <!-- Cancelled Trips Tab -->
-        <div id="cancelled" class="tab-content">
-            <div class="grid gap-6 md:gap-8">
-                <!-- Sample Cancelled Trip Card -->
-                <div class="booking-card glass bg-white/80 rounded-3xl shadow-xl overflow-hidden group fade-in hover:bg-white/95">
-                    <div class="flex flex-col lg:flex-row">
-                        <div class="lg:w-1/3 relative">
-                            <img src="https://images.pexels.com/photos/169211/pexels-photo-169211.jpeg" alt="Kerala" class="w-full h-full object-cover min-h-[200px] md:min-h-[250px] opacity-60">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            <div class="absolute bottom-4 md:bottom-6 left-4 md:left-6 text-white">
-                                <span class="px-3 py-1 bg-red-600 rounded-full text-xs font-bold mb-2 inline-block">CANCELLED</span>
-                                <h3 class="text-xl md:text-2xl font-extrabold">Kerala Backwaters</h3>
-                            </div>
-                        </div>
-
-                        <div class="lg:w-2/3 p-6 md:p-8">
-                            <div class="flex flex-wrap justify-between items-start mb-6 md:mb-8 gap-4">
-                                <div class="space-y-1">
-                                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">BOOKING ID</p>
-                                    <p class="text-lg font-bold text-gray-800">PMT-5894721</p>
-                                </div>
-                                <div class="flex items-center gap-2 bg-red-50 text-red-700 px-4 py-2 rounded-xl border border-red-100 italic">
-                                    <span class="status-dot bg-red-500"></span>
-                                    <span class="font-bold">Booking Cancelled</span>
-                                </div>
-                            </div>
-
-                            <div class="grid sm:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="calendar" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">ORIGINAL DATE</p>
-                                        <p class="text-sm font-bold">Mar 10, 2025</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">TRAVELERS</p>
-                                        <p class="text-sm font-bold">2 Persons</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                        <i data-lucide="wallet" class="w-5 h-5 text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-400 font-bold uppercase">REFUNDED</p>
-                                        <p class="text-sm font-bold text-green-600">₹ 28,500.00</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-red-50 border border-red-200 rounded-2xl p-4">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i>
-                                    <span class="font-bold text-red-800">Cancellation Reason</span>
-                                </div>
-                                <p class="text-sm text-red-700 italic">"Cancelled due to unforeseen circumstances. Full refund processed within 5-7 business days."</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 px-6 md:px-8 py-4 flex flex-wrap justify-between items-center gap-4 border-t border-gray-100">
-                        <div class="flex flex-wrap gap-4">
-                            <button class="view-invoice flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                <i data-lucide="file-text" class="w-4 h-4"></i> View Invoice
-                            </button>
-                            <button class="rebook-trip flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                <i data-lucide="refresh-cw" class="w-4 h-4"></i> Rebook Trip
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-100 py-8 md:py-12 mt-12 md:mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-            <p>&copy; 2024 PlanMyTrip. Registered travel logistics provider.</p>
-        </div>
-    </footer>
-
-    <!-- Invoice Modal -->
-    <div id="invoiceModal" class="fixed inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md hidden z-50 modal-overlay">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto modal-content shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-white/50">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900">Invoice Details</h2>
-                        <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-
-                    <div class="bg-gradient-premium text-white p-6 rounded-2xl mb-6">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-sm opacity-90">Invoice Number</p>
-                                <p class="text-xl font-bold">INV-PMT-7829410</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-sm opacity-90">Date Issued</p>
-                                <p class="text-lg font-bold">Oct 15, 2025</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4 mb-6">
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <div>
-                                <p class="font-bold text-gray-900">Leh-Ladakh Adventure Package</p>
-                                <p class="text-sm text-gray-500">5 Nights, 2 Travelers</p>
-                            </div>
-                            <p class="font-bold text-gray-900">₹ 35,000.00</p>
-                        </div>
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <div>
-                                <p class="font-bold text-gray-900">Transportation</p>
-                                <p class="text-sm text-gray-500">Flight + Local Transfers</p>
-                            </div>
-                            <p class="font-bold text-gray-900">₹ 12,000.00</p>
-                        </div>
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <div>
-                                <p class="font-bold text-gray-900">Accommodation</p>
-                                <p class="text-sm text-gray-500">4-Star Hotels</p>
-                            </div>
-                            <p class="font-bold text-gray-900">₹ 18,000.00</p>
-                        </div>
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <div>
-                                <p class="font-bold text-gray-900">Activities & Meals</p>
-                                <p class="text-sm text-gray-500">Guided Tours + Meals</p>
-                            </div>
-                            <p class="font-bold text-gray-900">₹ 8,000.00</p>
-                        </div>
-                        <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                            <div>
-                                <p class="font-bold text-gray-900">Service Charges</p>
-                                <p class="text-sm text-gray-500">Booking & Processing</p>
-                            </div>
-                            <p class="font-bold text-gray-900">₹ 2,400.00</p>
-                        </div>
-                        <div class="flex justify-between items-center py-3 border-b-2 border-gray-300">
-                            <div>
-                                <p class="font-bold text-gray-900">GST (18%)</p>
-                                <p class="text-sm text-gray-500">Goods & Services Tax</p>
-                            </div>
-                            <p class="font-bold text-gray-900">₹ 6,840.00</p>
-                        </div>
-                        <div class="flex justify-between items-center py-4 bg-gray-50 px-4 rounded-xl">
-                            <p class="text-xl font-extrabold text-gray-900">Total Amount</p>
-                            <p class="text-xl font-extrabold text-indigo-600">₹ 82,240.00</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6">
-                        <div class="flex items-center gap-3 mb-2">
-                            <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
-                            <span class="font-bold text-green-800">Payment Status: Paid</span>
-                        </div>
-                        <p class="text-sm text-green-700">Payment received via Credit Card ending in ****1234 on Oct 15, 2025</p>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <button class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-indigo-700 transition-colors">
-                            <i data-lucide="download" class="w-5 h-5 inline mr-2"></i>
-                            Download PDF
-                        </button>
-                        <button class="flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                            <i data-lucide="printer" class="w-5 h-5 inline mr-2"></i>
-                            Print Invoice
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div class="modal-body" id="itineraryContent"></div>
         </div>
     </div>
 
-    <!-- Itinerary Modal -->
-    <div id="itineraryModal" class="fixed inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md hidden z-50 modal-overlay">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white/95 backdrop-blur-xl rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto modal-content shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-white/50">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900">Trip Itinerary</h2>
-                        <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-
-                    <div class="bg-gradient-premium text-white p-6 rounded-2xl mb-8">
-                        <h3 class="text-2xl font-extrabold mb-2">Leh-Ladakh Adventure</h3>
-                        <p class="text-lg opacity-90">November 01-06, 2025 • 2 Travelers</p>
-                        <div class="flex items-center gap-4 mt-4">
-                            <span class="px-3 py-1 bg-white/20 rounded-full text-sm">5 Nights</span>
-                            <span class="px-3 py-1 bg-white/20 rounded-full text-sm">Adventure</span>
-                            <span class="px-3 py-1 bg-white/20 rounded-full text-sm">Cultural</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-6">
-                        <!-- Day 1 -->
-                        <div class="border border-gray-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                    <span class="font-extrabold text-indigo-600">1</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-extrabold text-gray-900">Day 1: Arrival in Leh</h4>
-                                    <p class="text-gray-600">November 01, 2025</p>
-                                </div>
-                            </div>
-                            <div class="ml-16 space-y-3">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="plane" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Flight arrival at Kushok Bakula Rimpochee Airport</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="car" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Airport transfer to hotel</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="home" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Check-in at Hotel Royal Palace</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="utensils" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Welcome dinner with local cuisine</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Day 2 -->
-                        <div class="border border-gray-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                    <span class="font-extrabold text-indigo-600">2</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-extrabold text-gray-900">Day 2: Leh Sightseeing</h4>
-                                    <p class="text-gray-600">November 02, 2025</p>
-                                </div>
-                            </div>
-                            <div class="ml-16 space-y-3">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="camera" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Visit Leh Palace & Shanti Stupa</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="map-pin" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Explore local markets and monasteries</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="utensils" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Traditional Ladakhi lunch</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Day 3 -->
-                        <div class="border border-gray-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                    <span class="font-extrabold text-indigo-600">3</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-extrabold text-gray-900">Day 3: Nubra Valley</h4>
-                                    <p class="text-gray-600">November 03, 2025</p>
-                                </div>
-                            </div>
-                            <div class="ml-16 space-y-3">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="mountain" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Drive to Nubra Valley via Khardung La Pass</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="camel" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Camel safari in the sand dunes</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="home" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Overnight stay in Nubra</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Day 4 -->
-                        <div class="border border-gray-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                    <span class="font-extrabold text-indigo-600">4</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-extrabold text-gray-900">Day 4: Pangong Lake</h4>
-                                    <p class="text-gray-600">November 04, 2025</p>
-                                </div>
-                            </div>
-                            <div class="ml-16 space-y-3">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="waves" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Visit Pangong Lake (3rd largest brackish lake)</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="sun" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Enjoy sunset at the lake</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="tent" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Camping experience</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Day 5 -->
-                        <div class="border border-gray-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                    <span class="font-extrabold text-indigo-600">5</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-extrabold text-gray-900">Day 5: Return to Leh</h4>
-                                    <p class="text-gray-600">November 05, 2025</p>
-                                </div>
-                            </div>
-                            <div class="ml-16 space-y-3">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="car" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Drive back to Leh</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="shopping-bag" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Shopping and relaxation</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="utensils" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Farewell dinner</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Day 6 -->
-                        <div class="border border-gray-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                    <span class="font-extrabold text-indigo-600">6</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-extrabold text-gray-900">Day 6: Departure</h4>
-                                    <p class="text-gray-600">November 06, 2025</p>
-                                </div>
-                            </div>
-                            <div class="ml-16 space-y-3">
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="car" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Airport transfer</span>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <i data-lucide="plane" class="w-5 h-5 text-indigo-600"></i>
-                                    <span class="text-gray-700">Flight departure</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 flex gap-4">
-                        <button class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-indigo-700 transition-colors">
-                            <i data-lucide="download" class="w-5 h-5 inline mr-2"></i>
-                            Download Itinerary
-                        </button>
-                        <button class="flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                            <i data-lucide="share" class="w-5 h-5 inline mr-2"></i>
-                            Share Itinerary
-                        </button>
-                    </div>
-                </div>
+    <div id="sellModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Sell Ticket</h3>
+                <button onclick="closeModal('sellModal')" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
-        </div>
-    </div>
-
-    <!-- Cancel Booking Modal -->
-    <div id="cancelModal" class="fixed inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md hidden z-50 modal-overlay">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full modal-content shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-white/50">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900">Cancel Booking</h2>
-                        <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-
-                    <div class="bg-red-50 border border-red-200 rounded-2xl p-6 mb-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <i data-lucide="alert-triangle" class="w-6 h-6 text-red-600"></i>
-                            <h3 class="text-lg font-extrabold text-red-800">Cancellation Policy</h3>
-                        </div>
-                        <ul class="text-sm text-red-700 space-y-2">
-                            <li class="cancellation-policy-item p-2 rounded-lg border border-transparent transition-colors">• <strong>30+ days before departure:</strong> Full refund (minus processing fees)</li>
-                            <li class="cancellation-policy-item p-2 rounded-lg border border-transparent transition-colors">• <strong>15-30 days before departure:</strong> 70% refund</li>
-                            <li class="cancellation-policy-item p-2 rounded-lg border border-transparent transition-colors">• <strong>7-14 days before departure:</strong> 50% refund</li>
-                            <li class="cancellation-policy-item p-2 rounded-lg border border-transparent transition-colors">• <strong>Less than 7 days:</strong> No refund</li>
-                        </ul>
-                    </div>
-
-                    <div class="bg-gray-50 rounded-2xl p-6 mb-6">
-                        <h4 class="font-extrabold text-gray-900 mb-4">Booking Details</h4>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Booking ID:</span>
-                                <span class="font-bold" id="cancelBookingId">PMT-7829410</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Trip:</span>
-                                <span class="font-bold" id="cancelTripName">Leh-Ladakh Adventure</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Departure Date:</span>
-                                <span class="font-bold" id="cancelDepartureDate">Nov 01, 2025</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Total Paid:</span>
-                                <span class="font-bold text-indigo-600" id="cancelTotalPaid">₹ 45,600.00</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Estimated Refund:</span>
-                                <span class="font-bold text-green-600" id="cancelEstimatedRefund">₹ 41,040.00</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Cancellation Fee:</span>
-                                <span class="font-bold text-red-600" id="cancelFee">₹ 4,560.00</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-bold text-gray-700 mb-3">Reason for Cancellation</label>
-                        <select id="cancelReason" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">Select a reason</option>
-                            <option value="change_dates">Change of travel dates</option>
-                            <option value="personal_emergency">Personal emergency</option>
-                            <option value="health_issues">Health issues</option>
-                            <option value="weather_concerns">Weather concerns</option>
-                            <option value="financial_issues">Financial issues</option>
-                            <option value="other">Other reason</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-bold text-gray-700 mb-3">Additional Comments (Optional)</label>
-                        <textarea id="cancelComments" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Please provide any additional details..."></textarea>
-                    </div>
-
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="info" class="w-5 h-5 text-yellow-600"></i>
-                            <p class="text-sm text-yellow-800">
-                                <strong>Important:</strong> Cancellation requests are processed within 24-48 hours. Refunds are credited to the original payment method.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                            Keep Booking
-                        </button>
-                        <button id="confirmCancel" class="flex-1 bg-red-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-red-700 transition-colors">
-                            <i data-lucide="x-circle" class="w-5 h-5 inline mr-2"></i>
-                            Confirm Cancellation
-                        </button>
-                    </div>
+            <div class="modal-body">
+                <p class="text-sm text-slate-500 mb-4">Set your asking price for the community marketplace.</p>
+                <div class="relative mb-4">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₹</span>
+                    <input type="number" id="sellPrice" class="sell-input pl-8" placeholder="0.00">
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rate Trip Modal -->
-    <div id="rateModal" class="fixed inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md hidden z-50 modal-overlay">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full modal-content shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-white/50">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900">Rate Your Trip</h2>
-                        <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-
-                    <div class="bg-gradient-premium text-white p-6 rounded-2xl mb-6">
-                        <h3 class="text-xl font-extrabold mb-2">Goa Beach Paradise</h3>
-                        <p class="text-sm opacity-90">August 15-20, 2024 • 3 Travelers</p>
-                    </div>
-
-                    <div class="mb-6">
-                        <h4 class="text-lg font-extrabold text-gray-900 mb-4">Overall Rating</h4>
-                        <div class="flex gap-2 mb-4" id="starRating">
-                            <button class="star-btn text-gray-300 hover:text-yellow-400 text-3xl" data-rating="1">★</button>
-                            <button class="star-btn text-gray-300 hover:text-yellow-400 text-3xl" data-rating="2">★</button>
-                            <button class="star-btn text-gray-300 hover:text-yellow-400 text-3xl" data-rating="3">★</button>
-                            <button class="star-btn text-gray-300 hover:text-yellow-400 text-3xl" data-rating="4">★</button>
-                            <button class="star-btn text-gray-300 hover:text-yellow-400 text-3xl" data-rating="5">★</button>
-                        </div>
-                        <p class="text-sm text-gray-600" id="ratingText">Click to rate your experience</p>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-sm font-bold text-gray-700 mb-3">Share your experience</label>
-                        <textarea id="reviewText" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Tell us about your trip experience..."></textarea>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                                <i data-lucide="map-pin" class="w-6 h-6 text-green-600"></i>
-                            </div>
-                            <p class="text-xs font-bold text-gray-700">DESTINATION</p>
-                            <div class="flex justify-center mt-1">
-                                <button class="aspect-btn text-gray-300 hover:text-green-500 text-lg" data-aspect="destination">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-green-500 text-lg" data-aspect="destination">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-green-500 text-lg" data-aspect="destination">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-green-500 text-lg" data-aspect="destination">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-green-500 text-lg" data-aspect="destination">★</button>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                                <i data-lucide="home" class="w-6 h-6 text-blue-600"></i>
-                            </div>
-                            <p class="text-xs font-bold text-gray-700">ACCOMMODATION</p>
-                            <div class="flex justify-center mt-1">
-                                <button class="aspect-btn text-gray-300 hover:text-blue-500 text-lg" data-aspect="accommodation">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-blue-500 text-lg" data-aspect="accommodation">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-blue-500 text-lg" data-aspect="accommodation">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-blue-500 text-lg" data-aspect="accommodation">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-blue-500 text-lg" data-aspect="accommodation">★</button>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                                <i data-lucide="car" class="w-6 h-6 text-purple-600"></i>
-                            </div>
-                            <p class="text-xs font-bold text-gray-700">TRANSPORT</p>
-                            <div class="flex justify-center mt-1">
-                                <button class="aspect-btn text-gray-300 hover:text-purple-500 text-lg" data-aspect="transport">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-purple-500 text-lg" data-aspect="transport">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-purple-500 text-lg" data-aspect="transport">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-purple-500 text-lg" data-aspect="transport">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-purple-500 text-lg" data-aspect="transport">★</button>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                                <i data-lucide="utensils" class="w-6 h-6 text-orange-600"></i>
-                            </div>
-                            <p class="text-xs font-bold text-gray-700">FOOD</p>
-                            <div class="flex justify-center mt-1">
-                                <button class="aspect-btn text-gray-300 hover:text-orange-500 text-lg" data-aspect="food">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-orange-500 text-lg" data-aspect="food">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-orange-500 text-lg" data-aspect="food">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-orange-500 text-lg" data-aspect="food">★</button>
-                                <button class="aspect-btn text-gray-300 hover:text-orange-500 text-lg" data-aspect="food">★</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                            Skip for Now
-                        </button>
-                        <button id="submitRating" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-indigo-700 transition-colors">
-                            <i data-lucide="send" class="w-5 h-5 inline mr-2"></i>
-                            Submit Review
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Rebook Trip Modal -->
-    <div id="rebookModal" class="fixed inset-0 bg-[rgba(15,23,42,0.6)] backdrop-blur-md hidden z-50 modal-overlay">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white/95 backdrop-blur-xl rounded-3xl max-w-2xl w-full modal-content shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-white/50">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-extrabold text-gray-900">Rebook Trip</h2>
-                        <button class="close-modal p-2 hover:bg-gray-100 rounded-xl">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-
-                    <div class="bg-gradient-premium text-white p-6 rounded-2xl mb-6">
-                        <h3 class="text-xl font-extrabold mb-2">Kerala Backwaters</h3>
-                        <p class="text-sm opacity-90">Previously cancelled • 2 Travelers</p>
-                    </div>
-
-                    <div class="space-y-6 mb-6">
-                        <div class="bg-gray-50 rounded-2xl p-6">
-                            <h4 class="font-extrabold text-gray-900 mb-4">Select New Travel Dates</h4>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Check-in Date</label>
-                                    <input type="date" id="rebookCheckIn" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Check-out Date</label>
-                                    <input type="date" id="rebookCheckOut" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 rounded-2xl p-6">
-                            <h4 class="font-extrabold text-gray-900 mb-4">Travel Preferences</h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Number of Travelers</label>
-                                    <select id="rebookTravelers" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="1">1 Traveler</option>
-                                        <option value="2" selected>2 Travelers</option>
-                                        <option value="3">3 Travelers</option>
-                                        <option value="4">4 Travelers</option>
-                                        <option value="5">5+ Travelers</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-bold text-gray-700 mb-2">Accommodation Type</label>
-                                    <select id="rebookAccommodation" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="budget">Budget (₹2,000-4,000/night)</option>
-                                        <option value="standard" selected>Standard (₹4,000-8,000/night)</option>
-                                        <option value="premium">Premium (₹8,000-15,000/night)</option>
-                                        <option value="luxury">Luxury (₹15,000+/night)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-green-50 border border-green-200 rounded-2xl p-6">
-                            <div class="flex items-center gap-3 mb-3">
-                                <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
-                                <h4 class="font-extrabold text-green-800">Rebooking Benefits</h4>
-                            </div>
-                            <ul class="text-sm text-green-700 space-y-1">
-                                <li>• Same package pricing guaranteed</li>
-                                <li>• Priority customer support</li>
-                                <li>• Flexible cancellation policy</li>
-                                <li>• Complimentary travel insurance</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6">
-                        <div class="flex items-center gap-3">
-                            <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
-                            <p class="text-sm text-blue-800">
-                                <strong>Note:</strong> Rebooking requests are confirmed within 24 hours. You'll receive a confirmation email with updated booking details.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-4">
-                        <button class="close-modal flex-1 border border-gray-300 text-gray-700 py-3 px-6 rounded-2xl font-bold hover:bg-gray-50 transition-colors">
-                            Cancel
-                        </button>
-                        <button id="submitRebook" class="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-2xl font-bold hover:bg-indigo-700 transition-colors">
-                            <i data-lucide="calendar" class="w-5 h-5 inline mr-2"></i>
-                            Confirm Rebooking
-                        </button>
-                    </div>
-                </div>
+                <textarea id="sellNotes" class="sell-input h-24 pt-3 resize-none" placeholder="Add some notes for the buyer..."></textarea>
+                <button onclick="processSale()" class="btn-confirm">Post to Marketplace</button>
             </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+        let bookingsData = [];
+        let currentUserEmail = 'guest@example.com';
 
-                // Mobile Menu Toggle
-        const menuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuToggle && mobileMenu) {
-            menuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-        }
+        async function loadBookings() {
+            try {
+                const userStr = localStorage.getItem('planmytrip_user');
+                const user = userStr ? JSON.parse(userStr) : null;
+                currentUserEmail = user ? user.email : 'guest@example.com';
 
-        // Tab functionality
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
+                document.getElementById('greeting').textContent = user ? `Hello, ${user.name.split(' ')[0]}!` : 'Hello Traveler!';
+                document.getElementById('userPillContainer').innerHTML = `
+                    <div class="user-pill"><i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}</div>
+                `;
+                lucide.createIcons();
 
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.classList.add('text-gray-500');
+                const res = await fetch(`/api/bookings/${encodeURIComponent(currentUserEmail)}`);
+                const data = await res.json();
+                let fetched = data.success ? data.bookings : [];
+
+                const today = new Date();
+                today.setHours(0,0,0,0);
+
+                bookingsData = fetched.map(b => {
+                    const bDate = new Date(b.date);
+                    if (b.status === 'Upcoming' && bDate < today) return { ...b, status: 'Past' };
+                    return b;
                 });
 
-                // Add active class to clicked button
-                button.classList.add('active');
-                button.classList.remove('text-gray-500');
-
-                // Hide all tab contents
-                tabContents.forEach(content => content.classList.remove('active'));
-
-                // Show selected tab content
-                const tabId = button.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        // Add hover effects to booking cards
-        document.querySelectorAll('.booking-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-5px)';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0)';
-            });
-        });
-
-        // Modal functionality
-        const invoiceModal = document.getElementById('invoiceModal');
-        const itineraryModal = document.getElementById('itineraryModal');
-        const cancelModal = document.getElementById('cancelModal');
-        const closeButtons = document.querySelectorAll('.close-modal');
-
-        // Open invoice modal
-        document.querySelectorAll('.view-invoice').forEach(button => {
-            button.addEventListener('click', () => {
-                invoiceModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Open itinerary modal
-        document.querySelectorAll('.view-itinerary').forEach(button => {
-            button.addEventListener('click', () => {
-                itineraryModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Open cancel booking modal
-        document.querySelectorAll('.cancel-booking').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const bookingData = {
-                    id: e.target.closest('.cancel-booking').getAttribute('data-booking-id'),
-                    tripName: e.target.closest('.cancel-booking').getAttribute('data-trip-name'),
-                    departureDate: e.target.closest('.cancel-booking').getAttribute('data-departure-date'),
-                    totalPaid: parseFloat(e.target.closest('.cancel-booking').getAttribute('data-total-paid'))
-                };
-
-                populateCancelModal(bookingData);
-                cancelModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Close modals
-        closeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                allModals.forEach(modal => modal.classList.add('hidden'));
-                document.body.style.overflow = 'auto';
-            });
-        });
-
-        // Close modal when clicking outside (for all modals)
-        allModals.forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = 'auto';
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('new') === 'true') {
+                    pmtNotif.success("Booking Confirmed!", "Your journey has been secured. Check your itinerary!");
+                    window.history.replaceState({}, document.title, window.location.pathname);
                 }
-            });
-        });
-
-        // Rate Trip Modal functionality
-        const rateModal = document.getElementById('rateModal');
-        const rebookModal = document.getElementById('rebookModal');
-
-        // Open rate trip modal
-        document.querySelectorAll('.rate-trip').forEach(button => {
-            button.addEventListener('click', () => {
-                rateModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Open rebook trip modal
-        document.querySelectorAll('.rebook-trip').forEach(button => {
-            button.addEventListener('click', () => {
-                rebookModal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            });
-        });
-
-        // Star rating functionality
-        let currentRating = 0;
-        const starButtons = document.querySelectorAll('.star-btn');
-        const ratingText = document.getElementById('ratingText');
-
-        starButtons.forEach((star, index) => {
-            star.addEventListener('click', () => {
-                currentRating = index + 1;
-                updateStarDisplay(currentRating);
-                updateRatingText(currentRating);
-            });
-
-            star.addEventListener('mouseenter', () => {
-                updateStarDisplay(index + 1);
-            });
-
-            star.addEventListener('mouseleave', () => {
-                updateStarDisplay(currentRating);
-            });
-        });
-
-        function updateStarDisplay(rating) {
-            starButtons.forEach((star, index) => {
-                if (index < rating) {
-                    star.classList.remove('text-gray-300');
-                    star.classList.add('text-yellow-400');
-                } else {
-                    star.classList.remove('text-yellow-400');
-                    star.classList.add('text-gray-300');
-                }
-            });
+            } catch (err) {
+                console.error('Fetch error:', err);
+            }
+            renderBookings('Upcoming');
         }
 
-        function updateRatingText(rating) {
-            const texts = {
-                0: 'Click to rate your experience',
-                1: 'Poor - Could be better',
-                2: 'Fair - Not great',
-                3: 'Good - Enjoyable trip',
-                4: 'Very Good - Great experience',
-                5: 'Excellent - Perfect trip!'
-            };
-            ratingText.textContent = texts[rating];
-        }
+        function renderBookings(status) {
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = '';
 
-        // Aspect rating functionality
-        const aspectRatings = {};
-        const aspectColors = {
-            destination: 'text-green-500',
-            accommodation: 'text-blue-500',
-            transport: 'text-purple-500',
-            food: 'text-orange-500'
-        };
-
-        document.querySelectorAll('.aspect-btn').forEach(button => {
-            const aspect = button.getAttribute('data-aspect');
-            if (!aspectRatings[aspect]) aspectRatings[aspect] = 0;
-
-            button.addEventListener('click', () => {
-                const rating = Array.from(button.parentElement.children).indexOf(button) + 1;
-                aspectRatings[aspect] = rating;
-
-                // Update visual feedback
-                button.parentElement.querySelectorAll('.aspect-btn').forEach((btn, idx) => {
-                    const colorClass = aspectColors[aspect];
-                    if (idx < rating) {
-                        btn.classList.remove('text-gray-300');
-                        btn.classList.add(colorClass);
-                    } else {
-                        btn.classList.remove(colorClass);
-                        btn.classList.add('text-gray-300');
-                    }
-                });
-            });
-        });
-
-        // Submit rating
-        document.getElementById('submitRating').addEventListener('click', () => {
-            if (currentRating === 0) {
-                alert('Please select a star rating before submitting.');
+            if (status === 'Marketplace') {
+                fetchMarketplace();
                 return;
             }
 
-            const reviewText = document.getElementById('reviewText').value;
-            const ratingData = {
-                overall: currentRating,
-                aspects: aspectRatings,
-                review: reviewText,
-                timestamp: new Date().toISOString()
-            };
+            const filtered = bookingsData.filter(b => b.status === status);
 
-            // Here you would typically send this data to your backend
-            console.log('Rating submitted:', ratingData);
-
-            // Show success message
-            alert('Thank you for your feedback! Your review has been submitted.');
-
-            // Close modal and reset form
-            rateModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            resetRatingForm();
-        });
-
-        function resetRatingForm() {
-            currentRating = 0;
-            updateStarDisplay(0);
-            updateRatingText(0);
-            document.getElementById('reviewText').value = '';
-
-            // Reset aspect ratings
-            Object.keys(aspectRatings).forEach(aspect => aspectRatings[aspect] = 0);
-            document.querySelectorAll('.aspect-btn').forEach(btn => {
-                btn.classList.remove('text-green-500', 'text-blue-500', 'text-purple-500', 'text-orange-500');
-                btn.classList.add('text-gray-300');
-            });
-        }
-
-        // Submit rebooking
-        document.getElementById('submitRebook').addEventListener('click', () => {
-            const checkIn = document.getElementById('rebookCheckIn').value;
-            const checkOut = document.getElementById('rebookCheckOut').value;
-            const travelers = document.getElementById('rebookTravelers').value;
-            const accommodation = document.getElementById('rebookAccommodation').value;
-
-            if (!checkIn || !checkOut) {
-                alert('Please select both check-in and check-out dates.');
+            if (filtered.length === 0) {
+                document.getElementById('bookings-map-container').classList.add('hidden');
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i data-lucide="map-pinned" class="w-10 h-10"></i></div>
+                        <h3 class="empty-title">No ${status.toLowerCase()} trips</h3>
+                        <p class="empty-subtitle">Adventure awaits! Why not start planning your next memorable getaway today?</p>
+                        <a href="plannewtrip.html" class="cta-button">New Adventure</a>
+                    </div>
+                `;
+                lucide.createIcons();
                 return;
             }
 
-            if (new Date(checkIn) >= new Date(checkOut)) {
-                alert('Check-out date must be after check-in date.');
-                return;
+            if (status === 'Upcoming') {
+                document.getElementById('bookings-map-container').classList.remove('hidden');
+                updateBookingsMap(filtered);
+            } else {
+                document.getElementById('bookings-map-container').classList.add('hidden');
             }
 
-            const rebookData = {
-                checkIn: checkIn,
-                checkOut: checkOut,
-                travelers: travelers,
-                accommodation: accommodation,
-                timestamp: new Date().toISOString()
-            };
-
-            // Here you would typically send this data to your backend
-            console.log('Rebooking submitted:', rebookData);
-
-            // Show success message
-            alert('Your rebooking request has been submitted! You will receive a confirmation email within 24 hours.');
-
-            // Close modal
-            rebookModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        });
-
-        // Close all modals
-        const allModals = [invoiceModal, itineraryModal, cancelModal, rateModal, rebookModal];
-        closeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                allModals.forEach(modal => modal.classList.add('hidden'));
-                document.body.style.overflow = 'auto';
+            filtered.slice().reverse().forEach(b => {
+                const card = createBookingCard(b, status);
+                container.appendChild(card);
             });
-        });
-
-        // Close modal when clicking outside (for all modals)
-        allModals.forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.add('hidden');
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        });
-
-        // Confirm cancellation
-        document.getElementById('confirmCancel').addEventListener('click', async () => {
-            const reason = document.getElementById('cancelReason').value;
-            if (!reason) {
-                alert('Please select a reason for cancellation.');
-                return;
-            }
-
-            const confirmButton = document.getElementById('confirmCancel');
-            const originalText = confirmButton.innerHTML;
-
-            // Show loading state
-            confirmButton.disabled = true;
-            confirmButton.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 inline mr-2 animate-spin"></i> Processing...';
             lucide.createIcons();
+        }
 
-            const bookingId = document.getElementById('cancelBookingId').textContent;
-            const comments = document.getElementById('cancelComments').value;
+        function createBookingCard(b, status) {
+            let icon = 'map-pin', typeClass = 'type-flight';
+            if(b.type === 'flight') icon = 'plane-takeoff';
+            if(b.type === 'hotel') { icon = 'hotel'; typeClass = 'type-hotel'; }
+            if(b.type === 'bus') { icon = 'bus'; typeClass = 'type-bus'; }
+            if(b.type === 'train') { icon = 'train-front'; typeClass = 'type-train'; }
+            if(b.type === 'stay') { icon = 'home'; typeClass = 'type-hotel'; }
+            if(b.type === 'trip') { icon = 'route'; typeClass = 'type-trip'; }
 
-            // Simulate API call delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const sClass = `status-${b.status.toLowerCase()}`;
+            const div = document.createElement('div');
+            div.className = 'booking-card';
+            div.innerHTML = `
+                <div class="icon-box ${typeClass}"><i data-lucide="${icon}" class="w-8 h-8"></i></div>
+                <div class="booking-content">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="booking-title">${b.title}</h3>
+                        <span class="status-badge ${sClass}">${b.status}</span>
+                    </div>
+                    <div class="details-row">
+                        <div class="detail-item"><i data-lucide="calendar" class="w-4 h-4"></i> ${b.date}</div>
+                        <div class="detail-item"><i data-lucide="info" class="w-4 h-4"></i> ${b.details}</div>
+                        <div class="detail-item"><i data-lucide="hash" class="w-4 h-4"></i> ${b.id}</div>
+                    </div>
+                </div>
+                <div class="booking-actions">
+                    <div class="price-tag">${b.amount || 'N/A'}</div>
+                    <div class="flex gap-2">
+                        <button class="action-btn btn-view" onclick="viewItinerary('${b.id}')"><i data-lucide="file-text" class="w-4 h-4"></i> Itinerary</button>
+                        ${b.status === 'Upcoming' ? `
+                            <button class="action-btn btn-sell" onclick="openSellModal('${b.id}')"><i data-lucide="shopping-tag" class="w-4 h-4"></i> ${b.forSale ? 'Update' : 'Sell'}</button>
+                            <button class="action-btn btn-cancel" onclick="cancelBooking('${b.id}')"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                        ` : `
+                            <button class="action-btn btn-rebook" onclick="rebookTrip('${b.id}')"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Rebook</button>
+                        `}
+                    </div>
+                </div>
+            `;
+            return div;
+        }
 
-            // Here you would typically send the cancellation request to your backend
-            const cancellationData = {
-                bookingId: bookingId,
-                reason: reason,
-                comments: comments,
-                timestamp: new Date().toISOString()
-            };
+        // Marketplace
+        async function fetchMarketplace() {
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = `<div class="p-12 text-center text-slate-400"><i data-lucide="loader-2" class="w-10 h-10 animate-spin mx-auto mb-4"></i> Finding listings...</div>`;
+            lucide.createIcons();
+            try {
+                const res = await fetch('/api/bookings/marketplace');
+                const data = await res.json();
+                if (data.success) {
+                    renderMarketplace(data.listings);
+                }
+            } catch (err) {
+                container.innerHTML = `<div class="p-12 text-center text-red-500">Service temporarily unavailable.</div>`;
+            }
+        }
 
-            console.log('Cancellation request:', cancellationData);
+        function renderMarketplace(listings) {
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = '';
+            const others = listings.filter(l => l.sellerEmail !== currentUserEmail);
+            if (others.length === 0) {
+                container.innerHTML = `<div class="empty-state"><div class="empty-icon"><i data-lucide="shopping-cart" class="w-10 h-10"></i></div><h3 class="empty-title">Marketplace is empty</h3><p class="empty-subtitle">Check back later for community travel deals!</p></div>`;
+                lucide.createIcons();
+                return;
+            }
+            others.forEach(l => {
+                const div = document.createElement('div');
+                div.className = 'booking-card';
+                div.innerHTML = `
+                    <div class="icon-box type-trip"><i data-lucide="shopping-bag" class="w-8 h-8"></i></div>
+                    <div class="booking-content">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="booking-title">${l.title}</h3>
+                            <span class="status-badge status-upcoming">ON SALE</span>
+                        </div>
+                        <div class="details-row">
+                            <div class="detail-item"><i data-lucide="calendar" class="w-4 h-4"></i> ${l.date}</div>
+                            <div class="detail-item"><i data-lucide="user" class="w-4 h-4"></i> @${l.sellerEmail.split('@')[0]}</div>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <div class="price-tag">₹${l.askingPrice}</div>
+                        <button class="action-btn btn-rebook" onclick="buyTicket('${l.sellerEmail}', '${l.id}')">Buy Now</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            lucide.createIcons();
+        }
 
-            // Show detailed success message
-            const refundAmount = document.getElementById('cancelEstimatedRefund').textContent;
-            const tripName = document.getElementById('cancelTripName').textContent;
+        // Logic
+        window.cancelBooking = async (id) => {
+            if(!confirm('Cancel this booking? Status will be updated instantly.')) return;
+            try {
+                const res = await fetch('/api/bookings/cancel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentUserEmail, id })
+                });
+                if ((await res.json()).success) {
+                    pmtNotif.success("Cancelled", "Trip cancelled successfully.");
+                    loadBookings();
+                }
+            } catch (err) { pmtNotif.error("Error", "Could not process cancellation."); }
+        }
 
-            alert(`✅ Cancellation Request Submitted Successfully!\n\nBooking: ${bookingId}\nTrip: ${tripName}\nEstimated Refund: ${refundAmount}\n\nYou will receive a confirmation email within 24 hours with detailed refund processing information.`);
+        window.buyTicket = async (seller, id) => {
+            if(!confirm('Buy this ticket? It will be transferred to your account immediately.')) return;
+            try {
+                const res = await fetch('/api/bookings/buy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ buyerEmail: currentUserEmail, sellerEmail: seller, bookingId: id })
+                });
+                if ((await res.json()).success) {
+                    pmtNotif.success("Success!", "Ticket transferred to your upcoming trips.");
+                    loadBookings();
+                } else { pmtNotif.error("Failed", "Listing may no longer be available."); }
+            } catch (err) { pmtNotif.error("Error", "Network failure."); }
+        }
 
-            // Reset button and close modal
-            confirmButton.disabled = false;
-            confirmButton.innerHTML = originalText;
-            cancelModal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            resetCancelForm();
+        let currentSellId = null;
+        window.openSellModal = (id) => { currentSellId = id; document.getElementById('sellModal').style.display = 'flex'; }
+        window.closeModal = (id) => { document.getElementById(id).style.display = 'none'; }
+        
+        window.processSale = async () => {
+            const price = document.getElementById('sellPrice').value;
+            if(!price || price <= 0) return pmtNotif.info("Price required", "Enter a valid amount.");
+            try {
+                const res = await fetch('/api/bookings/list-for-sale', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentUserEmail, id: currentSellId, price, notes: document.getElementById('sellNotes').value })
+                });
+                if ((await res.json()).success) {
+                    pmtNotif.success("Listed", "Ticket is now available in marketplace.");
+                    closeModal('sellModal');
+                    loadBookings();
+                }
+            } catch (err) { pmtNotif.error("Error", "Could not post listing."); }
+        }
+
+        window.viewItinerary = (id) => {
+            const b = bookingsData.find(x => x.id === id);
+            if(!b) return;
+            document.getElementById('itineraryContent').innerHTML = `
+                <div class="itinerary-item"><span class="itinerary-label">Reference</span><span class="itinerary-value">${b.id}</span></div>
+                <div class="itinerary-item"><span class="itinerary-label">Category</span><span class="itinerary-value">${b.type}</span></div>
+                <div class="itinerary-item"><span class="itinerary-label">Trip</span><span class="itinerary-value">${b.title}</span></div>
+                <div class="itinerary-item"><span class="itinerary-label">Date</span><span class="itinerary-value">${b.date}</span></div>
+                <div class="itinerary-item"><span class="itinerary-label">Details</span><span class="itinerary-value">${b.details}</span></div>
+                <div class="itinerary-item"><span class="itinerary-label">Price</span><span class="itinerary-value">${b.amount}</span></div>
+            `;
+            document.getElementById('itineraryModal').style.display = 'flex';
+        }
+
+        window.rebookTrip = (id) => {
+            const b = bookingsData.find(x => x.id === id);
+            const map = { 'flight':'flight.html', 'bus':'bus.html', 'train':'train.html', 'hotel':'hotel.html', 'stay':'accomodation.html', 'trip':'plannewtrip.html' };
+            window.location.href = map[b.type] || 'plannewtrip.html';
+        }
+
+        // Map
+        let mapObj = null, markers = [];
+        async function updateBookingsMap(trips) {
+            try {
+                await loadGoogleMapsApi();
+                if (!mapObj) mapObj = new google.maps.Map(document.getElementById('bookings-map'), { 
+                    center: { lat: 20.59, lng: 78.96 }, zoom: 4, disableDefaultUI: true,
+                    styles: [{ "featureType": "all", "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] }]
+                });
+                markers.forEach(m => m.setMap(null)); markers = [];
+                const geocoder = new google.maps.Geocoder(), bounds = new google.maps.LatLngBounds();
+                let count = 0;
+                trips.forEach(t => {
+                    let addr = t.title.includes('to') ? t.title.split('to')[1] : (t.title.includes('in') ? t.title.split('in')[1] : t.title);
+                    geocoder.geocode({ address: addr }, (res, status) => {
+                        if (status === 'OK' && res[0]) {
+                            const m = new google.maps.Marker({ position: res[0].geometry.location, map: mapObj, icon: { path: google.maps.SymbolPath.CIRCLE, scale: 7, fillColor: "#6366f1", fillOpacity: 1, strokeWeight: 2, strokeColor: "#fff" } });
+                            markers.push(m); bounds.extend(res[0].geometry.location); count++;
+                            if (count > 1) mapObj.fitBounds(bounds); else mapObj.setCenter(res[0].geometry.location);
+                        }
+                    });
+                });
+            } catch (e) {}
+        }
+
+        // Tabs
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderBookings(btn.dataset.status);
+            });
         });
 
-        // Function to populate cancel modal with booking data
-        function populateCancelModal(bookingData) {
-            // Update booking details
-            document.getElementById('cancelBookingId').textContent = bookingData.id;
-            document.getElementById('cancelTripName').textContent = bookingData.tripName;
-
-            // Format departure date
-            const departureDate = new Date(bookingData.departureDate);
-            document.getElementById('cancelDepartureDate').textContent = departureDate.toLocaleDateString('en-IN', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            });
-
-            // Format total paid
-            document.getElementById('cancelTotalPaid').textContent = `₹ ${bookingData.totalPaid.toLocaleString('en-IN')}`;
-
-            // Calculate refund based on cancellation policy
-            const refundData = calculateRefund(bookingData.totalPaid, departureDate);
-            document.getElementById('cancelEstimatedRefund').textContent = `₹ ${refundData.refundAmount.toLocaleString('en-IN')}`;
-            document.getElementById('cancelFee').textContent = `₹ ${refundData.fee.toLocaleString('en-IN')}`;
-
-            // Update policy display based on days remaining
-            updateCancellationPolicy(refundData.daysUntilDeparture);
-        }
-
-        // Function to calculate refund based on cancellation policy
-        function calculateRefund(totalPaid, departureDate) {
-            const today = new Date();
-            const timeDiff = departureDate.getTime() - today.getTime();
-            const daysUntilDeparture = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-            let refundPercentage = 0;
-            let policyText = '';
-
-            if (daysUntilDeparture >= 30) {
-                refundPercentage = 1.0; // Full refund minus processing fee
-                policyText = '30+ days before departure: Full refund (minus processing fees)';
-            } else if (daysUntilDeparture >= 15) {
-                refundPercentage = 0.7;
-                policyText = '15-30 days before departure: 70% refund';
-            } else if (daysUntilDeparture >= 7) {
-                refundPercentage = 0.5;
-                policyText = '7-14 days before departure: 50% refund';
-            } else {
-                refundPercentage = 0;
-                policyText = 'Less than 7 days: No refund';
-            }
-
-            const refundAmount = Math.round(totalPaid * refundPercentage);
-            const fee = totalPaid - refundAmount;
-
-            return {
-                refundAmount: refundAmount,
-                fee: fee,
-                percentage: refundPercentage,
-                daysUntilDeparture: daysUntilDeparture,
-                policyText: policyText
-            };
-        }
-
-        // Function to update cancellation policy display
-        function updateCancellationPolicy(daysUntilDeparture) {
-            const policyItems = document.querySelectorAll('.cancellation-policy-item');
-            policyItems.forEach(item => item.classList.remove('bg-red-100', 'border-red-300'));
-
-            let applicablePolicy;
-            if (daysUntilDeparture >= 30) {
-                applicablePolicy = policyItems[0];
-            } else if (daysUntilDeparture >= 15) {
-                applicablePolicy = policyItems[1];
-            } else if (daysUntilDeparture >= 7) {
-                applicablePolicy = policyItems[2];
-            } else {
-                applicablePolicy = policyItems[3];
-            }
-
-            if (applicablePolicy) {
-                applicablePolicy.classList.add('bg-red-100', 'border-red-300');
-            }
-        }
-
-        // Function to reset cancel form
-        function resetCancelForm() {
-            document.getElementById('cancelReason').value = '';
-            document.getElementById('cancelComments').value = '';
-        }
+        loadBookings();
     </script>
 </body>
 </html>

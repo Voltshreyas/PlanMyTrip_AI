@@ -33,9 +33,9 @@ const CAROUSEL_IMAGES = [
 ];
 
 const REVIEWS = [
-    { user: "Shreyas R.", text: "Outstanding! Saved us ₹5,000 with personalized budgeting. The app's smart filtering is incredible!", photo: "https://placehold.co/50x50/F97316/FFFFFF?text=SR" },
+    { user: "Shreyas R.", text: "Outstanding! Saved us Rs 5,000 with personalized budgeting. The app's smart filtering is incredible!", photo: "https://placehold.co/50x50/F97316/FFFFFF?text=SR" },
     { user: "Anuska S.", text: "Real-time tracking was spot-on! Car was exactly where the app said. Professional and reliable service.", photo: "https://placehold.co/50x50/34D399/FFFFFF?text=AS" },
-    { user: "Amar R.", text: "Referral program is game-changing! Earned ₹2,500 simply by sharing with friends. Brilliant concept!", photo: "https://placehold.co/50x50/8B5CF6/FFFFFF?text=AR" },
+    { user: "Amar R.", text: "Referral program is game-changing! Earned Rs 2,500 simply by sharing with friends. Brilliant concept!", photo: "https://placehold.co/50x50/8B5CF6/FFFFFF?text=AR" },
     { user: "Saanvi B.", text: "Safety alerts during monsoon were lifesaving. This company truly prioritizes traveler wellness.", photo: "https://placehold.co/50x50/EC4899/FFFFFF?text=SB" },
     { user: "Saradiya R.", text: "Seamless from booking to checkout. Best travel booking experience I've had. 5 stars!", photo: "https://placehold.co/50x50/22C55E/FFFFFF?text=SR" }
 ];
@@ -57,11 +57,11 @@ const DESTINATIONS = [
 
 // ===== UTILITY FUNCTIONS =====
 const formatINR = (amount) => {
-    return `₹ ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount)}`;
+    return `Rs ${new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount)}`;
 };
 
 const formatSimpleINR = (amount) => {
-    return `₹ ${new Intl.NumberFormat('en-IN').format(Math.round(amount))}`;
+    return `Rs ${new Intl.NumberFormat('en-IN').format(Math.round(amount))}`;
 };
 
 const validateBudget = (budget) => budget >= PRICING.MINIMUM_BUDGET && budget <= PRICING.MAXIMUM_BUDGET;
@@ -194,7 +194,7 @@ function renderDestinations() {
                         onclick="event.stopPropagation(); toggleDestination('${dest.id}')" ${checked ? 'checked' : ''}>
                     <div>
                         <label for="dest-check-${dest.id}" class="font-bold text-gray-800 cursor-pointer flex items-center">
-                            <span class="mr-2">${dest.emoji}</span> ${dest.name}
+                            <span class="mr-2 text-[10px] uppercase tracking-wide text-emerald-700 bg-emerald-50 px-2 py-1 rounded">${dest.emoji}</span> ${dest.name}
                         </label>
                         <div class="flex items-center mt-1">
                             <i data-lucide="star" class="w-3 h-3 text-yellow-500 fill-yellow-500 mr-1"></i>

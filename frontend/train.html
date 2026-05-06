@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRCTC Next Generation eTicketing System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/maps.js"></script>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: rgba(15, 23, 42, 0.12);
+            --irctc-blue: #1e3a8a; /* Deep blue */
+            --irctc-blue-dark: #172554;
+            --irctc-orange: #f97316; /* Orange */
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(30,58,138,0.08), transparent 26rem),
+                radial-gradient(circle at 88% 14%, rgba(249,115,22,0.08), transparent 30rem),
+                linear-gradient(180deg, #f8fafc 0%, #eff6ff 54%, #fff7ed 100%);
+        }
+
+        .page-shell {
+            width: min(100% - 2rem, 80rem);
+            margin: 0 auto;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(8px);
+            color: var(--ink);
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(30,58,138,0.08);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+            padding: 0 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .pill-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(30,58,138,0.12);
+            background: #ffffff;
+        }
+
+        .irctc-hero {
+            position: relative;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            min-height: 75vh;
+            display: flex;
+            align-items: stretch;
+            box-shadow: 0 24px 70px rgba(30,58,138,0.18);
+            border: 1px solid rgba(255,255,255,0.4);
+            margin-bottom: 2rem;
+        }
+
+        .irctc-bg {
+            position: absolute;
+            inset: 0;
+            /* Background matching Vande Bharat vibe */
+            background: 
+                linear-gradient(90deg, rgba(15,23,42,0.6) 0%, rgba(15,23,42,0.3) 50%, transparent 100%),
+                url('https://images.unsplash.com/photo-1541427468627-a89a96e5ca1d?q=80&w=2000&auto=format&fit=crop') center / cover no-repeat;
+            z-index: 0;
+            transform: scale(1.02);
+            transition: transform 10s ease;
+        }
+
+        .irctc-hero:hover .irctc-bg {
+            transform: scale(1);
+        }
+
+        .irctc-grid {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 460px 1fr;
+            gap: 2rem;
+            padding: 3rem;
+        }
+
+        @media (max-width: 1024px) {
+            .irctc-grid {
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+            .irctc-bg {
+                background: 
+                    linear-gradient(180deg, rgba(15,23,42,0.8) 0%, rgba(15,23,42,0.5) 100%),
+                    url('https://images.unsplash.com/photo-1541427468627-a89a96e5ca1d?q=80&w=2000&auto=format&fit=crop') center / cover no-repeat;
+            }
+        }
+
+        .hero-text-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-end;
+            text-align: right;
+            padding-top: 1rem;
+            color: white;
+        }
+
+        .railway-title {
+            font-size: clamp(2.5rem, 4vw, 4.5rem);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            line-height: 1.1;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            letter-spacing: 0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .railway-subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.5rem);
+            font-weight: 500;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            letter-spacing: 0.05em;
+        }
+
+        .railway-subtitle span {
+            margin: 0 0.75rem;
+            opacity: 0.6;
+        }
+
+        /* Glassmorphic Widget */
+        .booking-widget {
+            display: flex;
+            flex-direction: column;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.25));
+        }
+
+        .widget-tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: -1px; /* Overlap border */
+            z-index: 2;
+        }
+
+        .w-tab {
+            flex: 1;
+            background: var(--irctc-blue-dark);
+            color: #ffffff;
+            padding: 1rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 0.75rem 0.75rem 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .w-tab:hover {
+            background: var(--irctc-blue);
+        }
+
+        .widget-body {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 0 0 1rem 1rem;
+            padding: 2.5rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .widget-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--irctc-blue-dark);
+            text-align: center;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.75rem;
+            border: 1px solid rgba(15, 23, 42, 0.2);
+            border-radius: 0.5rem;
+            background: #ffffff;
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all .2s ease;
+        }
+
+        .form-input::placeholder {
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--irctc-blue);
+            box-shadow: 0 0 0 3px rgba(30,58,138,0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--irctc-blue);
+            width: 1.1rem;
+            height: 1.1rem;
+            pointer-events: none;
+        }
+
+        .floating-label {
+            position: absolute;
+            left: 2.75rem;
+            top: -0.6rem;
+            background: #ffffff;
+            padding: 0 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--irctc-blue);
+            border-radius: 0.25rem;
+        }
+
+        .swap-container {
+            display: flex;
+            justify-content: center;
+            margin: -1.25rem 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .swap-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--irctc-blue);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--irctc-blue-dark);
+            cursor: pointer;
+            line-height: 1.3;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            appearance: none;
+            width: 1.1rem;
+            height: 1.1rem;
+            border: 2px solid rgba(30,58,138,0.3);
+            border-radius: 0.2rem;
+            margin-top: 0.1rem;
+            cursor: pointer;
+            position: relative;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked {
+            background: var(--irctc-blue);
+            border-color: var(--irctc-blue);
+        }
+
+        .checkbox-label input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            color: white;
+            font-size: 0.8rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .search-btn {
+            width: 100%;
+            min-height: 3.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: var(--irctc-orange);
+            color: #ffffff;
+            transition: background .2s ease, transform .2s ease;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 15px rgba(249,115,22,0.3);
+        }
+
+        .search-btn:hover {
+            background: #ea580c;
+            transform: translateY(-2px);
+        }
+
+        /* ===== Station Autocomplete ===== */
+        .station-wrapper {
+            position: relative;
+        }
+
+        .station-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 60px rgba(15,23,42,0.15), 0 4px 16px rgba(15,23,42,0.08);
+            z-index: 9999;
+            overflow: hidden;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+
+        .station-dropdown.open {
+            display: block;
+            animation: dropIn 0.18s ease;
+        }
+
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .station-header {
+            display: block;
+            padding: 0.55rem 1rem;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: #ffffff;
+            background: var(--irctc-blue);
+            text-align: center;
+        }
+
+        .station-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.12s ease;
+        }
+
+        .station-item:last-child { border-bottom: none; }
+
+        .station-item:hover,
+        .station-item.active {
+            background: #eff6ff;
+        }
+
+        .station-icon {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .station-info { flex: 1; min-width: 0; }
+
+        .station-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.3;
+        }
+
+        .station-name em {
+            font-style: normal;
+            color: var(--irctc-orange);
+        }
+
+        .station-code {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #ffffff;
+            background: var(--irctc-blue);
+            padding: 1px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        .station-state {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .station-no-result {
+            padding: 1.5rem;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link active"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
+        </div>
+    </nav>
+
+    <style>
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #6366f1; }
+        .user-pill { background: #e0e7ff; color: #6366f1; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            document.getElementById('userPillContainer').innerHTML = `
+                <div class="user-pill">
+                    <i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}
+                </div>
+            `;
+            lucide.createIcons();
+        });
+    </script>
+
+        <main class="pb-8">
+            <section class="irctc-hero">
+                <div class="irctc-bg"></div>
+                
+                <div class="irctc-grid">
+                    <!-- Left Widget -->
+                    <div class="booking-widget">
+                        <!-- Tabs -->
+                        <div class="widget-tabs">
+                            <div class="w-tab">
+                                <i data-lucide="check-square" class="w-4 h-4"></i>
+                                PNR STATUS
+                            </div>
+                            <div class="w-tab">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                                CHARTS / VACANCY
+                            </div>
+                        </div>
+
+                        <!-- Form Area -->
+                        <div class="widget-body">
+                            <h2 class="widget-title">BOOK TICKET</h2>
+
+                            <form id="irctcForm">
+                                <div class="form-group station-wrapper">
+                                    <span class="floating-label">From</span>
+                                    <i data-lucide="send" class="input-icon"></i>
+                                    <input type="text" id="fromStation" class="form-input" placeholder="Origin Station" autocomplete="off" required>
+                                    <div id="fromDropdown" class="station-dropdown">
+                                        <span class="station-header">----- Stations -----</span>
+                                        <div class="station-list" id="fromList"></div>
+                                    </div>
+                                </div>
+
+                                <div class="swap-container">
+                                    <button type="button" id="swapStations" class="swap-btn">
+                                        <i data-lucide="arrow-right-left" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <div class="form-group mt-2 station-wrapper">
+                                    <span class="floating-label">To</span>
+                                    <i data-lucide="map-pin" class="input-icon"></i>
+                                    <input type="text" id="toStation" class="form-input" placeholder="Destination Station" autocomplete="off" required>
+                                    <div id="toDropdown" class="station-dropdown">
+                                        <span class="station-header">----- Stations -----</span>
+                                        <div class="station-list" id="toList"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <span class="floating-label">DD/MM/YYYY *</span>
+                                        <i data-lucide="calendar" class="input-icon"></i>
+                                        <input type="date" id="journeyDate" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <i data-lucide="briefcase" class="input-icon"></i>
+                                        <select id="trainClass" class="form-select">
+                                            <option value="ALL">All Classes</option>
+                                            <option value="EA">Anubhuti Class (EA)</option>
+                                            <option value="1A">AC First Class (1A)</option>
+                                            <option value="EV">Vistadome AC (EV)</option>
+                                            <option value="EC">Exec. Chair Car (EC)</option>
+                                            <option value="2A">AC 2 Tier (2A)</option>
+                                            <option value="FC">First Class (FC)</option>
+                                            <option value="3A">AC 3 Tier (3A)</option>
+                                            <option value="3E">AC 3 Economy (3E)</option>
+                                            <option value="CC">AC Chair car (CC)</option>
+                                            <option value="SL">Sleeper (SL)</option>
+                                            <option value="VS">Vistadome Non AC (VS)</option>
+                                            <option value="2S">Second Sitting (2S)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <i data-lucide="grid" class="input-icon"></i>
+                                    <select id="quota" class="form-select">
+                                        <option value="GN">GENERAL</option>
+                                        <option value="LD">LADIES</option>
+                                        <option value="TQ">TATKAL</option>
+                                        <option value="PT">PREMIUM TATKAL</option>
+                                        <option value="SS">LOWER BERTH/SR.CITIZEN</option>
+                                        <option value="HP">PERSON WITH DISABILITY</option>
+                                    </select>
+                                </div>
+
+                                <div class="checkbox-grid">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="concession">
+                                        Person With Disability Concession
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="flexibleDate">
+                                        Flexible With Date
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="passConcession">
+                                        Railway Pass Concession
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="availableBerth">
+                                        Train with Available Berth
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="search-btn">
+                                    Search Trains
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Right Text -->
+                    <div class="hero-text-area">
+                        <h1 class="railway-title">INDIAN RAILWAYS</h1>
+                        <div class="railway-subtitle">
+                            Safety <span>|</span> Security <span>|</span> Punctuality
+                        </div>
+                    </div>
+                </div>
+
+
+            </section>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Swap Stations
+        document.getElementById('swapStations').addEventListener('click', function() {
+            const fromInput = document.getElementById('fromStation');
+            const toInput = document.getElementById('toStation');
+            const temp = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = temp;
+        });
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('journeyDate').setAttribute('min', today);
+
+        // Handle form submission
+        document.getElementById('irctcForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulating a train search redirect
+            const from = document.getElementById('fromStation').value.toUpperCase();
+            const to = document.getElementById('toStation').value.toUpperCase();
+            const date = document.getElementById('journeyDate').value;
+
+            if(!from || !to || !date) {
+                pmtNotif.info("Missing Information", "Please fill in origin, destination, and date.");
+                return;
+            }
+
+            // Save booking to backend
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = user ? user.email : 'guest@example.com';
+
+            const newBooking = {
+                id: 'TR' + Date.now(),
+                type: 'train',
+                status: 'Upcoming',
+                title: `${from} to ${to}`,
+                date: date,
+                details: `${document.getElementById('trainClass').value} • ${document.getElementById('quota').value}`,
+                amount: '₹' + Math.floor(200 + Math.random() * 3000).toLocaleString('en-IN')
+            };
+
+            // Show searching feedback
+            const btn = document.querySelector('.search-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Booking Train...`;
+            lucide.createIcons();
+            btn.disabled = true;
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, booking: newBooking })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pmtNotif.success("IRCTC Ticket Confirmed!", `Successfully booked train from ${from} to ${to}.`);
+                setTimeout(() => {
+                    window.location.href = 'bookings.html?new=true';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+                pmtNotif.error("IRCTC System Error", "Failed to confirm train ticket. Please try again.");
+            });
+        });
+
+        // Initialize custom station autocomplete
+        const STATIONS = [
+            { name: 'New Delhi', code: 'NDLS', city: 'New Delhi', state: 'Delhi' },
+            { name: 'Mumbai Central', code: 'BCT', city: 'Mumbai', state: 'Maharashtra' },
+            { name: 'Mumbai CST', code: 'CSTM', city: 'Mumbai', state: 'Maharashtra' },
+            { name: 'Howrah Jn', code: 'HWH', city: 'Howrah / Kolkata', state: 'West Bengal' },
+            { name: 'Chennai Central', code: 'MAS', city: 'Chennai', state: 'Tamil Nadu' },
+            { name: 'Bangalore City', code: 'SBC', city: 'Bengaluru', state: 'Karnataka' },
+            { name: 'Hyderabad Decan', code: 'HYB', city: 'Secunderabad', state: 'Telangana' },
+            { name: 'Secunderabad Jn', code: 'SC', city: 'Secunderabad', state: 'Telangana' },
+            { name: 'Pune Jn', code: 'PUNE', city: 'Pune', state: 'Maharashtra' },
+            { name: 'Ahmedabad Jn', code: 'ADI', city: 'Ahmedabad', state: 'Gujarat' },
+            { name: 'Jaipur Jn', code: 'JP', city: 'Jaipur', state: 'Rajasthan' },
+            { name: 'Lucknow Jn', code: 'LKO', city: 'Lucknow', state: 'Uttar Pradesh' },
+            { name: 'Lucknow NR', code: 'LJN', city: 'Lucknow', state: 'Uttar Pradesh' },
+            { name: 'Patna Jn', code: 'PNBE', city: 'Patna', state: 'Bihar' },
+            { name: 'Bhopal Jn', code: 'BPL', city: 'Bhopal', state: 'Madhya Pradesh' },
+            { name: 'Indore Jn', code: 'INDB', city: 'Indore', state: 'Madhya Pradesh' },
+            { name: 'Nagpur Jn', code: 'NGP', city: 'Nagpur', state: 'Maharashtra' },
+            { name: 'Surat', code: 'ST', city: 'Surat', state: 'Gujarat' },
+            { name: 'Vadodara Jn', code: 'BRC', city: 'Vadodara', state: 'Gujarat' },
+            { name: 'Chandigarh', code: 'CDG', city: 'Chandigarh', state: 'Punjab' },
+            { name: 'Amritsar Jn', code: 'ASR', city: 'Amritsar', state: 'Punjab' },
+            { name: 'Agra Cantt', code: 'AGC', city: 'Agra', state: 'Uttar Pradesh' },
+            { name: 'Varanasi Jn', code: 'BSB', city: 'Varanasi', state: 'Uttar Pradesh' },
+            { name: 'Guwahati', code: 'GHY', city: 'Guwahati', state: 'Assam' },
+            { name: 'Bhubaneswar', code: 'BBS', city: 'Bhubaneswar', state: 'Odisha' },
+            { name: 'Thiruvananthapuram Central', code: 'TVC', city: 'Thiruvananthapuram', state: 'Kerala' },
+            { name: 'Kochi Ernakulam Jn', code: 'ERS', city: 'Ernakulam', state: 'Kerala' },
+            { name: 'Coimbatore Jn', code: 'CBE', city: 'Coimbatore', state: 'Tamil Nadu' },
+            { name: 'Visakhapatnam', code: 'VSKP', city: 'Visakhapatnam', state: 'Andhra Pradesh' },
+            { name: 'Vijayawada Jn', code: 'BZA', city: 'Vijayawada', state: 'Andhra Pradesh' },
+            { name: 'Haridwar Jn', code: 'HW', city: 'Haridwar', state: 'Uttarakhand' },
+            { name: 'Dehradun', code: 'DDN', city: 'Dehradun', state: 'Uttarakhand' },
+            { name: 'Jodhpur Jn', code: 'JU', city: 'Jodhpur', state: 'Rajasthan' },
+            { name: 'Udaipur City', code: 'UDZ', city: 'Udaipur', state: 'Rajasthan' },
+            { name: 'Jammu Tawi', code: 'JAT', city: 'Jammu', state: 'J&K' },
+            { name: 'H Nizamuddin', code: 'NZM', city: 'New Delhi', state: 'Delhi' },
+            { name: 'H Sahib Nanded', code: 'NED', city: 'Nanded', state: 'Maharashtra' },
+            { name: 'Gwalior Jn', code: 'GWL', city: 'Gwalior', state: 'Madhya Pradesh' },
+            { name: 'Jabalpur', code: 'JBP', city: 'Jabalpur', state: 'Madhya Pradesh' },
+            { name: 'Ranchi', code: 'RNC', city: 'Ranchi', state: 'Jharkhand' },
+            { name: 'Raipur Jn', code: 'R', city: 'Raipur', state: 'Chhattisgarh' },
+            { name: 'Madurai Jn', code: 'MDU', city: 'Madurai', state: 'Tamil Nadu' },
+            { name: 'Salem Jn', code: 'SA', city: 'Salem', state: 'Tamil Nadu' },
+            { name: 'Mysuru Jn', code: 'MYS', city: 'Mysuru', state: 'Karnataka' },
+            { name: 'Hubli Jn', code: 'UBL', city: 'Hubballi', state: 'Karnataka' },
+            { name: 'Mangaluru Central', code: 'MAQ', city: 'Mangaluru', state: 'Karnataka' },
+            { name: 'Kolkata', code: 'KOAA', city: 'Kolkata', state: 'West Bengal' },
+            { name: 'Sealdah', code: 'SDAH', city: 'Kolkata', state: 'West Bengal' },
+            { name: 'Siliguri Jn', code: 'SGUJ', city: 'Siliguri', state: 'West Bengal' },
+            { name: 'Kanpur Central', code: 'CNB', city: 'Kanpur', state: 'Uttar Pradesh' },
+            { name: 'Allahabad Jn', code: 'ALD', city: 'Prayagraj', state: 'Uttar Pradesh' },
+            { name: 'Gorakhpur Jn', code: 'GKP', city: 'Gorakhpur', state: 'Uttar Pradesh' },
+            { name: 'Mathura Jn', code: 'MTJ', city: 'Mathura', state: 'Uttar Pradesh' },
+        ];
+
+        function highlight(text, query) {
+            if (!query) return text;
+            const idx = text.toLowerCase().indexOf(query.toLowerCase());
+            if (idx === -1) return text;
+            return text.substring(0, idx) + '<em>' + text.substring(idx, idx + query.length) + '</em>' + text.substring(idx + query.length);
+        }
+
+        function buildStationItems(query, listEl, inputEl, dropdownEl) {
+            const q = query.trim().toLowerCase();
+            listEl.innerHTML = '';
+
+            const results = q.length === 0 ? [] : STATIONS.filter(s =>
+                s.name.toLowerCase().includes(q) ||
+                s.code.toLowerCase().includes(q) ||
+                s.city.toLowerCase().includes(q) ||
+                s.state.toLowerCase().includes(q)
+            ).slice(0, 10);
+
+            if (results.length === 0) {
+                listEl.innerHTML = `<div class="station-no-result">No stations found for "${query}"</div>`;
+                dropdownEl.classList.add('open');
+                return;
+            }
+
+            let activeIdx = -1;
+
+            results.forEach((s, i) => {
+                const item = document.createElement('div');
+                item.className = 'station-item';
+                item.dataset.idx = i;
+                item.innerHTML = `
+                    <div class="station-icon">
+                        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    </div>
+                    <div class="station-info">
+                        <div class="station-name">${highlight(s.name, query)} <span class="station-code">${s.code}</span></div>
+                        <div class="station-state">${highlight(s.city, query)} &bull; ${s.state}</div>
+                    </div>
+                `;
+                item.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    inputEl.value = `${s.name} - ${s.code} (${s.city})`;
+                    inputEl.dataset.stationCode = s.code;
+                    dropdownEl.classList.remove('open');
+                });
+                listEl.appendChild(item);
+            });
+
+            dropdownEl.classList.add('open');
+
+            // Keyboard nav
+            inputEl._kbHandler && inputEl.removeEventListener('keydown', inputEl._kbHandler);
+            inputEl._kbHandler = function(e) {
+                const items = listEl.querySelectorAll('.station-item');
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (activeIdx < items.length - 1) {
+                        if (activeIdx >= 0) items[activeIdx].classList.remove('active');
+                        activeIdx++;
+                        items[activeIdx].classList.add('active');
+                        items[activeIdx].scrollIntoView({ block: 'nearest' });
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (activeIdx > 0) {
+                        items[activeIdx].classList.remove('active');
+                        activeIdx--;
+                        items[activeIdx].classList.add('active');
+                        items[activeIdx].scrollIntoView({ block: 'nearest' });
+                    }
+                } else if (e.key === 'Enter') {
+                    if (activeIdx >= 0) {
+                        e.preventDefault();
+                        const s = results[activeIdx];
+                        inputEl.value = `${s.name} - ${s.code} (${s.city})`;
+                        inputEl.dataset.stationCode = s.code;
+                        dropdownEl.classList.remove('open');
+                    }
+                } else if (e.key === 'Escape') {
+                    dropdownEl.classList.remove('open');
+                }
+            };
+            inputEl.addEventListener('keydown', inputEl._kbHandler);
+        }
+
+        function initStationAutocomplete(inputId, dropdownId, listId) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            const list = document.getElementById(listId);
+
+            input.addEventListener('input', () => {
+                const q = input.value.trim();
+                if (q.length < 1) { dropdown.classList.remove('open'); return; }
+                buildStationItems(q, list, input, dropdown);
+            });
+
+            input.addEventListener('focus', () => {
+                if (input.value.trim().length > 0) {
+                    buildStationItems(input.value.trim(), list, input, dropdown);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('open');
+                }
+            });
+        }
+
+        initStationAutocomplete('fromStation', 'fromDropdown', 'fromList');
+        initStationAutocomplete('toStation', 'toDropdown', 'toList');
+    </script>
+</body>
+</html>

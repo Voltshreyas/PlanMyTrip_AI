@@ -1,12 +1,26 @@
 // ===== SESSION MANAGEMENT =====
-// Check if user is logged in, redirect to login if not
-function checkSession() {
-    const user = localStorage.getItem('planmytrip_user');
-    if (!user) {
-        window.location.href = 'login.html';
+// Check if user is logged in. Public pages can call this without redirecting.
+function checkSession(options = {}) {
+    const { redirect = false, loginPath = 'login.html' } = options;
+    const storedUser = localStorage.getItem('planmytrip_user');
+    if (!storedUser) {
+        if (redirect) window.location.href = loginPath;
         return null;
     }
-    return JSON.parse(user);
+
+    try {
+        const user = JSON.parse(storedUser);
+        if (!user || typeof user !== 'object' || !user.email) {
+            localStorage.removeItem('planmytrip_user');
+            if (redirect) window.location.href = loginPath;
+            return null;
+        }
+        return user;
+    } catch (error) {
+        localStorage.removeItem('planmytrip_user');
+        if (redirect) window.location.href = loginPath;
+        return null;
+    }
 }
 
 // Logout function

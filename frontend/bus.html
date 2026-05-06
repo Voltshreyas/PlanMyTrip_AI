@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/city-autocomplete.js"></script>
+    <script src="../js/notifications.js"></script>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: rgba(15, 23, 42, 0.12);
+            --redbus-red: #d84e55;
+            --redbus-dark: #b63a40;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Top Actions */
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 50;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            color: white;
+            font-weight: 700;
+            transition: all .2s ease;
+            padding: 0 1.25rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .pill-button:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        .pill-button.logout {
+            color: #fecdd3;
+            border-color: rgba(254,205,211,0.3);
+        }
+
+        .pill-button.logout:hover {
+            background: rgba(225, 29, 72, 0.4);
+            color: white;
+        }
+
+        /* Hero Wrapper */
+        .hero-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1rem 8rem 1rem;
+            background: 
+                linear-gradient(to bottom, rgba(15,23,42,0.6) 0%, rgba(15,23,42,0.2) 70%, #f8fafc 100%),
+                url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2000&auto=format&fit=crop') center 30% / cover no-repeat;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            color: white;
+            text-align: center;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            letter-spacing: -0.02em;
+            max-width: 800px;
+        }
+
+        /* Search Widget */
+        .search-container {
+            width: 100%;
+            max-width: 76rem;
+            margin: -4rem auto 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 20;
+        }
+
+        .search-widget {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(15,23,42,0.05);
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            position: relative;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 1.25rem 1.5rem 2.5rem 1.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-right: 1px solid var(--line);
+            transition: background 0.2s ease;
+            cursor: text;
+            min-width: 0;
+        }
+        
+        .input-box:hover {
+            background: #f8fafc;
+        }
+
+        .input-box:first-child { border-radius: 1.5rem 0 0 1.5rem; }
+        .input-box:last-child { border-right: none; border-radius: 0 1.5rem 1.5rem 0; }
+
+        .icon-container {
+            color: var(--muted);
+            flex-shrink: 0;
+            display: flex;
+        }
+
+        .input-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+        }
+
+        .form-input {
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--ink);
+            width: 100%;
+            padding: 0;
+            text-overflow: ellipsis;
+        }
+
+        .form-input:focus { outline: none; }
+        .form-input::placeholder { color: #94a3b8; font-weight: 600; }
+
+        /* Swap Button */
+        .swap-btn {
+            position: absolute;
+            right: -1.25rem;
+            top: 2.5rem;
+            transform: translateY(-50%);
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ink);
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease;
+        }
+
+        .swap-btn:hover {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        /* Date Section */
+        .date-box {
+            flex: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .date-input-area {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        input[type="date"] {
+            cursor: pointer;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .quick-dates {
+            display: flex;
+            gap: 0.35rem;
+            flex-shrink: 0;
+        }
+
+        .quick-date-btn {
+            background: #f1f5f9;
+            border: 1px solid transparent;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-date-btn:hover {
+            background: #e2e8f0;
+            color: var(--ink);
+        }
+
+        .quick-date-btn.active {
+            background: #fee2e2;
+            color: var(--redbus-red);
+            border-color: #fca5a5;
+        }
+
+        /* Women Toggle Box */
+        .women-box {
+            flex: 1.15;
+            background: #fffbfa;
+        }
+
+        .women-box:hover {
+            background: #fff1f2;
+        }
+
+        .women-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 0.5rem;
+        }
+
+        .women-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 0;
+        }
+
+        .women-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            background: #fecdd3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e11d48;
+            flex-shrink: 0;
+        }
+
+        .women-text {
+            min-width: 0;
+        }
+
+        .women-text h4 {
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin: 0;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .women-text a {
+            font-size: 0.7rem;
+            color: var(--redbus-red);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 2.5rem;
+            height: 1.4rem;
+            background: #cbd5e1;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 0.15rem;
+            left: 0.15rem;
+            width: 1.1rem;
+            height: 1.1rem;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle-checkbox { display: none; }
+        .toggle-checkbox:checked + .toggle-switch { background: var(--redbus-red); }
+        .toggle-checkbox:checked + .toggle-switch::after { transform: translateX(1.1rem); }
+
+        /* Search Button */
+        .search-btn-wrapper {
+            position: absolute;
+            bottom: -1.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+        }
+
+        .search-btn {
+            background: var(--redbus-red);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding: 1rem 3.5rem;
+            border-radius: 2rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(216,78,85,0.4);
+            transition: transform 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            background: var(--redbus-dark);
+            box-shadow: 0 14px 30px rgba(216,78,85,0.5);
+        }
+
+        /* Bottom Section filler */
+        .content-area {
+            max-width: 76rem;
+            margin: 6rem auto 4rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .promo-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid var(--line);
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .promo-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .promo-icon.blue { background: #eff6ff; color: #3b82f6; }
+        .promo-icon.green { background: #f0fdf4; color: #22c55e; }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
+            .date-box { flex: 1.8; }
+        }
+
+        @media (max-width: 1024px) {
+            .search-widget {
+                flex-direction: column;
+                border-radius: 1.5rem;
+                padding-bottom: 2rem;
+            }
+            .input-box {
+                border-right: none;
+                border-bottom: 1px solid var(--line);
+                padding: 1.25rem;
+            }
+            .input-box:last-child { border-bottom: none; border-radius: 0 0 1.5rem 1.5rem; }
+            .input-box:first-child { border-radius: 1.5rem 1.5rem 0 0; }
+            
+            .swap-btn {
+                right: 2rem;
+                top: auto;
+                bottom: -1.25rem;
+                transform: none;
+                z-index: 10;
+            }
+            .swap-btn:hover { transform: rotate(90deg); }
+
+            .date-box {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            .hero-wrapper {
+                padding-top: 7rem;
+            }
+            .top-bar {
+                padding: 1rem;
+            }
+            .date-box {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .quick-dates {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 0.5rem;
+            }
+            .pill-button span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar is now properly absolute positioned over the hero -->
+    <header class="top-bar">
+        <a href="../index.html" class="pill-button">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to PlanMyTrip</span>
+        </a>
+        <button type="button" onclick="logoutUser()" class="pill-button logout">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Log out</span>
+        </button>
+    </header>
+
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link active"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
+        </div>
+    </nav>
+
+    <style>
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #6366f1; }
+        .user-pill { background: #e0e7ff; color: #6366f1; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            document.getElementById('userPillContainer').innerHTML = `
+                <div class="user-pill">
+                    <i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}
+                </div>
+            `;
+            lucide.createIcons();
+        });
+    </script>
+
+    <!-- Hero Wrapper contains the background and the title securely -->
+    <div class="hero-wrapper">
+        <h1 class="hero-title">
+            India's No. 1 online<br>bus ticket booking site
+        </h1>
+    </div>
+
+    <!-- Search Section pulled up over the hero -->
+    <main>
+        <div class="search-container">
+            <form id="redbusForm" class="search-widget">
+                
+                <!-- From -->
+                <div class="input-box" onclick="document.getElementById('fromCity').focus()">
+                    <div class="icon-container">
+                        <i data-lucide="bus-front" class="w-6 h-6"></i>
+                    </div>
+                    <div class="input-content">
+                        <span class="input-label">From</span>
+                        <input type="text" id="fromCity" class="form-input" placeholder="Origin City" required>
+                    </div>
+                    
+                    <button type="button" id="swapBtn" class="swap-btn">
+                        <i data-lucide="arrow-right-left" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- To -->
+                <div class="input-box" onclick="document.getElementById('toCity').focus()">
+                    <div class="icon-container">
+                        <i data-lucide="bus-front" class="w-6 h-6"></i>
+                    </div>
+                    <div class="input-content">
+                        <span class="input-label">To</span>
+                        <input type="text" id="toCity" class="form-input" placeholder="Destination City" required>
+                    </div>
+                </div>
+
+                <!-- Date -->
+                <div class="input-box date-box">
+                    <div class="date-input-area" onclick="document.getElementById('journeyDate').showPicker()">
+                        <div class="icon-container">
+                            <i data-lucide="calendar" class="w-6 h-6"></i>
+                        </div>
+                        <div class="input-content relative">
+                            <span class="input-label">Date of Journey</span>
+                            <input type="date" id="journeyDate" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="quick-dates">
+                        <button type="button" class="quick-date-btn active" id="btnToday">Today</button>
+                        <button type="button" class="quick-date-btn" id="btnTomorrow">Tomorrow</button>
+                    </div>
+                </div>
+
+                <!-- Women Toggle -->
+                <div class="input-box women-box">
+                    <div class="women-content">
+                        <div class="women-info">
+                            <div class="women-avatar">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </div>
+                            <div class="women-text">
+                                <h4>Booking for women</h4>
+                                <a href="#">Know more</a>
+                            </div>
+                        </div>
+                        <label>
+                            <input type="checkbox" id="womenBooking" class="toggle-checkbox">
+                            <div class="toggle-switch"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <div class="search-btn-wrapper">
+                    <button type="submit" class="search-btn">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                        Search buses
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Bottom Filler Content to make it beautiful -->
+        <div class="content-area">
+            <div class="promo-card">
+                <div class="promo-icon blue">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Secure Payments</h3>
+                    <p class="text-slate-500 font-medium">Multiple payment options with bank-grade security and instant refunds.</p>
+                </div>
+            </div>
+            <div class="promo-card">
+                <div class="promo-icon green">
+                    <i data-lucide="map" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Live Tracking</h3>
+                    <p class="text-slate-500 font-medium">Track your bus in real-time and share your journey with loved ones.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Swap functionality
+        document.getElementById('swapBtn').addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent focusing the input
+            const fromInput = document.getElementById('fromCity');
+            const toInput = document.getElementById('toCity');
+            const temp = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = temp;
+        });
+
+        // Date Logic
+        const dateInput = document.getElementById('journeyDate');
+        const btnToday = document.getElementById('btnToday');
+        const btnTomorrow = document.getElementById('btnTomorrow');
+
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        // Initialize
+        dateInput.setAttribute('min', formatDate(today));
+        dateInput.value = formatDate(today); // Default to today
+
+        function updateQuickDateButtons() {
+            if (dateInput.value === formatDate(today)) {
+                btnToday.classList.add('active');
+                btnTomorrow.classList.remove('active');
+            } else if (dateInput.value === formatDate(tomorrow)) {
+                btnTomorrow.classList.add('active');
+                btnToday.classList.remove('active');
+            } else {
+                btnToday.classList.remove('active');
+                btnTomorrow.classList.remove('active');
+            }
+        }
+
+        dateInput.addEventListener('change', updateQuickDateButtons);
+
+        btnToday.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dateInput.value = formatDate(today);
+            updateQuickDateButtons();
+        });
+
+        btnTomorrow.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dateInput.value = formatDate(tomorrow);
+            updateQuickDateButtons();
+        });
+
+        // Form Submission
+        document.getElementById('redbusForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const from = document.getElementById('fromCity').value.toUpperCase();
+            const to = document.getElementById('toCity').value.toUpperCase();
+            const date = document.getElementById('journeyDate').value;
+            const womenOnly = document.getElementById('womenBooking').checked;
+
+            if(!from || !to || !date) {
+                pmtNotif.info("Missing Information", "Please fill in origin, destination, and date.");
+                return;
+            }
+
+            // Save booking to backend
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = user ? user.email : 'guest@example.com';
+
+            const newBooking = {
+                id: 'BUS' + Date.now(),
+                type: 'bus',
+                status: 'Upcoming',
+                title: `${from} to ${to}`,
+                date: date,
+                details: womenOnly ? 'Women-Only Coach' : 'General Coach',
+                amount: '₹' + Math.floor(300 + Math.random() * 2000).toLocaleString('en-IN')
+            };
+
+            // Show feedback
+            const btn = document.querySelector('.search-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Booking...`;
+            lucide.createIcons();
+            btn.disabled = true;
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, booking: newBooking })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pmtNotif.success("Bus Reserved!", "Your bus tickets have been confirmed successfully.");
+                setTimeout(() => {
+                    window.location.href = 'bookings.html?new=true';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+                pmtNotif.error("Booking Failed", "Failed to confirm bus booking. Please try again.");
+            });
+        });
+
+        // Initialize city autocomplete
+        initCityAutocomplete('fromCity', { accentColor: '#d8484e', label: 'Cities', showAirport: false });
+        initCityAutocomplete('toCity',   { accentColor: '#d8484e', label: 'Cities', showAirport: false });
+    </script>
+</body>
+</html>

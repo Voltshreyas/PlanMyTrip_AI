@@ -1,0 +1,46 @@
+[
+  {
+    "id": "ENQ-1777895473082",
+    "name": "shreyas",
+    "email": "shreyasroy2026@gmail.com",
+    "subject": "hi",
+    "message": "ss",
+    "type": "Flight",
+    "status": "Resolved",
+    "response": "",
+    "createdAt": "2026-05-04T11:51:13.082Z"
+  },
+  {
+    "id": "ENQ-1778018014864",
+    "name": "shreyas",
+    "email": "shreyasroy2023@gmail.com",
+    "subject": "flight cancel",
+    "message": "jj",
+    "type": "Flight",
+    "status": "Resolved",
+    "response": "",
+    "createdAt": "2026-05-05T21:53:34.864Z"
+  },
+  {
+    "id": "ENQ-1778018115732",
+    "name": "Snehal Sarkar",
+    "email": "snehalsarkar94@gmail.com",
+    "subject": "flight cancel",
+    "message": "dd",
+    "type": "Flight",
+    "status": "Resolved",
+    "response": "hi",
+    "createdAt": "2026-05-05T21:55:15.732Z"
+  },
+  {
+    "id": "ENQ-1778018138188",
+    "name": "shreyas",
+    "email": "shreyasroy53@gmail.com",
+    "subject": "flight cancel",
+    "message": "hi",
+    "type": "Flight",
+    "status": "Resolved",
+    "response": "hi",
+    "createdAt": "2026-05-05T21:55:38.188Z"
+  }
+]

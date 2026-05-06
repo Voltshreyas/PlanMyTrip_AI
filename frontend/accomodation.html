@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accommodations & Unique Stays - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/city-autocomplete.js"></script>
+    <script src="../js/notifications.js"></script>
+    <style>
+        :root {
+            --ink: #1c1917; /* stone-900 */
+            --muted: #78716c; /* stone-500 */
+            --line: rgba(28, 25, 23, 0.12);
+            --primary: #f59e0b; /* amber-500 */
+            --primary-dark: #d97706; /* amber-600 */
+            --primary-light: #fef3c7; /* amber-100 */
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background: #fafaf9; /* stone-50 */
+            overflow-x: hidden;
+        }
+
+        /* Top Actions */
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 50;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            color: white;
+            font-weight: 700;
+            transition: all .2s ease;
+            padding: 0 1.25rem;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .pill-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .pill-button.logout {
+            color: #fee2e2;
+            border-color: rgba(254,226,226,0.3);
+        }
+
+        .pill-button.logout:hover {
+            background: rgba(220, 38, 38, 0.4);
+            color: white;
+        }
+
+        /* Hero Wrapper */
+        .hero-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 65vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1rem 8rem 1rem;
+            background: 
+                linear-gradient(to bottom, rgba(28,25,23,0.5) 0%, rgba(28,25,23,0.2) 60%, #fafaf9 100%),
+                url('https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=2000&auto=format&fit=crop') center 60% / cover no-repeat;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            color: white;
+            text-align: center;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            letter-spacing: -0.02em;
+            max-width: 800px;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        /* Search Widget Container */
+        .search-container {
+            width: 100%;
+            max-width: 68rem;
+            margin: -5rem auto 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 20;
+        }
+
+        .acc-widget {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 60px rgba(245, 158, 11, 0.08), 0 0 0 1px rgba(255,255,255,0.8);
+            padding: 0;
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            position: relative;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 1.5rem 1.5rem 3rem 1.5rem; /* Large bottom padding for the absolute button */
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            border-right: 1px solid var(--line);
+            transition: background 0.2s ease;
+            cursor: text;
+            min-width: 0;
+        }
+        
+        .input-box:hover {
+            background: #fafaf9;
+        }
+
+        .input-box:first-child { border-radius: 1.5rem 0 0 1.5rem; }
+        .input-box:last-child { border-right: none; border-radius: 0 1.5rem 1.5rem 0; }
+
+        .icon-container {
+            color: var(--muted);
+            flex-shrink: 0;
+            display: flex;
+            margin-top: 0.15rem;
+        }
+
+        .input-content {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+            position: relative;
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+        }
+
+        .form-input {
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--ink);
+            width: 100%;
+            padding: 0;
+            text-overflow: ellipsis;
+            outline: none;
+        }
+
+        .form-input::placeholder { color: #a8a29e; font-weight: 600; }
+        
+        select.form-input {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* Date Section Specific */
+        .date-box {
+            flex: 1.6;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .date-input-area {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+            position: relative;
+        }
+
+        .date-divider {
+            color: var(--line);
+            font-weight: 300;
+            font-size: 1.5rem;
+            line-height: 1;
+            margin-top: 1rem;
+        }
+        
+        input[type="date"] { cursor: pointer; }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Search Button */
+        .search-btn-wrapper {
+            position: absolute;
+            bottom: -1.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 800;
+            padding: 1rem 4rem;
+            border-radius: 2rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            transition: transform 0.2s ease, background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            background: var(--primary-dark);
+            box-shadow: 0 14px 30px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Content Area */
+        .content-area {
+            max-width: 68rem;
+            margin: 6rem auto 4rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .promo-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid var(--line);
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .promo-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            .acc-widget {
+                flex-direction: column;
+                border-radius: 1.5rem;
+                padding-bottom: 2rem;
+            }
+            .input-box {
+                border-right: none;
+                border-bottom: 1px solid var(--line);
+                padding: 1.5rem;
+            }
+            .input-box:last-child { border-bottom: none; border-radius: 0 0 1.5rem 1.5rem; }
+            .input-box:first-child { border-radius: 1.5rem 1.5rem 0 0; }
+        }
+
+        @media (max-width: 640px) {
+            .date-box {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .date-divider { display: none; }
+            .hero-title { font-size: 2.25rem; }
+            .hero-wrapper { padding-top: 7rem; }
+            .top-bar { padding: 1rem; }
+            .pill-button span { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
+        </div>
+    </nav>
+
+    <style>
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #6366f1; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-link:hover, .nav-link.active { color: #6366f1; }
+        .user-pill { background: #e0e7ff; color: #6366f1; padding: 0.5rem 1rem; border-radius: 2rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            document.getElementById('userPillContainer').innerHTML = `
+                <div class="user-pill">
+                    <i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}
+                </div>
+            `;
+            lucide.createIcons();
+        });
+    </script>
+
+    <!-- Hero -->
+    <div class="hero-wrapper">
+        <h1 class="hero-title">Find Your Perfect Stay</h1>
+        <p class="hero-subtitle">Villas, Apartments, Cabins and unique homes across the globe</p>
+    </div>
+
+    <main>
+        <div class="search-container">
+            <form id="accForm" class="acc-widget">
+                
+                <!-- Destination -->
+                <div class="input-box" onclick="document.getElementById('accDest').focus()">
+                    <div class="icon-container">
+                        <i data-lucide="map-pin" class="w-6 h-6"></i>
+                    </div>
+                    <div class="input-content">
+                        <span class="input-label">Where to?</span>
+                        <input type="text" id="accDest" class="form-input" placeholder="Anywhere" required>
+                    </div>
+                </div>
+
+                <!-- Dates (Check in & Check out) -->
+                <div class="input-box date-box">
+                    <div class="icon-container">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    
+                    <div class="date-input-area" onclick="document.getElementById('checkInDate').showPicker()">
+                        <span class="input-label">Check-in</span>
+                        <input type="date" id="checkInDate" class="form-input" required>
+                    </div>
+
+                    <div class="date-divider">-</div>
+
+                    <div class="date-input-area" onclick="document.getElementById('checkOutDate').showPicker()">
+                        <span class="input-label">Check-out</span>
+                        <input type="date" id="checkOutDate" class="form-input" required>
+                    </div>
+                </div>
+
+                <!-- Guests & Type -->
+                <div class="input-box" onclick="document.getElementById('propertyType').focus()">
+                    <div class="icon-container">
+                        <i data-lucide="home" class="w-6 h-6"></i>
+                    </div>
+                    <div class="input-content">
+                        <span class="input-label">Property Type</span>
+                        <select id="propertyType" class="form-input">
+                            <option value="Any Property">Any Property</option>
+                            <option value="Villa">Villa</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Cabin">Cabin</option>
+                            <option value="Resort">Resort</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <div class="search-btn-wrapper">
+                    <button type="submit" class="search-btn" id="searchBtn">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                        Search Stays
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Promo Section -->
+        <div class="content-area">
+            <div class="promo-card">
+                <div class="promo-icon">
+                    <i data-lucide="key" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Self Check-in</h3>
+                    <p class="text-stone-500 font-medium">Enjoy seamless smart lock access and self check-in options on thousands of properties.</p>
+                </div>
+            </div>
+            <div class="promo-card">
+                <div class="promo-icon">
+                    <i data-lucide="sparkles" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Verified Quality</h3>
+                    <p class="text-stone-500 font-medium">Every unique stay is vetted for cleanliness, amenities, and host reliability.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Date Logic
+        const checkIn = document.getElementById('checkInDate');
+        const checkOut = document.getElementById('checkOutDate');
+        const today = new Date();
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        checkIn.setAttribute('min', formatDate(today));
+        checkOut.setAttribute('min', formatDate(today));
+
+        checkIn.addEventListener('change', (e) => {
+            checkOut.setAttribute('min', e.target.value);
+            if(checkOut.value && checkOut.value <= e.target.value) {
+                let d = new Date(e.target.value);
+                d.setDate(d.getDate() + 1);
+                checkOut.value = formatDate(d);
+            }
+        });
+
+        // Form Submission - Tie into localStorage bookings
+        document.getElementById('accForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dest = document.getElementById('accDest').value.trim();
+            const dateIn = document.getElementById('checkInDate').value;
+            const dateOut = document.getElementById('checkOutDate').value;
+            const type = document.getElementById('propertyType').value;
+
+            if(!dest || !dateIn || !dateOut) {
+                pmtNotif.info("Missing Information", "Please fill in destination and dates.");
+                return;
+            }
+
+            // Save booking to backend
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = user ? user.email : 'guest@example.com';
+
+            let d1 = new Date(dateIn);
+            let d2 = new Date(dateOut);
+            let nights = Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) || 1;
+
+            const newBooking = {
+                id: 'STAY' + Date.now(),
+                type: 'hotel',
+                status: 'Upcoming',
+                title: `Beautiful ${type} in ${dest.toUpperCase()}`,
+                date: dateIn,
+                details: `${nights} Night(s) • Self Check-in`,
+                amount: '₹' + Math.floor(2500 + Math.random() * 8000).toLocaleString('en-IN')
+            };
+
+            // Loading feedback
+            const btn = document.getElementById('searchBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Reserving...`;
+            lucide.createIcons();
+            btn.disabled = true;
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, booking: newBooking })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pmtNotif.success("Stay Confirmed!", `Your ${type} has been reserved. Redirecting...`);
+                setTimeout(() => {
+                    window.location.href = 'bookings.html?new=true';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+                pmtNotif.error("Reservation Failed", "Failed to confirm your accommodation stay. Please try again.");
+            });
+        });
+
+        // Initialize city autocomplete
+        initCityAutocomplete('accDest', { accentColor: '#0f766e', label: 'Cities', showAirport: false });
+    </script>
+</body>
+</html>

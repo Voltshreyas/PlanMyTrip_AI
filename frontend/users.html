@@ -3,233 +3,507 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - PlanMyTrip</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/styles.css">
+    <title>My Account - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        h1, h2, h3, h4, .font-outfit { font-family: 'Outfit', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); }
-        .bg-gradient-premium { background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); }
-        .fade-in { animation: fadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        :root {
+            --ink: #14213d;
+            --muted: #617084;
+            --line: rgba(20, 33, 61, 0.12);
+            --paper: #f7fbfa;
+            --teal: #0f766e;
+            --blue: #2563eb;
+            --amber: #f59e0b;
+            --rose: #e11d48;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 12% 8%, rgba(245,158,11,0.12), transparent 26rem),
+                radial-gradient(circle at 88% 14%, rgba(37,99,235,0.11), transparent 30rem),
+                linear-gradient(180deg, #f7fbfa 0%, #eef7ff 54%, #fff7ed 100%);
+        }
+
+        h1, h2, h3, .font-outfit {
+            font-family: 'Outfit', system-ui, sans-serif;
+            letter-spacing: 0;
+        }
+
+        .page-shell {
+            width: min(100% - 1.25rem, 72rem);
+            margin: 0 auto;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+
+        .icon-button,
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.82);
+            color: var(--ink);
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(20,33,61,0.08);
+            transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+        }
+
+        .icon-button {
+            width: 2.75rem;
+            padding: 0;
+        }
+
+        .pill-button {
+            padding: 0 1rem;
+        }
+
+        .icon-button:hover,
+        .pill-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(20,33,61,0.12);
+            background: #ffffff;
+        }
+
+        .hero-panel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255,255,255,0.36);
+            background:
+                linear-gradient(110deg, rgba(15,23,42,0.94), rgba(15,118,110,0.82) 48%, rgba(37,99,235,0.72)),
+                url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?q=80&w=1800&auto=format&fit=crop') center / cover no-repeat;
+            color: #ffffff;
+            box-shadow: 0 24px 70px rgba(20,33,61,0.18);
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: clamp(1rem, 3vw, 2rem);
+        }
+
+        .profile-avatar {
+            width: clamp(5.4rem, 14vw, 8rem);
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at 30% 22%, rgba(255,255,255,0.28), transparent 28%),
+                linear-gradient(135deg, #0f766e 0%, #2563eb 56%, #7c3aed 100%);
+            border: 4px solid #fbbf24;
+            box-shadow: 0 20px 48px rgba(0,0,0,0.28), 0 0 0 7px rgba(251,191,36,0.16);
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 900;
+            font-family: 'Outfit', system-ui, sans-serif;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-height: 2rem;
+            padding: 0 0.75rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.24);
+            background: rgba(255,255,255,0.13);
+            color: rgba(255,255,255,0.9);
+            font-size: 0.78rem;
+            font-weight: 900;
+        }
+
+        .hero-title {
+            margin-top: 0.8rem;
+            font-size: clamp(2.1rem, 6vw, 4.6rem);
+            line-height: 0.95;
+            font-weight: 900;
+        }
+
+        .hero-email {
+            margin-top: 0.65rem;
+            color: rgba(255,255,255,0.78);
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .hero-actions {
+            display: grid;
+            gap: 0.75rem;
+            min-width: 12rem;
+        }
+
+        .hero-action {
+            min-height: 3rem;
+            padding: 0 1rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            font-weight: 900;
+            background: #ffffff;
+            color: #0f766e;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .hero-action.secondary {
+            background: rgba(255,255,255,0.13);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.24);
+        }
+
+        .hero-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+        }
+
+        .section-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 22rem;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .surface {
+            border-radius: 1rem;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.84);
+            box-shadow: 0 16px 42px rgba(20,33,61,0.08);
+        }
+
+        .stat-card,
+        .panel {
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .stat-card:hover,
+        .panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 52px rgba(20,33,61,0.12);
+        }
+
+        .soft-icon {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f766e;
+            background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+            border: 1px solid rgba(15,118,110,0.14);
+        }
+
+        .soft-icon.blue { color: #2563eb; background: #eff6ff; border-color: rgba(37,99,235,0.16); }
+        .soft-icon.amber { color: #b45309; background: #fffbeb; border-color: rgba(245,158,11,0.18); }
+        .soft-icon.rose { color: #be123c; background: #fff1f2; border-color: rgba(225,29,72,0.16); }
+
+        .row-link {
+            width: 100%;
+            min-height: 4.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.9rem;
+            border-radius: 0.85rem;
+            border: 1px solid rgba(20,33,61,0.1);
+            background: #ffffff;
+            text-align: left;
+            transition: background .2s ease, transform .2s ease, border-color .2s ease;
+        }
+
+        .row-link:hover {
+            background: linear-gradient(90deg, #f0fdfa, #eff6ff);
+            border-color: rgba(15,118,110,0.2);
+            transform: translateX(3px);
+        }
+
+        .reward-card {
+            background:
+                linear-gradient(135deg, #14213d, #0f766e 58%, #f59e0b);
+            color: #ffffff;
+        }
+
+        .logout-button {
+            color: #be123c;
+            background: #fff1f2;
+            border-color: rgba(190,18,60,0.14);
+        }
+
+        @media (max-width: 960px) {
+            .hero-inner {
+                grid-template-columns: 1fr;
+                text-align: center;
+                justify-items: center;
+            }
+
+            .hero-actions {
+                width: min(100%, 28rem);
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .top-actions {
+                padding-top: 0.75rem;
+            }
+
+            .pill-button span {
+                display: none;
+            }
+
+            .hero-panel {
+                border-radius: 1rem;
+            }
+
+            .hero-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .row-link {
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
-<body class="bg-indigo-50/20 min-h-screen flex flex-col relative overflow-x-hidden">
-    <!-- Premium Header & Navigation -->
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100/50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-4">
-            <!-- Logo -->
-            <a href="../index.html" class="flex items-center gap-2.5 group flex-shrink-0">
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-400 flex items-center justify-center shadow-md shadow-indigo-300/40 transition-transform group-hover:scale-110">
-                    <i data-lucide="plane" class="w-5 h-5 text-white"></i>
-                </div>
-                <span class="text-xl font-extrabold" style="font-family:'Outfit',sans-serif;background:linear-gradient(135deg,#4f46e5,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-                    PlanMyTrip
-                </span>
+<body>
+    <div class="page-shell">
+        <div class="top-actions">
+            <a href="../index.html" class="pill-button">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                <span>Back to PlanMyTrip</span>
             </a>
-
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center gap-1">
-                <a id="nav-home" href="../index.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="home" class="w-4 h-4"></i> Home
-                </a>
-                <a id="nav-destinations" href="../destination.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-                </a>
-                <a id="nav-about" href="mission.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="info" class="w-4 h-4"></i> Mission
-                </a>
-                <a id="nav-bookings" href="bookings.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-                </a>
-                <a id="nav-referrals" href="referral.html" class="nav-link flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all font-semibold">
-                    <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-                </a>
-                <a href="plannewtrip.html" class="ml-3 flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white shadow-md shadow-indigo-300/40 transition-all hover:scale-105 bg-gradient-premium">
-                    <i data-lucide="rocket" class="w-3.5 h-3.5"></i> Plan Trip
-                </a>
-            </nav>
-
-            <!-- Right side -->
-            <div class="flex items-center gap-2 sm:gap-3">
-                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-xl">
-                    <i data-lucide="user-circle" class="w-4 h-4 text-indigo-500"></i>
-                    <span class="text-xs font-bold text-indigo-700 max-w-[80px] truncate" id="user-id-display">User</span>
-                </div>
-                <a href="logout.html" title="Logout" class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-semibold py-1.5 px-3 rounded-xl transition-all text-sm border border-red-100">
-                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Logout</span>
-                </a>
-                <a href="users.html"><img class="user-avatar w-9 h-9 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-indigo-300 transition-all" src="https://placehold.co/40x40/4F46E5/FFFFFF?text=SR" alt="User Avatar" id="user-avatar-img"></a>
-                <!-- Hamburger -->
-                <button id="mobile-menu-toggle" class="md:hidden flex items-center justify-center w-9 h-9 rounded-xl text-gray-600" style="background:rgba(79,70,229,0.07);border:1.5px solid rgba(79,70,229,0.12);">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-            </div>
+            <button type="button" onclick="logoutUser()" class="pill-button logout-button">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Log out</span>
+            </button>
         </div>
 
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden animate-slide-down mx-4 mb-3 p-3 space-y-1" style="background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-radius:1rem;border:1px solid rgba(79,70,229,0.1);box-shadow:0 8px 32px rgba(79,70,229,0.1);">
-            <a id="nav-home-mobile" href="../index.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="home" class="w-4 h-4"></i> Home
-            </a>
-            <a id="nav-destinations-mobile" href="../destination.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="map-pin" class="w-4 h-4"></i> Destinations
-            </a>
-            <a id="nav-about-mobile" href="mission.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="info" class="w-4 h-4"></i> Our Mission
-            </a>
-            <a id="nav-bookings-mobile" href="bookings.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="calendar" class="w-4 h-4"></i> Bookings
-            </a>
-            <a id="nav-referrals-mobile" href="referral.html" class="nav-link flex items-center gap-2.5 px-3 py-2.5 text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 rounded-lg transition-all font-semibold text-sm">
-                <i data-lucide="gift" class="w-4 h-4"></i> Referrals
-            </a>
-        </div>
-    </header>
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Profile Header -->
-        <div class="glass bg-white/90 rounded-[2rem] shadow-2xl overflow-hidden border border-white mb-10 fade-in">
-            <div class="h-32 bg-gradient-premium"></div>
-            <div class="px-8 pb-8">
-                <div class="relative flex justify-center sm:justify-start">
-                    <div class="absolute -top-16 w-32 h-32 rounded-3xl border-4 border-white overflow-hidden shadow-2xl bg-white">
-                        <img src="https://placehold.co/128x128/4F46E5/FFFFFF?text=SR" alt="User Avatar" class="w-full h-full object-cover">
-                        <button class="absolute bottom-2 right-2 p-2 bg-indigo-600 text-white rounded-xl shadow-lg hover:bg-indigo-700 transition-all">
-                            <i data-lucide="camera" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="pt-20 sm:pt-4 sm:ml-40 flex flex-col sm:flex-row justify-between items-center sm:items-end gap-4">
-                    <div class="text-center sm:text-left">
-                        <h1 class="text-3xl font-black text-gray-900">Shreyas Roy.</h1>
-                        <p class="text-gray-500 font-medium">shreyasroy2023@gmail.com</p>
-                    </div>
-                    <button class="px-6 py-2.5 bg-indigo-50 text-indigo-600 font-bold rounded-2xl border border-indigo-100 hover:bg-indigo-100 transition-all">
-                        Edit Profile
-                    </button>
-                </div>
-            </div>
-        </div>
+        <main class="pb-8">
+            <section class="hero-panel">
+                <div class="hero-inner">
+                    <div id="profile-avatar" class="profile-avatar">AS</div>
 
-        <!-- Dashboard Grid -->
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Travel Stats -->
-            <div class="md:col-span-2 space-y-8">
-                <div class="glass bg-white/90 p-8 rounded-[2rem] shadow-xl hover:shadow-2xl transition-all duration-300 fade-in">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                        <i data-lucide="bar-chart-3" class="w-5 h-5 text-indigo-600"></i>
-                        Travel Insights
-                    </h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        <div class="p-4 bg-indigo-50 rounded-2xl text-center">
-                            <p class="text-2xl font-black text-indigo-600">12</p>
-                            <p class="text-xs text-indigo-400 font-bold uppercase">Trips</p>
-                        </div>
-                        <div class="p-4 bg-emerald-50 rounded-2xl text-center">
-                            <p class="text-2xl font-black text-emerald-600">5</p>
-                            <p class="text-xs text-emerald-400 font-bold uppercase">States</p>
-                        </div>
-                        <div class="p-4 bg-cyan-50 rounded-2xl text-center">
-                            <p class="text-2xl font-black text-cyan-600">1.2k</p>
-                            <p class="text-xs text-cyan-400 font-bold uppercase">KMs</p>
-                        </div>
-                        <div class="p-4 bg-amber-50 rounded-2xl text-center">
-                            <p class="text-2xl font-black text-amber-600">4.9</p>
-                            <p class="text-xs text-amber-400 font-bold uppercase">Rating</p>
-                        </div>
+                    <div>
+                        <span class="status-pill">
+                            <i data-lucide="badge-check" class="w-4 h-4"></i>
+                            Verified traveler
+                        </span>
+                        <h1 id="profile-name" class="hero-title">Traveler</h1>
+                        <p id="profile-email" class="hero-email">guest@planmytrip.com</p>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="plannewtrip.html" class="hero-action">
+                            <i data-lucide="route" class="w-4 h-4"></i>
+                            Plan Trip
+                        </a>
+                        <a href="bookings.html" class="hero-action secondary">
+                            <i data-lucide="calendar-check" class="w-4 h-4"></i>
+                            Bookings
+                        </a>
                     </div>
                 </div>
+            </section>
 
-                <!-- Account Settings -->
-                <div class="glass bg-white/90 rounded-[2rem] shadow-xl border border-white overflow-hidden fade-in">
-                    <div class="p-8 border-b border-gray-100">
-                        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-                            <i data-lucide="settings" class="w-5 h-5 text-gray-400"></i>
-                            Account Preferences
-                        </h2>
-                    </div>
-                    <div class="divide-y divide-gray-50">
-                        <button class="w-full px-8 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-                                    <i data-lucide="shield" class="w-5 h-5 text-blue-600"></i>
-                                </div>
-                                <div class="text-left">
-                                    <p class="font-bold text-gray-900">Security & Privacy</p>
-                                    <p class="text-xs text-gray-500">Manage password and data sharing</p>
-                                </div>
+            <section class="stat-grid">
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon"><i data-lucide="map" class="w-5 h-5"></i></div>
+                    <p class="mt-4 text-3xl font-black">12</p>
+                    <p class="text-sm text-slate-500 font-bold">Trips planned</p>
+                </article>
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon blue"><i data-lucide="landmark" class="w-5 h-5"></i></div>
+                    <p class="mt-4 text-3xl font-black">5</p>
+                    <p class="text-sm text-slate-500 font-bold">States explored</p>
+                </article>
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon amber"><i data-lucide="gift" class="w-5 h-5"></i></div>
+                    <p id="reward-total" class="mt-4 text-3xl font-black">Rs 0</p>
+                    <p class="text-sm text-slate-500 font-bold">Referral rewards</p>
+                </article>
+                <article class="surface stat-card p-5">
+                    <div class="soft-icon rose"><i data-lucide="star" class="w-5 h-5"></i></div>
+                    <p class="mt-4 text-3xl font-black">4.9</p>
+                    <p class="text-sm text-slate-500 font-bold">Average rating</p>
+                </article>
+            </section>
+
+            <section class="section-grid">
+                <div class="space-y-4">
+                    <article class="surface panel p-5 md:p-7">
+                        <div class="flex items-start justify-between gap-4 mb-5">
+                            <div>
+                                <h2 class="text-2xl font-black">Account Preferences</h2>
+                                <p class="text-slate-500 mt-1">Manage security, alerts, and your travel defaults.</p>
                             </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-                        </button>
-                        <button class="w-full px-8 py-5 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center">
-                                    <i data-lucide="bell" class="w-5 h-5 text-purple-600"></i>
-                                </div>
-                                <div class="text-left">
-                                    <p class="font-bold text-gray-900">Notifications</p>
-                                    <p class="text-xs text-gray-500">Trip alerts and promo emails</p>
-                                </div>
+                            <div class="soft-icon"><i data-lucide="settings" class="w-5 h-5"></i></div>
+                        </div>
+                        <div class="grid gap-3">
+                            <button class="row-link">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon blue"><i data-lucide="shield" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Security and privacy</strong><small class="text-slate-500">Password, sessions, and account protection</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </button>
+                            <button class="row-link">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon amber"><i data-lucide="bell" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Trip notifications</strong><small class="text-slate-500">Booking alerts, pickup updates, and reminders</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </button>
+                            <button class="row-link">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon"><i data-lucide="utensils" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Travel preferences</strong><small class="text-slate-500">Food, stay, route, and comfort choices</small></span>
+                                </span>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+                            </button>
+                        </div>
+                    </article>
+
+                    <article class="surface panel p-5 md:p-7">
+                        <div class="flex items-center justify-between gap-4 mb-5">
+                            <div>
+                                <h2 class="text-2xl font-black">Recent Activity</h2>
+                                <p class="text-slate-500 mt-1">Your latest PlanMyTrip updates.</p>
                             </div>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-gray-300"></i>
-                        </button>
-                    </div>
+                            <div class="soft-icon rose"><i data-lucide="activity" class="w-5 h-5"></i></div>
+                        </div>
+                        <div class="grid gap-3">
+                            <div class="row-link">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon"><i data-lucide="calendar-check" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Travel dashboard opened</strong><small class="text-slate-500">Review routes, bookings, and rewards</small></span>
+                                </span>
+                                <span class="text-sm font-black text-slate-500">Now</span>
+                            </div>
+                            <div class="row-link">
+                                <span class="flex items-center gap-3">
+                                    <span class="soft-icon amber"><i data-lucide="gift" class="w-5 h-5"></i></span>
+                                    <span><strong class="block">Referral code ready</strong><small id="referral-code-text" class="text-slate-500">Login reward code available</small></span>
+                                </span>
+                                <a href="referral.html" class="text-sm font-black text-teal-700">Open</a>
+                            </div>
+                        </div>
+                    </article>
                 </div>
-            </div>
 
-            <!-- Sidebar -->
-            <div class="space-y-8">
-                <!-- Referral Card -->
-                <div class="bg-gradient-premium p-8 rounded-[2rem] text-white shadow-[0_20px_40px_rgba(79,70,229,0.2)] hover:shadow-[0_20px_40px_rgba(79,70,229,0.4)] transition-all duration-300 hover:-translate-y-2 fade-in">
-                    <i data-lucide="gift" class="w-10 h-10 mb-4 opacity-50"></i>
-                    <h3 class="text-xl font-bold mb-2">Invite your friends</h3>
-                    <p class="text-sm text-indigo-100 mb-6 leading-relaxed">Share the joy of discovery and earn ₹750 for every booking they make.</p>
-                    <a href="referral.html" class="block w-full text-center bg-white text-indigo-600 font-bold py-3 rounded-2xl hover:bg-indigo-50 transition-colors">
-                        Get Your Code
-                    </a>
-                </div>
+                <aside class="space-y-4">
+                    <article class="panel reward-card rounded-2xl p-6 shadow-lg">
+                        <div class="w-12 h-12 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                        </div>
+                        <h2 class="mt-5 text-2xl font-black">Invite and save</h2>
+                        <p class="mt-2 text-white/75 leading-relaxed">Share PlanMyTrip with friends and keep travel rewards ready for your next booking.</p>
+                        <a href="referral.html" class="mt-5 w-full inline-flex items-center justify-center gap-2 min-h-12 rounded-xl bg-white text-slate-900 font-black">
+                            Open Referrals
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    </article>
 
-                <!-- Support Card -->
-                <div class="glass bg-white/90 p-8 rounded-[2rem] shadow-xl border border-white text-center hover:shadow-2xl transition-all hover:scale-[1.02] fade-in">
-                    <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="headphones" class="w-6 h-6 text-indigo-600"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-900 mb-1">Need Help?</h3>
-                    <p class="text-xs text-gray-500 mb-4 leading-relaxed">Our support team is available 24/7 for your assistance.</p>
-                    <button class="text-sm font-bold text-indigo-600 hover:text-indigo-700">Contact Support</button>
-                </div>
-            </div>
-        </div>
-    </main>
+                    <article class="surface panel p-6">
+                        <div class="soft-icon blue"><i data-lucide="headphones" class="w-5 h-5"></i></div>
+                        <h2 class="mt-5 text-xl font-black">Need help?</h2>
+                        <p class="mt-2 text-sm text-slate-500 leading-relaxed">Get help with bookings, refunds, itinerary changes, and pickup details.</p>
+                        <a href="mission.html" class="mt-5 inline-flex font-black text-blue-700">Contact Support</a>
+                    </article>
+                </aside>
+            </section>
+        </main>
+    </div>
 
-    
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-100 py-12 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500">
-            <p>&copy; 2024 PlanMyTrip. Registered travel logistics provider.</p>
-        </div>
-    </footer>
     <script>
         lucide.createIcons();
-        const menuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (menuToggle && mobileMenu) {
-            menuToggle.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
+
+        function getStoredUser() {
+            try {
+                const user = JSON.parse(localStorage.getItem('planmytrip_user') || 'null');
+                return user && user.email ? user : null;
+            } catch (error) {
+                localStorage.removeItem('planmytrip_user');
+                return null;
+            }
+        }
+
+        function getDisplayName(user) {
+            if (!user) return 'Traveler';
+            if (user.name) return user.name;
+            return user.email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+        }
+
+        function getInitials(user) {
+            const displayName = getDisplayName(user);
+            const parts = displayName.split(/\s+/).filter(Boolean);
+            if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+            return displayName.slice(0, 2).toUpperCase();
+        }
+
+        function formatCurrency(value) {
+            return `Rs ${new Intl.NumberFormat('en-IN').format(Number(value) || 0)}`;
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('planmytrip_user');
+            localStorage.removeItem('user_session');
+            window.location.href = '../login.html';
+        }
+
+        const user = getStoredUser();
+        if (!user) {
+            window.location.href = '../login.html';
+        } else {
+            document.getElementById('profile-name').textContent = getDisplayName(user);
+            document.getElementById('profile-email').textContent = user.email;
+            document.getElementById('profile-avatar').textContent = getInitials(user);
+            document.getElementById('reward-total').textContent = formatCurrency(user.totalDiscount || 0);
+            document.getElementById('referral-code-text').textContent = user.referralCode || 'Referral code will appear after signup';
         }
     </script>
 </body>

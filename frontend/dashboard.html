@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Dashboard | PlanMyTrip Admin</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Tools -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/notifications.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --ink: #0f172a;
+            --muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.85);
+            --border: rgba(226, 232, 240, 0.8);
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: var(--ink);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .logo-area {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .nav-group { margin-bottom: 2rem; }
+        .nav-label { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; padding-left: 0.75rem; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1rem;
+            border-radius: 1rem;
+            color: var(--muted);
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .nav-item:hover { background: #f1f5f9; color: var(--ink); }
+        .nav-item.active { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3); }
+
+        /* Main Content */
+        .main-view {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2.5rem 3rem;
+        }
+
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-title h1 { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 900; letter-spacing: -0.02em; }
+        .header-title p { color: var(--muted); font-weight: 500; }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 3.5rem; height: 3.5rem; border-radius: 1rem; display: flex; align-items: center; justify-content: center;
+        }
+
+        .stat-info h3 { font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+        .stat-info p { font-family: 'Outfit', sans-serif; font-size: 1.75rem; font-weight: 900; }
+
+        /* Data Tables */
+        .content-panel {
+            background: white;
+            border-radius: 1.5rem;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.02);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0 0.5rem;
+        }
+
+        .panel-title { font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 800; }
+
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+        .data-table td { padding: 1rem; border-bottom: 1px solid #f8fafc; font-size: 0.9rem; font-weight: 600; vertical-align: middle; }
+
+        .type-pill { padding: 0.25rem 0.75rem; border-radius: 2rem; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .status-pill { padding: 0.25rem 0.6rem; border-radius: 0.5rem; font-size: 0.7rem; font-weight: 700; }
+
+        /* Enquiries */
+        .enquiry-card {
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+        .enquiry-card:hover { transform: translateX(5px); }
+
+        .badge-new { background: #fef3c7; color: #92400e; }
+        .badge-resolved { background: #dcfce7; color: #166534; }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 2rem 0.75rem; }
+            .logo-area span, .nav-item span, .nav-label { display: none; }
+            .nav-item { justify-content: center; padding: 1rem; }
+            .main-view { margin-left: 80px; padding: 2rem; }
+        }
+    </style>
+    <script>
+        // Immediate Auth Check
+        (function() {
+            const user = JSON.parse(localStorage.getItem('planmytrip_user') || 'null');
+            if (!user || user.email !== 'shreyasroy2023@gmail.com') {
+                alert('Access Denied: Only the system administrator can access the DevConsole.');
+                window.location.href = '../login.html';
+            }
+        })();
+    </script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <i data-lucide="terminal" class="w-8 h-8"></i>
+            <span>DevConsole</span>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-label">General</div>
+            <div class="nav-item active" data-view="overview">
+                <i data-lucide="layout-dashboard"></i> <span>Overview</span>
+            </div>
+            <div class="nav-item" data-view="bookings">
+                <i data-lucide="calendar"></i> <span>All Bookings</span>
+            </div>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-label">Support</div>
+            <div class="nav-item" data-view="enquiries">
+                <i data-lucide="message-square"></i> <span>Enquiries</span>
+            </div>
+            <div class="nav-item" data-view="users">
+                <i data-lucide="users"></i> <span>Users</span>
+            </div>
+        </div>
+
+        <div class="mt-auto">
+            <a href="../index.html" class="nav-item" style="color: var(--danger); background: #fff1f2;">
+                <i data-lucide="external-link"></i> <span>Exit Console</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-view">
+        <div class="header-bar">
+            <div class="header-title">
+                <h1 id="view-title">Overview</h1>
+                <p id="view-subtitle">System status and key metrics at a glance.</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="refreshData()" class="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </button>
+                <div class="bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Admin: Shreyas
+                </div>
+            </div>
+        </div>
+
+        <!-- Overview Content -->
+        <div id="overview-view" class="view-content fade-in">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon bg-indigo-100 text-indigo-600"><i data-lucide="shopping-cart"></i></div>
+                    <div class="stat-info"><h3>Total Bookings</h3><p id="stat-bookings">0</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-emerald-100 text-emerald-600"><i data-lucide="indian-rupee"></i></div>
+                    <div class="stat-info"><h3>Total Revenue</h3><p id="stat-revenue">0</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-sky-100 text-sky-600"><i data-lucide="users"></i></div>
+                    <div class="stat-info"><h3>Total Users</h3><p id="stat-users">0</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon bg-amber-100 text-amber-600"><i data-lucide="help-circle"></i></div>
+                    <div class="stat-info"><h3>Enquiries</h3><p id="stat-enquiries">0</p></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="content-panel">
+                    <div class="panel-header"><h2 class="panel-title">Booking Distribution</h2></div>
+                    <div id="booking-types-list" class="space-y-4">
+                        <!-- Types populated here -->
+                    </div>
+                </div>
+                <div class="content-panel">
+                    <div class="panel-header"><h2 class="panel-title">Support Breakdown</h2></div>
+                    <div id="enquiry-types-list" class="space-y-4">
+                        <!-- Enquiry Types populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings View -->
+        <div id="bookings-view" class="view-content fade-in hidden">
+            <div class="content-panel overflow-x-auto">
+                <div class="panel-header">
+                    <h2 class="panel-title">Global Booking Registry</h2>
+                    <input type="text" placeholder="Search ID, User, or Destination..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm w-64">
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Reference</th>
+                            <th>User Email</th>
+                            <th>Destination</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-bookings-table">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Enquiries View -->
+        <div id="enquiries-view" class="view-content fade-in hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="md:col-span-2">
+                    <div class="content-panel">
+                        <div class="panel-header"><h2 class="panel-title">Support Inbox</h2></div>
+                        <div id="enquiry-list" class="space-y-4">
+                            <!-- Enquiries populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="content-panel">
+                        <h3 class="font-bold text-sm mb-4 text-slate-500 uppercase tracking-wider">Quick Actions</h3>
+                        <button class="w-full text-left p-3 hover:bg-slate-50 rounded-lg flex items-center gap-3 font-semibold text-sm transition-all">
+                            <i data-lucide="mail" class="w-4 h-4 text-indigo-600"></i> Mark All as Read
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users View -->
+        <div id="users-view" class="view-content fade-in hidden">
+            <div class="content-panel overflow-x-auto">
+                <div class="panel-header">
+                    <h2 class="panel-title">Platform Members</h2>
+                    <input type="text" placeholder="Search name or email..." class="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-indigo-500 text-sm w-64">
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Email Address</th>
+                            <th>Phone</th>
+                            <th>Member Since</th>
+                            <th>Referral Code</th>
+                        </tr>
+                    </thead>
+                    <tbody id="all-users-table">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // View Switching
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const view = item.dataset.view;
+                if (!view) return;
+
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
+                document.getElementById(`${view}-view`).classList.remove('hidden');
+
+                // Update Header
+                const titles = {
+                    overview: { t: 'Overview', s: 'System status and key metrics at a glance.' },
+                    bookings: { t: 'Global Bookings', s: 'Full oversight of every ticket and hotel reservation.' },
+                    enquiries: { t: 'Support Inbox', s: 'Manage user enquiries and feedback submissions.' },
+                    users: { t: 'User Management', s: 'Complete list of registered platform members.' }
+                };
+                document.getElementById('view-title').textContent = titles[view].t;
+                document.getElementById('view-subtitle').textContent = titles[view].s;
+            });
+        });
+        // Helper for authenticated API calls
+        async function apiFetch(url, options = {}) {
+            const user = JSON.parse(localStorage.getItem('planmytrip_user') || '{}');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers,
+                'X-Admin-Email': user.email || ''
+            };
+            return fetch(url, { ...options, headers });
+        }
+
+        async function refreshData() {
+            pmtNotif.info("Syncing...", "Fetching latest system data.");
+            await Promise.all([
+                loadStats(),
+                loadAllBookings(),
+                loadEnquiries(),
+                loadUsers()
+            ]);
+            pmtNotif.success("Synchronized", "All views updated with real-time data.");
+        }
+
+        async function loadUsers() {
+            const res = await apiFetch('/api/admin/users');
+            const data = await res.json();
+            if (data.success) {
+                const table = document.getElementById('all-users-table');
+                table.innerHTML = '';
+                data.users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="font-bold">${u.name}</td>
+                        <td class="text-indigo-600">${u.email}</td>
+                        <td>${u.phone}</td>
+                        <td class="text-xs">${new Date(u.createdAt).toLocaleDateString()}</td>
+                        <td><span class="type-pill bg-teal-50 text-teal-600">${u.referralCode}</span></td>
+                    `;
+                    table.appendChild(tr);
+                });
+            }
+        }
+
+        async function loadStats() {
+            const res = await apiFetch('/api/admin/stats');
+            const data = await res.json();
+            if (data.success) {
+                const s = data.stats;
+                document.getElementById('stat-bookings').textContent = s.totalBookings;
+                document.getElementById('stat-revenue').textContent = '₹' + s.totalRevenue.toLocaleString();
+                document.getElementById('stat-users').textContent = s.totalUsers;
+                document.getElementById('stat-enquiries').textContent = s.totalEnquiries;
+
+                // Render types
+                const typeList = document.getElementById('booking-types-list');
+                typeList.innerHTML = '';
+                const colors = { flight: 'indigo', train: 'rose', bus: 'emerald', hotel: 'fuchsia', stay: 'amber', trip: 'sky' };
+                
+                Object.entries(s.typeCounts).forEach(([type, count]) => {
+                    const pct = s.totalBookings > 0 ? Math.round((count / s.totalBookings) * 100) : 0;
+                    const color = colors[type] || 'slate';
+                    typeList.innerHTML += `
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="capitalize">${type}</span>
+                                <span>${count} (${pct}%)</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-${color}-500" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Render Enquiry types
+                const enqTypeList = document.getElementById('enquiry-types-list');
+                enqTypeList.innerHTML = '';
+                const enqColors = { General: 'slate', Flight: 'indigo', Train: 'rose', Bus: 'emerald', Hotel: 'fuchsia', Accommodation: 'sky', Payment: 'amber', Technical: 'red' };
+
+                Object.entries(s.enquiryTypeCounts).forEach(([type, count]) => {
+                    const pct = s.totalEnquiries > 0 ? Math.round((count / s.totalEnquiries) * 100) : 0;
+                    const color = enqColors[type] || 'slate';
+                    enqTypeList.innerHTML += `
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="capitalize">${type}</span>
+                                <span>${count} (${pct}%)</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-${color}-500" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        async function loadAllBookings() {
+            const res = await apiFetch('/api/admin/all-bookings');
+            const data = await res.json();
+            if (data.success) {
+                const table = document.getElementById('all-bookings-table');
+                table.innerHTML = '';
+                data.bookings.forEach(b => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><span class="type-pill bg-slate-100 text-slate-600">${b.type}</span></td>
+                        <td class="font-mono text-xs">${b.id}</td>
+                        <td class="text-indigo-600">${b.userEmail}</td>
+                        <td>${b.title}</td>
+                        <td class="text-xs">${b.date}</td>
+                        <td><span class="status-pill ${b.status === 'Cancelled' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}">${b.status}</span></td>
+                        <td class="font-bold">${b.amount}</td>
+                    `;
+                    table.appendChild(tr);
+                });
+            }
+        }
+
+        async function loadEnquiries() {
+            const res = await apiFetch('/api/admin/enquiries');
+            const data = await res.json();
+            if (data.success) {
+                const list = document.getElementById('enquiry-list');
+                list.innerHTML = '';
+                
+                if (data.enquiries.length === 0) {
+                    list.innerHTML = `<div class="text-center py-8 text-slate-400">No enquiries found.</div>`;
+                    return;
+                }
+
+                data.enquiries.forEach(e => {
+                    const card = document.createElement('div');
+                    card.className = 'enquiry-card';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-tighter">${e.id} | ${e.type}</span>
+                                <h4 class="font-bold text-lg">${e.subject}</h4>
+                            </div>
+                            <span class="status-pill ${e.status === 'Pending' ? 'badge-new' : 'badge-resolved'}">${e.status}</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4">${e.message}</p>
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                            <div class="flex gap-4">
+                                <span class="flex items-center gap-1"><i data-lucide="user" class="w-3 h-3"></i> ${e.name}</span>
+                                <span class="flex items-center gap-1"><i data-lucide="mail" class="w-3 h-3"></i> ${e.email}</span>
+                            </div>
+                            <span>${new Date(e.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        ${e.status === 'Pending' ? `
+                            <div class="mt-4 pt-4 border-t border-slate-100">
+                                <textarea id="res-${e.id}" class="w-full p-3 rounded-lg border border-slate-200 text-sm font-semibold outline-none focus:border-indigo-500 mb-2" placeholder="Write a response..."></textarea>
+                                <button onclick="resolveEnquiry('${e.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-indigo-700 transition-all">Submit Response & Resolve</button>
+                            </div>
+                        ` : `
+                            <div class="mt-4 pt-4 border-t border-slate-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Developer Response</p>
+                                <p class="text-sm font-semibold text-emerald-600">${e.response || 'No response recorded.'}</p>
+                            </div>
+                        `}
+                    `;
+                    list.appendChild(card);
+                });
+                lucide.createIcons();
+            }
+        }
+
+        async function resolveEnquiry(id) {
+            const response = document.getElementById(`res-${id}`)?.value;
+            const res = await apiFetch('/api/admin/enquiry/resolve', {
+                method: 'POST',
+                body: JSON.stringify({ id, response })
+            });
+            if ((await res.json()).success) {
+                pmtNotif.success("Resolved", "Response sent and enquiry resolved.");
+                loadEnquiries();
+                loadStats();
+            }
+        }
+
+        // Init
+        refreshData();
+    </script>
+</body>
+</html>

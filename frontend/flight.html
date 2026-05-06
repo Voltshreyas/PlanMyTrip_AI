@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Booking - PlanMyTrip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/city-autocomplete.js"></script>
+    <script src="../js/notifications.js"></script>
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #64748b;
+            --line: rgba(15, 23, 42, 0.12);
+            --primary: #4f46e5; /* Indigo */
+            --primary-dark: #4338ca;
+            --primary-light: #eef2ff;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        /* Top Actions */
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            z-index: 50;
+        }
+
+        .pill-button {
+            min-height: 2.75rem;
+            border-radius: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            color: white;
+            font-weight: 700;
+            transition: all .2s ease;
+            padding: 0 1.25rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .pill-button:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        .pill-button.logout {
+            color: #fecdd3;
+            border-color: rgba(254,205,211,0.3);
+        }
+
+        .pill-button.logout:hover {
+            background: rgba(225, 29, 72, 0.4);
+            color: white;
+        }
+
+        /* Hero Wrapper */
+        .hero-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1rem 8rem 1rem;
+            background: 
+                linear-gradient(to bottom, rgba(15,23,42,0.5) 0%, rgba(15,23,42,0.1) 70%, #f8fafc 100%),
+                url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2000&auto=format&fit=crop') center 60% / cover no-repeat;
+        }
+
+        .hero-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            color: white;
+            text-align: center;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            letter-spacing: -0.02em;
+            max-width: 800px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        /* Search Widget Container */
+        .search-container {
+            width: 100%;
+            max-width: 68rem;
+            margin: -5rem auto 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 20;
+        }
+
+        .flight-widget {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 60px rgba(79, 70, 229, 0.08), 0 0 0 1px rgba(255,255,255,0.8);
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Trip Types */
+        .trip-types {
+            display: flex;
+            gap: 0.5rem;
+            background: #f1f5f9;
+            padding: 0.4rem;
+            border-radius: 1rem;
+            width: fit-content;
+        }
+
+        .type-btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .type-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Form Layouts */
+        .input-row {
+            display: flex;
+            background: white;
+            border-radius: 1.25rem;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        .input-section {
+            flex: 1;
+            padding: 1.25rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--line);
+            cursor: text;
+            transition: background 0.2s ease;
+            position: relative;
+        }
+
+        .input-section:hover { background: var(--primary-light); }
+        .input-section:first-child { border-radius: 1.25rem 0 0 1.25rem; }
+        .input-section:last-child { border-right: none; border-radius: 0 1.25rem 1.25rem 0; }
+
+        .input-section.disabled {
+            background: #f8fafc;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .form-input {
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--ink);
+            width: 100%;
+            padding: 0;
+            outline: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .form-input::placeholder { color: #94a3b8; font-weight: 600; }
+
+        .form-subtext {
+            font-size: 0.8rem;
+            color: var(--muted);
+            font-weight: 500;
+            margin-top: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Select styling */
+        select.form-input {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* Swap Button */
+        .swap-btn {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 3rem;
+            height: 3rem;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            z-index: 10;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+        }
+
+        .swap-btn:hover {
+            background: var(--primary-light);
+            transform: translate(-50%, -50%) rotate(180deg);
+        }
+
+        /* Date input hidden picker logic */
+        input[type="date"] { cursor: pointer; }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Submit Button */
+        .submit-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 800;
+            padding: 1.25rem 4rem;
+            border-radius: 2rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            background: var(--primary-dark);
+            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
+        }
+
+        /* Content Area */
+        .content-area {
+            max-width: 68rem;
+            margin: 4rem auto 4rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .promo-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid var(--line);
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .promo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        }
+
+        .promo-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .flight-widget {
+                padding: 1.5rem;
+                border-radius: 1.5rem;
+            }
+            .input-row {
+                flex-direction: column;
+            }
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid var(--line);
+            }
+            .input-section:last-child {
+                border-bottom: none;
+                border-radius: 0 0 1.25rem 1.25rem;
+            }
+            .input-section:first-child {
+                border-radius: 1.25rem 1.25rem 0 0;
+            }
+            .swap-btn {
+                left: auto;
+                right: 2rem;
+                transform: translate(0, -50%);
+            }
+            .swap-btn:hover {
+                transform: translate(0, -50%) rotate(180deg);
+            }
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            .pill-button span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <a href="../index.html" class="pill-button">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to PlanMyTrip</span>
+        </a>
+        <button type="button" onclick="logoutUser()" class="pill-button logout">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+            <span>Log out</span>
+        </button>
+    </header>
+
+    <nav class="nav-bar">
+        <a href="../index.html" class="nav-logo">
+            <i data-lucide="map-pin"></i> PlanMyTrip
+        </a>
+        <div class="nav-links">
+            <a href="flight.html" class="nav-link active"><i data-lucide="plane"></i> Flights</a>
+            <a href="train.html" class="nav-link"><i data-lucide="train"></i> Trains</a>
+            <a href="bus.html" class="nav-link"><i data-lucide="bus"></i> Bus</a>
+            <a href="hotel.html" class="nav-link"><i data-lucide="hotel"></i> Hotels</a>
+            <a href="bookings.html" class="nav-link"><i data-lucide="calendar"></i> My Bookings</a>
+            <div id="userPillContainer"></div>
+        </div>
+    </nav>
+
+    <style>
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #6366f1;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .nav-link:hover, .nav-link.active { color: #6366f1; }
+        .user-pill {
+            background: #e0e7ff;
+            color: #6366f1;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            document.getElementById('userPillContainer').innerHTML = `
+                <div class="user-pill">
+                    <i data-lucide="user"></i> ${user ? user.email.split('@')[0] : 'Guest'}
+                </div>
+            `;
+            lucide.createIcons();
+        });
+    </script>
+
+    <!-- Hero -->
+    <div class="hero-wrapper">
+        <h1 class="hero-title">Fly Beyond Boundaries</h1>
+        <p class="hero-subtitle">Book domestic and international flights instantly</p>
+    </div>
+
+    <main>
+        <div class="search-container">
+            <form id="flightForm" class="flight-widget">
+                
+                <!-- Trip Types -->
+                <div class="trip-types">
+                    <button type="button" class="type-btn active" id="btnOneWay">One Way</button>
+                    <button type="button" class="type-btn" id="btnRoundTrip">Round Trip</button>
+                </div>
+
+                <!-- Row 1: Destinations -->
+                <div class="input-row">
+                    <div class="input-section" onclick="document.getElementById('fromCity').focus()">
+                        <span class="input-label"><i data-lucide="plane-takeoff" class="w-3.5 h-3.5"></i> From</span>
+                        <input type="text" id="fromCity" class="form-input" placeholder="Origin" required>
+                        <span class="form-subtext">Enter city or airport</span>
+                    </div>
+
+                    <button type="button" id="swapBtn" class="swap-btn">
+                        <i data-lucide="arrow-right-left" class="w-4 h-4"></i>
+                    </button>
+
+                    <div class="input-section" onclick="document.getElementById('toCity').focus()">
+                        <span class="input-label"><i data-lucide="plane-landing" class="w-3.5 h-3.5"></i> To</span>
+                        <input type="text" id="toCity" class="form-input" placeholder="Destination" required>
+                        <span class="form-subtext">Enter city or airport</span>
+                    </div>
+                </div>
+
+                <!-- Row 2: Dates & Passengers -->
+                <div class="input-row">
+                    <!-- Depart -->
+                    <div class="input-section" onclick="document.getElementById('departDate').showPicker()">
+                        <span class="input-label"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Departure</span>
+                        <input type="date" id="departDate" class="form-input" required>
+                        <span class="form-subtext">Tap to select</span>
+                    </div>
+
+                    <!-- Return -->
+                    <div class="input-section disabled" id="returnBox" onclick="if(!this.classList.contains('disabled')) document.getElementById('returnDate').showPicker()">
+                        <span class="input-label"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i> Return</span>
+                        <input type="date" id="returnDate" class="form-input">
+                        <span class="form-subtext" id="returnSubtext">Select round trip</span>
+                    </div>
+
+                    <!-- Travellers -->
+                    <div class="input-section" onclick="document.getElementById('travellersClass').focus()">
+                        <span class="input-label"><i data-lucide="users" class="w-3.5 h-3.5"></i> Travellers & Class</span>
+                        <select id="travellersClass" class="form-input">
+                            <option value="1_economy">1 Adult, Economy</option>
+                            <option value="2_economy">2 Adults, Economy</option>
+                            <option value="1_business">1 Adult, Business</option>
+                            <option value="2_business">2 Adults, Business</option>
+                            <option value="1_first">1 Adult, First Class</option>
+                        </select>
+                        <span class="form-subtext">Tap to change</span>
+                    </div>
+                </div>
+
+                <div class="submit-wrapper">
+                    <button type="submit" class="submit-btn" id="searchSubmitBtn">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                        Search Flights
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="content-area">
+            <div class="promo-card">
+                <div class="promo-icon">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Free Cancellation</h3>
+                    <p class="text-slate-500 font-medium">Plans change? Get a full refund on your flight bookings when you add flexible protection.</p>
+                </div>
+            </div>
+            <div class="promo-card">
+                <div class="promo-icon">
+                    <i data-lucide="plane" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Global Coverage</h3>
+                    <p class="text-slate-500 font-medium">Book tickets with over 500+ airlines across the globe at the most competitive rates.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('planmytrip_user');
+                window.location.href = '../login.html';
+            }
+        }
+
+        // Swap functionality
+        document.getElementById('swapBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const fromInput = document.getElementById('fromCity');
+            const toInput = document.getElementById('toCity');
+            const temp = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = temp;
+        });
+
+        // Date Logic
+        const departDateInput = document.getElementById('departDate');
+        const returnDateInput = document.getElementById('returnDate');
+        const today = new Date();
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        departDateInput.setAttribute('min', formatDate(today));
+        departDateInput.value = formatDate(today);
+        returnDateInput.setAttribute('min', formatDate(today));
+
+        departDateInput.addEventListener('change', (e) => {
+            returnDateInput.setAttribute('min', e.target.value);
+            if(returnDateInput.value && returnDateInput.value < e.target.value) {
+                returnDateInput.value = e.target.value;
+            }
+        });
+
+        // Trip Type Toggle Logic
+        const btnOneWay = document.getElementById('btnOneWay');
+        const btnRoundTrip = document.getElementById('btnRoundTrip');
+        const returnBox = document.getElementById('returnBox');
+        const returnSubtext = document.getElementById('returnSubtext');
+
+        let isRoundTrip = false;
+
+        btnOneWay.addEventListener('click', () => {
+            isRoundTrip = false;
+            btnOneWay.classList.add('active');
+            btnRoundTrip.classList.remove('active');
+            
+            returnBox.classList.add('disabled');
+            returnDateInput.value = '';
+            returnDateInput.required = false;
+            returnSubtext.textContent = "Select round trip";
+        });
+
+        btnRoundTrip.addEventListener('click', () => {
+            isRoundTrip = true;
+            btnRoundTrip.classList.add('active');
+            btnOneWay.classList.remove('active');
+            
+            returnBox.classList.remove('disabled');
+            returnDateInput.required = true;
+            returnSubtext.textContent = "Tap to select";
+            
+            // Auto-set return date to tomorrow if empty
+            if(!returnDateInput.value) {
+                let d = new Date(departDateInput.value || today);
+                d.setDate(d.getDate() + 1);
+                returnDateInput.value = formatDate(d);
+            }
+        });
+
+        // Form Submission
+        document.getElementById('flightForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const from = document.getElementById('fromCity').value.trim();
+            const to = document.getElementById('toCity').value.trim();
+            const date = document.getElementById('departDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+            const paxData = document.getElementById('travellersClass').value;
+
+            if(!from || !to || !date || (isRoundTrip && !returnDate)) {
+                alert("Please fill in all required flight details.");
+                return;
+            }
+
+            // Save booking to backend
+            const userStr = localStorage.getItem('planmytrip_user');
+            const user = userStr ? JSON.parse(userStr) : null;
+            const userEmail = user ? user.email : 'guest@example.com';
+            
+            const flightCode = 'AI-' + Math.floor(100 + Math.random() * 900);
+            
+            const newBooking = {
+                id: 'FL' + Date.now(),
+                type: 'flight',
+                status: 'Upcoming',
+                title: `${from.toUpperCase()} to ${to.toUpperCase()}`,
+                date: date,
+                details: `${paxData.split('_')[0]} Adult(s) • ${flightCode}`,
+                amount: '₹' + Math.floor(4000 + Math.random() * 10000).toLocaleString('en-IN')
+            };
+
+            // Loading feedback
+            const btn = document.getElementById('searchSubmitBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Processing...`;
+            lucide.createIcons();
+            btn.disabled = true;
+
+            fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, booking: newBooking })
+            })
+            .then(res => res.json())
+            .then(data => {
+                pmtNotif.success("Flight Confirmed!", "Your flight has been booked successfully. Redirecting...");
+                setTimeout(() => {
+                    window.location.href = 'bookings.html?new=true';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                pmtNotif.error("Booking Failed", "We couldn't process your flight booking. Please try again.");
+            });
+        });
+
+        // Initialize city autocomplete
+        initCityAutocomplete('fromCity', { accentColor: '#2563eb', label: 'Airports & Cities', showAirport: true });
+        initCityAutocomplete('toCity',   { accentColor: '#2563eb', label: 'Airports & Cities', showAirport: true });
+    </script>
+</body>
+</html>

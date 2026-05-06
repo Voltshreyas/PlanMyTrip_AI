@@ -1,0 +1,188 @@
+[
+  [
+    "persist3@example.com",
+    {
+      "userId": "user_1775593287809",
+      "email": "persist3@example.com",
+      "phone": "9876543213",
+      "password": "c2VjcmV0MTIz",
+      "createdAt": "2026-04-07T20:21:27.809Z",
+      "referralCode": "PLANMYTRIP-3213",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "shreyas1234@gmail.com",
+    {
+      "userId": "user_1775593394051",
+      "email": "shreyas1234@gmail.com",
+      "phone": "8670326726",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-07T20:23:14.051Z",
+      "referralCode": "PLANMYTRIP-6726",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "snehalsarkar94@gmail.com",
+    {
+      "userId": "user_1775597363170",
+      "email": "snehalsarkar94@gmail.com",
+      "phone": "8902515964",
+      "password": "MTIzNDU2",
+      "createdAt": "2026-04-07T21:29:23.170Z",
+      "referralCode": "PLANMYTRIP-5964",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "sudipbarik244@gmail.com",
+    {
+      "userId": "user_1775636344871",
+      "email": "sudipbarik244@gmail.com",
+      "phone": "9641703846",
+      "password": "MTIzNDU2",
+      "createdAt": "2026-04-08T08:19:04.872Z",
+      "referralCode": "PLANMYTRIP-3846",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "shreyasroy53@gmail.com",
+    {
+      "userId": "user_1776675618567",
+      "email": "shreyasroy53@gmail.com",
+      "phone": "8670326726",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-20T09:00:18.567Z",
+      "referralCode": "PLANMYTRIP-6726",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "sayan1234@gmail.com",
+    {
+      "userId": "user_1776702699955",
+      "email": "sayan1234@gmail.com",
+      "phone": "8597340754",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-20T16:31:39.955Z",
+      "referralCode": "PLANMYTRIP-0754",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "shreyasroy2023@gmail.com",
+    {
+      "userId": "user_1776795803561",
+      "email": "shreyasroy2023@gmail.com",
+      "phone": "8670326726",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-21T18:23:23.561Z",
+      "referralCode": "PLANMYTRIP-6726",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "test@example.com",
+    {
+      "userId": "user_1776975121359",
+      "email": "test@example.com",
+      "phone": "1234567890",
+      "password": "cGFzc3dvcmQxMjM=",
+      "createdAt": "2026-04-23T20:12:01.359Z",
+      "referralCode": "PLANMYTRIP-7890",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "shreyashroy53@gmail.com",
+    {
+      "userId": "user_1776975512392",
+      "email": "shreyashroy53@gmail.com",
+      "phone": "8670326726",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-23T20:18:32.392Z",
+      "referralCode": "PLANMYTRIP-6726",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "ridhi1234@gmail.com",
+    {
+      "userId": "user_1777453018698",
+      "email": "ridhi1234@gmail.com",
+      "phone": "6297086206",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-29T08:56:58.698Z",
+      "referralCode": "PLANMYTRIP-6206",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "anuskasasmal36@gmail.com",
+    {
+      "userId": "user_1777547151283",
+      "name": "Anuska Sasmal",
+      "email": "anuskasasmal36@gmail.com",
+      "phone": "8670326726",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-04-30T11:05:51.284Z",
+      "referralCode": "PLANMYTRIP-6726",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "sanglapghosh51@gmail.com",
+    {
+      "userId": "user_1777594820739",
+      "name": "Sanglap",
+      "email": "sanglapghosh51@gmail.com",
+      "phone": "9883483390",
+      "password": "MTIzNDU2",
+      "createdAt": "2026-05-01T00:20:20.739Z",
+      "referralCode": "PLANMYTRIP-3390",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "sohammondal1304@gmail.com",
+    {
+      "userId": "user_1777617672388",
+      "name": "Soham Mondal",
+      "email": "sohammondal1304@gmail.com",
+      "phone": "9083861312",
+      "password": "c29oYW0xMzA0",
+      "createdAt": "2026-05-01T06:41:12.388Z",
+      "referralCode": "PLANMYTRIP-1312",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ],
+  [
+    "riddhipanja2006@gmail.com",
+    {
+      "userId": "user_1777894900539",
+      "name": "riddhi panja",
+      "email": "riddhipanja2006@gmail.com",
+      "phone": "6297086206",
+      "password": "MjAyMDI0",
+      "createdAt": "2026-05-04T11:41:40.540Z",
+      "referralCode": "PLANMYTRIP-6206",
+      "totalReferrals": 0,
+      "totalDiscount": 0
+    }
+  ]
+]
